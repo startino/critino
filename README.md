@@ -1,6 +1,6 @@
 <div align="center">
 
-![Logo of Critino, chat bubble styled as an arrow with check marks](https://critino.vercel.app/logo/colored.jpg)
+<img alt="Logo of Critino, chat bubble styled as an arrow with check marks" src="https://critino.vercel.app/logo/colored.jpg" width="200" height="200" style="border-radius:50">
 
 # **Critino**
 
