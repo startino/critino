@@ -59,6 +59,9 @@ importers:
       openai:
         specifier: ^4.56.0
         version: 4.57.0(zod@3.23.8)
+      paneforge:
+        specifier: ^0.0.5
+        version: 0.0.5(svelte@5.0.0-next.158)
       svelte-sonner:
         specifier: ^0.3.27
         version: 0.3.27(svelte@5.0.0-next.158)
@@ -3062,6 +3065,11 @@ packages:
 
   package-json-from-dist@1.0.0:
     resolution: {integrity: sha512-dATvCeZN/8wQsGywez1mzHtTlP22H8OEfPrVMLNr4/eGa+ijtLn/6M5f0dY8UKNrC2O9UCU6SSoG3qRKnt7STw==}
+
+  paneforge@0.0.5:
+    resolution: {integrity: sha512-98QHobaN/KeQhqqglbvjUmNCTRC4h4iqDxpSV8jCGhRLttgGlRXZNzWNr4Firni5rwasAZjOza0k/JdwppB/AQ==}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0-next.1
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -7268,6 +7276,11 @@ snapshots:
       p-limit: 3.1.0
 
   package-json-from-dist@1.0.0: {}
+
+  paneforge@0.0.5(svelte@5.0.0-next.158):
+    dependencies:
+      nanoid: 5.0.7
+      svelte: 5.0.0-next.158
 
   parent-module@1.0.1:
     dependencies:
