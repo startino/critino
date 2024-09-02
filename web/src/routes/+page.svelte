@@ -13,7 +13,12 @@
 <Resizable.Pane>
 	<Tabs.Root value="all">
 		<div class="flex h-14 items-center px-4">
-			<Breadcrumb crumbs={[team.name, 'home']} />
+			<Breadcrumb
+				crumbs={[
+					{ name: team.name, href: '/' },
+					{ name: 'home', href: '/' },
+				]}
+			/>
 		</div>
 		<Separator />
 		<div class="flex h-full w-full items-center justify-center">Home Dashboard</div>
