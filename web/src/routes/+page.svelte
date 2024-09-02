@@ -1,26 +1,16 @@
 <script lang="ts">
-	import * as Resizable from '$lib/components/ui/resizable';
-	import * as Tabs from '$lib/components/ui/tabs';
-	import { Separator } from '$lib/components/ui/select';
-	import { Typography } from '$lib/components/ui/typography';
-	import Breadcrumb from './breadcrumb.svelte';
+	import { Separator } from '$lib/components/ui/separator';
+	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 
 	export let data;
 
 	let { team } = data;
 </script>
 
-<Resizable.Pane>
-	<Tabs.Root value="all">
-		<div class="flex h-14 items-center px-4">
-			<Breadcrumb
-				crumbs={[
-					{ name: team.name, href: '/' },
-					{ name: 'home', href: '/' },
-				]}
-			/>
-		</div>
-		<Separator />
-		<div class="flex h-full w-full items-center justify-center">Home Dashboard</div>
-	</Tabs.Root>
-</Resizable.Pane>
+<div class="w-full">
+	<div class="flex h-14 items-center px-4">
+		<Breadcrumb crumbs={[{ name: team.name }, { name: 'home' }]} />
+	</div>
+	<Separator class="mt-0 pt-0" />
+	<div class="flex h-full w-full items-center justify-center">Home Dashboard</div>
+</div>

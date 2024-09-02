@@ -36,21 +36,21 @@ export type Database = {
         Row: {
           created_at: string
           description: string
-          id: number
+          id: string
           name: string
           team_id: string
         }
         Insert: {
           created_at?: string
           description?: string
-          id?: number
+          id?: string
           name?: string
           team_id?: string
         }
         Update: {
           created_at?: string
           description?: string
-          id?: number
+          id?: string
           name?: string
           team_id?: string
         }

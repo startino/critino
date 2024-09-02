@@ -1,6 +1,6 @@
 <script>
 	import * as Resizable from '$lib/components/ui/resizable';
-	import { Separator } from '$lib/components/ui/select';
+	import { Separator } from '$lib/components/ui/separator';
 	import { Typography } from '$lib/components/ui/typography';
 
 	import { page } from '$app/stores';

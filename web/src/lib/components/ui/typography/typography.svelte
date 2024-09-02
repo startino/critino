@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Props, typographyVariants } from './index';
+	import { type Props, typographyVariants } from '.';
 	import { cn } from '$lib/utils';
 
 	type $$Props = Props;

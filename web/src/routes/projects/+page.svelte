@@ -1,8 +1,7 @@
 <script lang="ts">
-	import * as Resizable from '$lib/components/ui/resizable';
-	import { Separator } from '$lib/components/ui/select';
+	import { Separator } from '$lib/components/ui/separator';
 	import * as Card from '$lib/components/ui/card';
-	import Breadcrumb from '../breadcrumb.svelte';
+	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import { goto } from '$app/navigation';
 	import { ChevronRight } from 'lucide-svelte';
 
@@ -11,14 +10,9 @@
 	let { team, projects } = data;
 </script>
 
-<Resizable.Pane>
+<div class="w-full">
 	<div class="flex h-14 items-center px-4">
-		<Breadcrumb
-			crumbs={[
-				{ name: team.name, href: '/' },
-				{ name: 'projects', href: '/projects' },
-			]}
-		/>
+		<Breadcrumb crumbs={[{ name: team.name, href: '/' }, { name: 'projects' }]} />
 	</div>
 	<Separator class="mt-0 pt-0" />
 	<div
@@ -38,4 +32,4 @@
 			</button>
 		{/each}
 	</div>
-</Resizable.Pane>
+</div>

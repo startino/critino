@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Resizable from '$lib/components/ui/resizable';
-	import { Separator } from '$lib/components/ui/select';
-	import Breadcrumb from '../../breadcrumb.svelte';
+	import { Separator } from '$lib/components/ui/separator';
+	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 
 	export let data;
 
@@ -14,7 +14,7 @@
 			crumbs={[
 				{ name: team.name, href: '/' },
 				{ name: 'projects', href: '/projects' },
-				{ name: project.name, href: `/projects/${project.id}` },
+				{ name: project.name },
 			]}
 		/>
 	</div>

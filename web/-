@@ -1,8 +1,10 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
+	import { cn } from '$lib/utils.js';
 	import { Typography } from '$lib/components/ui/typography';
 	import type { Team } from '$lib/supabase';
 	import { Icon } from '$lib/icons';
+	import { page } from '$app/stores';
 
 	export let isCollapsed: boolean;
 	export let teams: Team[];
@@ -24,13 +26,20 @@
 			selectedTeam = teams.find((team) => team.name === e?.value) || teams[0];
 		}}
 	>
-		<Select.Trigger class="relative grid" aria-label="Select team">
-			<div
-				class="absolute bottom-0 left-0 right-0 top-0 ml-2 flex items-center justify-start"
-			>
-				<Icon src={selectedTeam.icon_url} class="mr-4 size-6 min-h-6 min-w-6" />
-				<Typography variant="title-sm">{selectedTeam.name}</Typography>
-			</div>
+		<Select.Trigger
+			class={cn(
+				'flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0',
+				isCollapsed &&
+					'flex h-9 w-9 shrink-0 items-center justify-start p-0 [&>div>svg]:hidden [&>span]:w-auto'
+			)}
+			aria-label="Select team"
+		>
+			<span class="pointer-events-none">
+				<Icon src={selectedTeam.icon_url} class={'size-6 min-h-6 min-w-6'} />
+				<span class={cn(isCollapsed ? '!ml-0 !hidden' : 'ml-2')}>
+					<Typography variant="title-sm">{selectedTeam.name}</Typography>
+				</span>
+			</span>
 		</Select.Trigger>
 		<Select.Content sameWidth={!isCollapsed} align={isCollapsed ? 'center' : undefined}>
 			<Select.Group>
