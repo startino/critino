@@ -14,7 +14,7 @@
 	<div class="flex h-14 items-center px-4">
 		<Breadcrumb crumbs={[{ name: team.name, href: '/' }, { name: 'projects' }]} />
 	</div>
-	<Separator class="mt-0 pt-0" />
+	<Separator class="mt-0 pt-0 opacity-40" />
 	<div
 		class="mx-auto grid h-full w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
 	>

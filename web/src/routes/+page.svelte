@@ -11,6 +11,6 @@
 	<div class="flex h-14 items-center px-4">
 		<Breadcrumb crumbs={[{ name: team.name }, { name: 'home' }]} />
 	</div>
-	<Separator class="mt-0 pt-0" />
+	<Separator class="mt-0 pt-0 opacity-40" />
 	<div class="flex h-full w-full items-center justify-center">Home Dashboard</div>
 </div>

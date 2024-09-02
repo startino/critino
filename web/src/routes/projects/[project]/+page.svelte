@@ -18,6 +18,6 @@
 			]}
 		/>
 	</div>
-	<Separator class="mt-0 pt-0" />
+	<Separator class="mt-0 pt-0 opacity-40" />
 	{JSON.stringify(project, null, 2)}
 </Resizable.Pane>

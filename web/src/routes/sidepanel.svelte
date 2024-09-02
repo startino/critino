@@ -24,9 +24,15 @@
 	<div class={cn('flex h-14 flex-col items-center justify-center px-1')}>
 		<TeamSwitcher {isCollapsed} {teams} />
 	</div>
-	<Separator class="mt-0 pt-0" />
+
+	<Separator class="mt-0 opacity-40" />
+
 	<Nav {isCollapsed} routes={primaryRoutes} />
-	<Separator />
+
+	<Separator
+		class="ml-2 min-w-10 max-w-10 pt-0 opacity-40 transition-all duration-200 ease-in-out group-hover:min-w-48 group-hover:max-w-48"
+	/>
+
 	<div class="relative grid h-8">
 		<Typography
 			align="left"
@@ -44,7 +50,10 @@
 		</Typography>
 	</div>
 	<Nav {isCollapsed} routes={teamRoutes} />
-	<Separator />
+
+	<Separator
+		class="ml-2 min-w-10 max-w-10 pt-0 opacity-40 transition-all duration-200 ease-in-out group-hover:min-w-48 group-hover:max-w-48"
+	/>
 
 	<div class="relative grid h-8">
 		<Typography
