@@ -10,10 +10,10 @@ export function getContext<K extends keyof ContextMap>(key: K): ContextMap[K] {
 }
 
 export interface ContextMap {
+	theme: 'light' | 'dark';
 	forms: FormsContext;
 }
 
 // Contexts:
 
-export interface FormsContext {
-}
+export interface FormsContext {}

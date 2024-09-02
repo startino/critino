@@ -3,7 +3,7 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import TeamSwitcher from './team-switcher.svelte';
 	import { teams } from './teams';
-	import { setContext } from '$lib/context';
+	import { getContext, setContext } from '$lib/context';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Nav from './nav.svelte';
@@ -12,6 +12,9 @@
 	import { primaryRoutes, profileRoutes, teamRoutes } from './routes';
 	import { cn } from '$lib/utils';
 	import { Typography } from '$lib/components/ui/typography/index.js';
+	import * as schemes from '$lib/theme/schemes';
+	import ThemeSwitcher from './theme-switcher.svelte';
+	import { getMode } from '$lib/theme/index.js';
 
 	export let data;
 	setContext('forms', data.forms);
@@ -19,6 +22,15 @@
 	$: ({ user, supabase } = data);
 
 	onMount(() => {
+		if (typeof window !== 'undefined') {
+			for (const css of schemes[getMode()]) {
+				document.documentElement.style.setProperty(
+					css.split(': ')[0],
+					css.split(': ')[1].replace(';', '')
+				);
+			}
+		}
+
 		const { data } = supabase.auth.onAuthStateChange((_, newUser) => {
 			if (newUser?.expires_at !== user?.expires_at) {
 				invalidate('supabase:auth');
@@ -51,19 +63,18 @@
 
 <Toaster />
 
-<div class="md:hidden">
-	<enhanced:img src="/favicon.png" alt="Mail" class="block dark:hidden" />
-	<enhanced:img src="/favicon.png" alt="Mail" class="hidden dark:block" />
-</div>
-<main class="h-screen w-screen">
-	<div class="hidden h-full w-full md:block">
+<main class="h-screen w-screen bg-background text-background-on">
+	<div class="absolute right-2 top-2">
+		<ThemeSwitcher />
+	</div>
+	<div class="h-full w-full md:block">
 		<Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch">
 			<Resizable.Pane
 				defaultSize={defaultLayout[0]}
 				collapsedSize={navCollapsedSize}
 				collapsible
-				minSize={18}
-				maxSize={18}
+				minSize={15}
+				maxSize={15}
 				class="flex min-w-14 flex-col"
 				{onCollapse}
 				{onExpand}

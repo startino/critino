@@ -1,4 +1,4 @@
-import colorConfig from './theme/color';
+import colorsConfig from './theme/colors';
 import typographyConfig from './theme/typography';
 
 /** @type {import('tailwindcss').Config} */
@@ -6,7 +6,7 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		extend: {
-			colors: colorConfig,
+			colors: colorsConfig,
 			typography: () => ({
 				...typographyConfig(),
 				...{
