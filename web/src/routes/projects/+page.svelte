@@ -1,10 +1,10 @@
 <script lang="ts">
 	import * as Resizable from '$lib/components/ui/resizable';
 	import { Separator } from '$lib/components/ui/select';
-	import { Typography } from '$lib/components/ui/typography';
 	import * as Card from '$lib/components/ui/card';
 	import Breadcrumb from '../breadcrumb.svelte';
 	import { goto } from '$app/navigation';
+	import { ChevronRight } from 'lucide-svelte';
 
 	export let data;
 
@@ -20,16 +20,19 @@
 			]}
 		/>
 	</div>
-	<Separator />
+	<Separator class="mt-0 pt-0" />
 	<div
 		class="mx-auto grid h-full w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
 	>
 		{#each projects as project}
 			<button on:click={() => goto(`projects/${project.id}`)}>
-				<Card.Root class="hover:cursor-pointer">
-					<Card.Header>
+				<Card.Root class="group text-left hover:cursor-pointer">
+					<Card.Header class="relative">
 						<Card.Title>{project.name}</Card.Title>
 						<Card.Description>{project.description}</Card.Description>
+						<ChevronRight
+							class="transition-100 absolute right-5 top-5 opacity-50 group-hover:opacity-100"
+						/>
 					</Card.Header>
 				</Card.Root>
 			</button>

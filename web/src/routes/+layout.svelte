@@ -75,7 +75,7 @@
 				>
 					<TeamSwitcher {isCollapsed} {teams} />
 				</div>
-				<Separator />
+				<Separator class="mt-0 pt-0" />
 				<Nav {isCollapsed} routes={primaryRoutes} />
 				<Separator />
 				<Typography

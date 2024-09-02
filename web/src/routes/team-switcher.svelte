@@ -41,12 +41,12 @@
 				</span>
 			</span>
 		</Select.Trigger>
-		<Select.Content sameWidth={!isCollapsed} align={isCollapsed ? 'start' : undefined}>
+		<Select.Content sameWidth={!isCollapsed} align={isCollapsed ? 'center' : undefined}>
 			<Select.Group>
 				{#each teams as team}
 					<Select.Item value={team.name} label={team.name}>
 						<div
-							class="flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:text-foreground"
+							class="flex items-center justify-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:text-foreground"
 						>
 							<Icon
 								src={team.icon_url}
