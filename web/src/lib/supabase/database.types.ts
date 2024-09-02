@@ -36,31 +36,28 @@ export type Database = {
         Row: {
           created_at: string
           description: string
-          id: string
           name: string
-          team_id: string
+          team_name: string
         }
         Insert: {
           created_at?: string
           description?: string
-          id?: string
           name?: string
-          team_id?: string
+          team_name: string
         }
         Update: {
           created_at?: string
           description?: string
-          id?: string
           name?: string
-          team_id?: string
+          team_name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "projects_team_id_fkey"
-            columns: ["team_id"]
+            foreignKeyName: "projects_team_name_fkey"
+            columns: ["team_name"]
             isOneToOne: false
             referencedRelation: "teams"
-            referencedColumns: ["id"]
+            referencedColumns: ["name"]
           },
         ]
       }
@@ -68,19 +65,16 @@ export type Database = {
         Row: {
           created_at: string
           icon_url: string
-          id: string
           name: string
         }
         Insert: {
           created_at?: string
           icon_url?: string
-          id?: string
           name?: string
         }
         Update: {
           created_at?: string
           icon_url?: string
-          id?: string
           name?: string
         }
         Relationships: []

@@ -4,7 +4,7 @@ export const load = async ({ params, locals: { user, supabase } }) => {
 	const { data: project, error: eProject } = await supabase
 		.from('projects')
 		.select('*')
-		.eq('id', params.project)
+		.eq('name', params.project)
 		.single();
 
 	if (!project || eProject) {
@@ -16,7 +16,7 @@ export const load = async ({ params, locals: { user, supabase } }) => {
 	const { data: team, error: eTeam } = await supabase
 		.from('teams')
 		.select('*')
-		.eq('id', project.team_id)
+		.eq('name', project.team_name)
 		.single();
 
 	if (!team || eTeam) {

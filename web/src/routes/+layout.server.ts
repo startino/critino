@@ -12,29 +12,49 @@ export const load = async ({ cookies, locals: { user, supabase } }) => {
 		throw error(500, message);
 	}
 
-	let team_id = cookies.get('team') as string | null;
+	let team_name = cookies.get('team') as string | null;
 
-	if (!team_id) {
+	if (!team_name) {
 		const message = `Error getting team cookie. Using first team.`;
 		console.error(message);
 		if (!teams[0]) {
 			throw error(500, `No teams exist`);
 		}
-		cookies.set('team', teams[0].id, { path: '/' });
+		cookies.set('team', teams[0].name, { path: '/' });
 
-		team_id = teams[0].id;
+		team_name = teams[0].name;
 	}
 
-	const { data: team, error: eTeam } = await supabase
+	let { data: team, error: eTeam } = await supabase
 		.from('teams')
 		.select('*')
-		.eq('id', team_id)
+		.eq('name', team_name)
 		.single();
 
 	if (!team || eTeam) {
-		const message = `Error fetching team: ${eTeam.message}`;
+		const message = `Error fetching team: ${JSON.stringify(eTeam, null, 2)}`;
 		console.error(message);
-		throw error(500, message);
+
+		if (!teams[0]) {
+			throw error(500, `No teams exist`);
+		}
+		cookies.set('team', teams[0].name, { path: '/' });
+
+		team_name = teams[0].name;
+
+		const { data: team2, error: eTeam2 } = await supabase
+			.from('teams')
+			.select('*')
+			.eq('name', team_name)
+			.single();
+
+		if (!team2 || eTeam2) {
+			const message = `Error fetching team2: ${JSON.stringify(eTeam2, null, 2)}`;
+			console.error(message);
+			throw error(500, message);
+		}
+
+		team = team2;
 	}
 
 	console.log('teams', JSON.stringify(teams, null, 2));

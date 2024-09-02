@@ -19,7 +19,7 @@
 		class="mx-auto grid h-full w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
 	>
 		{#each projects as project}
-			<button on:click={() => goto(`projects/${project.id}`)}>
+			<button on:click={() => goto(`projects/${project.name}`)}>
 				<Card.Root class="group text-left hover:cursor-pointer">
 					<Card.Header class="relative">
 						<Card.Title>{project.name}</Card.Title>

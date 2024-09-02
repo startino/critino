@@ -13,7 +13,7 @@
 	let selectedTeam = teams[0];
 
 	$: if (typeof document !== 'undefined') {
-		document.cookie = 'team=' + selectedTeam.id;
+		document.cookie = 'team=' + selectedTeam.name;
 	}
 </script>
 
