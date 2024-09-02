@@ -2,8 +2,6 @@
 	import '$styling';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import TeamSwitcher from './team-switcher.svelte';
-	import { teams } from './teams';
-	import { getContext, setContext } from '$lib/context';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Nav from './nav.svelte';
@@ -17,9 +15,9 @@
 	import { getMode } from '$lib/theme/index.js';
 
 	export let data;
-	setContext('forms', data.forms);
 
-	$: ({ user, supabase } = data);
+	$: ({ user, supabase, teams } = data);
+	console.log(JSON.stringify(teams));
 
 	onMount(() => {
 		if (typeof window !== 'undefined') {
@@ -40,24 +38,14 @@
 		return () => data.subscription.unsubscribe();
 	});
 
-	export let defaultLayout = [265, 440, 655];
-	export let defaultCollapsed = false;
 	export let navCollapsedSize: number;
 
-	let isCollapsed = defaultCollapsed;
-
-	function onLayoutChange(sizes: number[]) {
-		document.cookie = `PaneForge:layout=${JSON.stringify(sizes)}`;
-	}
-
+	let isCollapsed = true;
 	function onCollapse() {
 		isCollapsed = true;
-		document.cookie = `PaneForge:collapsed=${true}`;
 	}
-
 	function onExpand() {
 		isCollapsed = false;
-		document.cookie = `PaneForge:collapsed=${false}`;
 	}
 </script>
 
@@ -68,13 +56,13 @@
 		<ThemeSwitcher />
 	</div>
 	<div class="h-full w-full md:block">
-		<Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch">
+		<Resizable.PaneGroup direction="horizontal" class="h-full items-stretch">
 			<Resizable.Pane
-				defaultSize={defaultLayout[0]}
 				collapsedSize={navCollapsedSize}
 				collapsible
-				minSize={15}
-				maxSize={15}
+				defaultSize={0}
+				minSize={20}
+				maxSize={20}
 				class="flex min-w-14 flex-col"
 				{onCollapse}
 				{onExpand}

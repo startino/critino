@@ -26,5 +26,5 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
 				},
 			});
 
-	return { user: data.user, forms: data.forms, supabase };
+	return { ...data, supabase };
 };

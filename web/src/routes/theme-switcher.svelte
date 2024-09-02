@@ -6,7 +6,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { getMode, resetMode, setMode, system } from '$lib/theme';
 
-	$: mode = getMode();
+	let mode = getMode();
 </script>
 
 <DropdownMenu.Root>

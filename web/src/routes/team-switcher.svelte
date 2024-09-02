@@ -1,23 +1,29 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import type { Team } from './teams';
 	import { cn } from '$lib/utils.js';
 	import { Typography } from '$lib/components/ui/typography';
+	import type { Team } from '$lib/supabase';
+	import { Icon } from '$lib/icons';
+	import { page } from '$app/stores';
 
 	export let isCollapsed: boolean;
 	export let teams: Team[];
 
-	$: teams = teams.sort((a, b) => a.label.localeCompare(b.label));
+	console.log(JSON.stringify(teams));
 
-	let selectedTeam = teams.sort((a, b) => a.label.localeCompare(b.label))[0];
+	let selectedTeam = teams[0];
+
+	$: if (typeof document !== 'undefined') {
+		document.cookie = 'team=' + selectedTeam.id;
+	}
 </script>
 
 {#if selectedTeam}
 	<Select.Root
 		portal={null}
-		selected={{ value: selectedTeam.label, label: selectedTeam.label }}
+		selected={{ value: selectedTeam.name, label: selectedTeam.name }}
 		onSelectedChange={(e) => {
-			selectedTeam = teams.find((team) => team.label === e?.value) || teams[0];
+			selectedTeam = teams.find((team) => team.name === e?.value) || teams[0];
 		}}
 	>
 		<Select.Trigger
@@ -29,25 +35,25 @@
 			aria-label="Select team"
 		>
 			<span class="pointer-events-none">
-				<svelte:component this={selectedTeam.icon} class={cn(isCollapsed ? 'ml-2' : '')} />
+				<Icon src={selectedTeam.icon_url} class={cn(isCollapsed ? 'ml-2' : '')} />
 				<span class={cn(isCollapsed ? '!ml-0 !hidden' : 'ml-2')}>
-					<Typography variant="title-sm">{selectedTeam.label}</Typography>
+					<Typography variant="title-sm">{selectedTeam.name}</Typography>
 				</span>
 			</span>
 		</Select.Trigger>
 		<Select.Content sameWidth={!isCollapsed} align={isCollapsed ? 'start' : undefined}>
 			<Select.Group>
 				{#each teams as team}
-					<Select.Item value={team.label} label={team.label}>
+					<Select.Item value={team.name} label={team.name}>
 						<div
 							class="flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:text-foreground"
 						>
-							<svelte:component
-								this={team.icon}
+							<Icon
+								src={team.icon_url}
 								aria-hidden="true"
 								class="size-6 shrink-0 text-foreground"
 							/>
-							<Typography variant="title-sm">{team.label}</Typography>
+							<Typography variant="title-sm">{team.name}</Typography>
 						</div>
 					</Select.Item>
 				{/each}

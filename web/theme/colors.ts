@@ -124,7 +124,7 @@ const colors = {
 
 	// shadcn aliases
 	foreground: withOpacity('--color-background-on'),
-	accent: withOpacity('--color-tertiary'),
+	accent: withOpacity('--color-tertiary-on'),
 	border: withOpacity('--color-primary'),
 	input: withOpacity('--color-primary'),
 	ring: withOpacity('--color-primary'),
@@ -142,7 +142,7 @@ const colors = {
 		foreground: withOpacity('--color-surface-on'),
 	},
 	card: {
-		DEFAULT: withOpacity('--color-primary'),
+		DEFAULT: withOpacity('--color-surface'),
 		foreground: withOpacity('--color-surface-on'),
 	},
 };

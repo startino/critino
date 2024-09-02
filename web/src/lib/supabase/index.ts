@@ -11,4 +11,8 @@ type CompositeTypes = Database['public']['CompositeTypes'];
 
 export type { Tables, Enums, Views, Functions, CompositeTypes, Json };
 
-export type { Database };
+type Profile = Tables['profiles']['Row'];
+type Team = Tables['teams']['Row'];
+type Project = Tables['projects']['Row'];
+
+export type { Database, Profile, Team, Project };

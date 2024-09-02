@@ -32,6 +32,59 @@ export type Database = {
           },
         ]
       }
+      projects: {
+        Row: {
+          created_at: string
+          description: string
+          id: number
+          name: string
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: number
+          name?: string
+          team_id?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: number
+          name?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string
+          icon_url: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          icon_url?: string
+          id?: string
+          name?: string
+        }
+        Update: {
+          created_at?: string
+          icon_url?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
