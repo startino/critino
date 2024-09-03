@@ -11,7 +11,8 @@
 		crumbs={[
 			{ name: team.name, href: '/' },
 			{ name: 'projects', href: '/projects' },
-			{ name: project.name },
+			{ name: project.name, href: '/projects/' + project.name },
+			{ name: 'critiques' },
 		]}
 	/>
 </div>

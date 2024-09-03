@@ -1,14 +1,7 @@
 import * as Icons from 'lucide-svelte';
 import type { Icon } from 'lucide-svelte';
 import type { ComponentType } from 'svelte';
-
-export type Route = {
-	title: string;
-	label: string | null;
-	href: string;
-	icon: ComponentType<Icon>;
-	variant: 'default' | 'ghost';
-};
+import type { Route } from '$lib/types/routes';
 
 export const primaryRoutes: Route[] = [
 	{

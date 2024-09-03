@@ -26,5 +26,7 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
 				},
 			});
 
+	console.log('routes/+layout.ts teams', JSON.stringify(data.teams, null, 2));
+	console.log('routes/+layout.ts team', JSON.stringify(data.team, null, 2));
 	return { ...data, supabase };
 };

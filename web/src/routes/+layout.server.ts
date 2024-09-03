@@ -57,7 +57,8 @@ export const load = async ({ cookies, locals: { user, supabase } }) => {
 		team = team2;
 	}
 
-	console.log('teams', JSON.stringify(teams, null, 2));
+	console.log('routes/+layout.server.ts teams', JSON.stringify(teams, null, 2));
+	console.log('routes/+layout.server.ts team', JSON.stringify(team, null, 2));
 	return {
 		team,
 		teams,

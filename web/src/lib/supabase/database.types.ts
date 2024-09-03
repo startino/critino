@@ -9,6 +9,100 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agents: {
+        Row: {
+          created_at: string
+          description: string
+          name: string
+          project_name: string
+          team_name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          name?: string
+          project_name: string
+          team_name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          name?: string
+          project_name?: string
+          team_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agents_project_name_fkey"
+            columns: ["project_name"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "agents_team_name_fkey"
+            columns: ["team_name"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["name"]
+          },
+        ]
+      }
+      critiques: {
+        Row: {
+          agent_name: string
+          context: Json[]
+          created_at: string
+          critique: Json
+          id: number
+          project_name: string
+          tags: string[]
+          team_name: string
+        }
+        Insert: {
+          agent_name: string
+          context?: Json[]
+          created_at?: string
+          critique?: Json
+          id?: number
+          project_name: string
+          tags?: string[]
+          team_name: string
+        }
+        Update: {
+          agent_name?: string
+          context?: Json[]
+          created_at?: string
+          critique?: Json
+          id?: number
+          project_name?: string
+          tags?: string[]
+          team_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "critiques_agent_name_fkey"
+            columns: ["agent_name"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "critiques_project_name_fkey"
+            columns: ["project_name"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "critiques_team_name_fkey"
+            columns: ["team_name"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["name"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

@@ -1,9 +1,8 @@
 <script lang="ts">
 	import TeamSwitcher from './team-switcher.svelte';
-	import Nav from './nav.svelte';
+	import Nav from '$lib/components/ui/nav.svelte';
 	import { Separator } from '$lib/components/ui/separator';
 	import { primaryRoutes, profileRoutes, teamRoutes } from './routes';
-	import { cn } from '$lib/utils';
 	import { Typography } from '$lib/components/ui/typography/index.js';
 	import type { Team } from '$lib/supabase';
 
@@ -21,13 +20,13 @@
 		}, 150)}
 	class="group flex min-w-14 max-w-14 flex-col overflow-hidden text-nowrap transition-all duration-200 ease-in-out hover:min-w-52 hover:max-w-52"
 >
-	<div class={cn('flex h-14 flex-col items-center justify-center px-1')}>
+	<div class="flex h-14 flex-col items-center justify-center px-1">
 		<TeamSwitcher {isCollapsed} {teams} />
 	</div>
 
-	<Separator class="mt-0 opacity-40" />
+	<Separator class="mt-0 pt-0 opacity-40" />
 
-	<Nav {isCollapsed} routes={primaryRoutes} />
+	<Nav routes={primaryRoutes} />
 
 	<Separator
 		class="ml-2 min-w-10 max-w-10 pt-0 opacity-40 transition-all duration-200 ease-in-out group-hover:min-w-48 group-hover:max-w-48"
@@ -49,7 +48,7 @@
 			Team Management
 		</Typography>
 	</div>
-	<Nav {isCollapsed} routes={teamRoutes} />
+	<Nav routes={teamRoutes} />
 
 	<Separator
 		class="ml-2 min-w-10 max-w-10 pt-0 opacity-40 transition-all duration-200 ease-in-out group-hover:min-w-48 group-hover:max-w-48"
@@ -71,5 +70,5 @@
 			Profile Management
 		</Typography>
 	</div>
-	<Nav {isCollapsed} routes={profileRoutes} />
+	<Nav routes={profileRoutes} />
 </div>

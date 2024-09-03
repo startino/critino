@@ -8,7 +8,7 @@
 	export let isCollapsed: boolean;
 	export let teams: Team[];
 
-	console.log(JSON.stringify(teams));
+	console.log('team-switcher teams', JSON.stringify(teams));
 
 	let selectedTeam = teams[0];
 

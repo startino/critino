@@ -11,8 +11,9 @@
 
 	export let data;
 
-	$: ({ user, supabase, teams } = data);
-	console.log(JSON.stringify(teams));
+	$: ({ user, supabase } = data);
+	let { teams } = data;
+	console.log('routes/+layout.svelte teams', JSON.stringify(teams));
 
 	onMount(() => {
 		if (typeof window !== 'undefined') {
@@ -42,5 +43,7 @@
 <main class="flex h-screen w-screen items-stretch bg-background text-background-on">
 	<SidePanel {teams} />
 	<Separator orientation="vertical" class="ml-0 pl-0" />
-	<slot />
+	<div class="flex h-full w-full flex-col items-center justify-center">
+		<slot />
+	</div>
 </main>
