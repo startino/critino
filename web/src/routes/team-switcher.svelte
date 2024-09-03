@@ -32,7 +32,7 @@
 				<Icon src={selectedTeam.icon_url} class="mr-3 size-11 min-h-11 min-w-11" />
 				<div class="flex w-full items-center justify-between pr-2">
 					<Typography variant="title-md">{selectedTeam.name}</Typography>
-					<ChevronDown class="opacity-50" />
+					<ChevronDown class="text-primary opacity-50" />
 				</div>
 			</div>
 		</Select.Trigger>
