@@ -18,13 +18,13 @@
 		setTimeout(() => {
 			isCollapsed = true;
 		}, 150)}
-	class="group flex min-w-14 max-w-14 flex-col overflow-hidden text-nowrap transition-all duration-200 ease-in-out hover:min-w-52 hover:max-w-52"
+	class="group relative flex min-w-14 max-w-14 flex-col overflow-hidden text-nowrap transition-all duration-200 ease-in-out hover:min-w-52 hover:max-w-52"
 >
-	<div class="flex h-14 flex-col items-center justify-center px-1">
+	<div class="absolute left-0 right-0 top-0 flex h-14 flex-col items-center justify-center px-1">
 		<TeamSwitcher {isCollapsed} {teams} />
 	</div>
 
-	<Separator class="mt-0 pt-0 opacity-40" />
+	<Separator class="mt-14 opacity-40" />
 
 	<Nav routes={primaryRoutes} />
 

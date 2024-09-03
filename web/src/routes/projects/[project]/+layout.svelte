@@ -16,32 +16,20 @@
 
 <div class="flex h-full w-full">
 	<!-- Nav -->
-	<div class="w-64">
-		<div
-			class="flex h-full w-full flex-col items-start justify-start overflow-hidden text-nowrap"
-		>
-			<div class="flex h-14 w-full items-center justify-start px-4">
-				<Typography variant="title-lg" class="mb-0 pb-0">Table Editor</Typography>
-			</div>
-			<Separator class="mt-0 pt-0 opacity-40" />
-
-			<Nav routes={primaryRoutes(project)} />
+	<div class="flex h-full w-64 flex-col items-start justify-start">
+		<div class="flex h-14 w-full items-center justify-start px-4">
+			<Typography variant="title-md" class="mb-0 pb-0">Project Editor</Typography>
 		</div>
+		<Separator class="mt-0 pt-0 opacity-40" />
+
+		<Nav routes={primaryRoutes(project)} />
 	</div>
 	<!-- /Nav -->
 
 	<Separator orientation="vertical" class="ml-0 pl-0" />
-	<div class="flex h-full w-full flex-col items-center justify-center">
+
+	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
 		<slot />
-		<!-- 	<div class="flex h-14 w-full items-center justify-start px-4"> -->
-		<!-- 		<Breadcrumb -->
-		<!-- 			crumbs={[ -->
-		<!-- 				{ name: team.name, href: '/' }, -->
-		<!-- 				{ name: 'projects', href: '/projects' }, -->
-		<!-- 				{ name: project.name }, -->
-		<!-- 			]} -->
-		<!-- 		/> -->
-		<!-- 	</div> -->
 		<!---->
 		<!-- 	<Separator class="mt-0 pt-0 opacity-40" /> -->
 		<!-- 	<div class="flex h-full w-full flex-col"> -->

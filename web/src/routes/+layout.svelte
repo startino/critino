@@ -43,7 +43,8 @@
 <main class="flex h-screen w-screen items-stretch bg-background text-background-on">
 	<SidePanel {teams} />
 	<Separator orientation="vertical" class="ml-0 pl-0" />
-	<div class="flex h-full w-full flex-col items-center justify-center">
+
+	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
 		<slot />
 	</div>
 </main>

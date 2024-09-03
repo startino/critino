@@ -8,7 +8,7 @@
 
 <div class="flex h-full w-full flex-col text-error">
 	<div class="flex h-16 w-full items-center justify-start px-4">
-		<Typography variant="title-lg" class="mb-0 pb-0">Table Editor</Typography>
+		<Typography variant="title-lg" class="mb-0 pb-0">Error</Typography>
 	</div>
 	<Separator class="mt-0 pt-0 opacity-40" />
 

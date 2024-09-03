@@ -6,14 +6,14 @@ export const primaryRoutes = (project: Project): Route[] => [
 	{
 		title: 'Critiques',
 		label: null,
-		href: `${project.name}/critiques`,
+		href: `/projects/${project.name}/critiques`,
 		icon: Icons.ListTodo,
 		variant: 'ghost',
 	},
 	{
 		title: 'Endpoints',
 		label: null,
-		href: `${project.name}/endpoints`,
+		href: `/projects/${project.name}/endpoints`,
 		icon: Icons.Unplug,
 		variant: 'ghost',
 	},

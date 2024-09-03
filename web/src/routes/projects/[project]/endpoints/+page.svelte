@@ -12,7 +12,7 @@
 			{ name: team.name, href: '/' },
 			{ name: 'projects', href: '/projects' },
 			{ name: project.name, href: '/projects/' + project.name },
-			{ name: 'critiques' },
+			{ name: 'endpoints' },
 		]}
 	/>
 </div>

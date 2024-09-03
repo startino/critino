@@ -10,11 +10,9 @@
 	let { team, projects } = data;
 </script>
 
-<div class="flex h-14 w-full items-center justify-start px-4">
-	<Breadcrumb crumbs={[{ name: team.name, href: '/' }, { name: 'projects' }]} />
-</div>
-<Separator class="mt-0 pt-0 opacity-40" />
-<div class="h-full w-full">
+<Breadcrumb crumbs={[{ name: team.name, href: '/' }, { name: 'projects' }]} />
+<Separator class="mt-14 opacity-40" />
+<div>
 	<div
 		class="mx-auto grid h-fit w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
 	>
