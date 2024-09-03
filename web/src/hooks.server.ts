@@ -86,6 +86,10 @@ export const supabase: Handle = async ({ event, resolve }) => {
 			throw error(500, message);
 		};
 
+		if (event.url.pathname.startsWith('/api')) {
+			return resolve(event);
+		}
+
 		const user = await getExistingUserOrCreateAnonymousUser(code);
 
 		const profile = await getExistingProfileOrCreateNewProfile(user);
@@ -126,6 +130,10 @@ export const supabase: Handle = async ({ event, resolve }) => {
 };
 
 const authGuard: Handle = async ({ event, resolve }) => {
+	if (event.url.pathname.startsWith('/api')) {
+		return resolve(event);
+	}
+
 	const user = await event.locals.getUser();
 
 	event.locals.user = user;

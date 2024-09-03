@@ -7,6 +7,7 @@ declare global {
 		interface Locals {
 			supabase: SupabaseClient<Database>;
 			user: (User & Profile) | null;
+			getUser(): Promise<(User & Profile) | null>;
 		}
 		interface PageData {
 			user: (User & Profile) | null;
