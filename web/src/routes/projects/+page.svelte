@@ -3,7 +3,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import { goto } from '$app/navigation';
-	import { ChevronRight } from 'lucide-svelte';
+	import { ChevronRight, Plus } from 'lucide-svelte';
 
 	export let data;
 
@@ -14,11 +14,11 @@
 <Separator class="mt-14 opacity-40" />
 <div>
 	<div
-		class="mx-auto grid h-fit w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
+		class="grid h-fit w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
 	>
 		{#each projects as project}
-			<button class="h-full w-full" on:click={() => goto(`projects/${project.name}`)}>
-				<Card.Root class="group text-left hover:cursor-pointer">
+			<button class="h-full" on:click={() => goto(`projects/${project.name}`)}>
+				<Card.Root class="group h-full w-full text-left">
 					<Card.Header class="relative">
 						<Card.Title>{project.name}</Card.Title>
 						<Card.Description>{project.description}</Card.Description>
@@ -29,5 +29,16 @@
 				</Card.Root>
 			</button>
 		{/each}
+
+		<button disabled class="h-full opacity-30">
+			<Card.Root class="group h-full w-full text-left">
+				<Card.Header class="relative">
+					<div class="flex h-full w-full flex-col items-center justify-center">
+						<Card.Title>Create new Project</Card.Title>
+						<Plus class="size-12" />
+					</div>
+				</Card.Header>
+			</Card.Root>
+		</button>
 	</div>
 </div>
