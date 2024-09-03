@@ -37,12 +37,12 @@
 
 <Toaster />
 
-<div class="absolute right-2 top-2">
+<div class="absolute right-2 top-2 z-10">
 	<ThemeSwitcher />
 </div>
 <main class="flex h-screen w-screen items-stretch bg-background text-background-on">
 	<SidePanel {teams} />
-	<Separator orientation="vertical" class="ml-0 pl-0" />
+	<Separator orientation="vertical" class="ml-0 pl-0 opacity-20 " />
 
 	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
 		<slot />

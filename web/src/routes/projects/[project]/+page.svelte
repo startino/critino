@@ -14,6 +14,4 @@
 	]}
 />
 
-<Separator class="mt-14 opacity-40" />
-
 <div class="flex w-full items-center justify-center">Project {project.name} Dashboard</div>

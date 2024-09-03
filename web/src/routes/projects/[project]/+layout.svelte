@@ -20,26 +20,15 @@
 		<div class="flex h-14 w-full items-center justify-start px-4">
 			<Typography variant="title-md" class="mb-0 pb-0">Project {project.name}</Typography>
 		</div>
-		<Separator class="mt-0 pt-0 opacity-40" />
+		<Separator class="mt-0 pt-0 opacity-20" />
 
 		<Nav routes={primaryRoutes(project)} />
 	</div>
 	<!-- /Nav -->
 
-	<Separator orientation="vertical" class="ml-0 pl-0" />
+	<Separator orientation="vertical" class="ml-0 pl-0 opacity-20" />
 
 	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
 		<slot />
-		<!---->
-		<!-- 	<Separator class="mt-0 pt-0 opacity-40" /> -->
-		<!-- 	<div class="flex h-full w-full flex-col"> -->
-		<!---->
-		<!-- 		<div class="flex h-full w-full flex-col items-center justify-center"> -->
-		<!-- 			<Typography as="h2" variant="headline-sm">API Endpoints:</Typography> -->
-		<!-- 			<Typography as="p" variant="body-md"> -->
-		<!-- 				GET /projects/{project.name} -->
-		<!-- 			</Typography> -->
-		<!-- 		</div> -->
-		<!-- 	</div> -->
 	</div>
 </div>

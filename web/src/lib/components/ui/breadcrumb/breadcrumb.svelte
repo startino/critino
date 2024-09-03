@@ -2,6 +2,7 @@
 	import { Typography } from '$lib/components/ui/typography';
 	import { type Props } from '.';
 	import { cn } from '$lib/utils';
+	import { Separator } from '../separator';
 
 	type $$Props = Props;
 
@@ -33,3 +34,4 @@
 		</Typography>
 	</div>
 </div>
+<Separator class="mt-14 opacity-20" />

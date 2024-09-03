@@ -11,7 +11,6 @@
 </script>
 
 <Breadcrumb crumbs={[{ name: team.name, href: '/' }, { name: 'projects' }]} />
-<Separator class="mt-14 opacity-40" />
 <div>
 	<div
 		class="grid h-fit w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
@@ -30,7 +29,7 @@
 			</button>
 		{/each}
 
-		<button disabled class="h-full opacity-30">
+		<button disabled class="h-full opacity-50">
 			<Card.Root class="group h-full w-full text-left">
 				<Card.Header class="relative">
 					<div class="flex h-full w-full flex-col items-center justify-center">

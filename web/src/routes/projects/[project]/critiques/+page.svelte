@@ -6,17 +6,13 @@
 	let { team, project } = data;
 </script>
 
-<div class="flex h-14 w-full items-center justify-start px-4">
-	<Breadcrumb
-		crumbs={[
-			{ name: team.name, href: '/' },
-			{ name: 'projects', href: '/projects' },
-			{ name: project.name, href: '/projects/' + project.name },
-			{ name: 'critiques' },
-		]}
-	/>
-</div>
-
-<Separator class="mt-0 pt-0 opacity-40" />
+<Breadcrumb
+	crumbs={[
+		{ name: team.name, href: '/' },
+		{ name: 'projects', href: '/projects' },
+		{ name: project.name, href: '/projects/' + project.name },
+		{ name: 'critiques' },
+	]}
+/>
 
 Not Build Yet
