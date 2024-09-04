@@ -14,4 +14,4 @@
 	]}
 />
 
-<div class="flex w-full items-center justify-center">Project {project.name} Dashboard</div>
+<div class="m-auto flex items-center justify-center">Project {project.name} Dashboard</div>

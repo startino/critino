@@ -4,16 +4,17 @@
 
 	import { Button } from '$lib/components/ui/button';
 	import { Pencil, Trash2 } from 'lucide-svelte';
-	import type { Critique, Database } from '$lib/supabase';
+	import type { Critique, Database, Project } from '$lib/supabase';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 
 	type Props = {
 		supabase: SupabaseClient<Database>;
 		id: string;
+		project: Project;
 		critiques: Critique[];
 	};
 
-	let { supabase, id, critiques }: Props = $props();
+	let { supabase, id, project, critiques }: Props = $props();
 
 	const handleDelete = async (id: string) => {
 		const { error: e } = await supabase.from('critiques').delete().eq('id', id);
@@ -34,7 +35,7 @@
 	<Button
 		variant="ghost"
 		class="aspect-1 p-1 text-primary hover:bg-transparent hover:text-primary-container-on"
-		on:click={() => goto(``)}
+		on:click={() => goto(`/projects/${project.name}/critiques/${id}`)}
 	>
 		<Pencil></Pencil>
 	</Button>

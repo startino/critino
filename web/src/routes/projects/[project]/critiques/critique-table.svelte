@@ -11,11 +11,12 @@
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import CritiqueTableActions from './critique-table-actions.svelte';
-	import type { Critique, Database } from '$lib/supabase';
+	import type { Critique, Database, Project, Team } from '$lib/supabase';
 	import { readable } from 'svelte/store';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 
 	export let supabase: SupabaseClient<Database>;
+	export let project: Project;
 	export let critiques: Critique[];
 
 	let table = createTable(readable(critiques), {
@@ -52,7 +53,12 @@
 			accessor: ({ id }) => id,
 			header: '',
 			cell: ({ value: id }) => {
-				return createRender(CritiqueTableActions, { supabase, id, critiques });
+				return createRender(CritiqueTableActions, {
+					supabase,
+					id,
+					project,
+					critiques,
+				});
 			},
 		}),
 	]);

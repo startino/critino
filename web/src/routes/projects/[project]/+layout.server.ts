@@ -1,4 +1,7 @@
+import { critiqueSchema } from '$lib/schema.js';
 import { error } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, parent, locals: { user, supabase } }) => {
 	const { team } = await parent();

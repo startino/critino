@@ -22,7 +22,7 @@
 			<Card.Title>Critiques</Card.Title>
 		</Card.Header>
 		<Card.Content class="p-0">
-			<CritiqueTable {supabase} {critiques} />
+			<CritiqueTable {supabase} {project} {critiques} />
 		</Card.Content>
 	</Card.Root>
 </div>

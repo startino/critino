@@ -8,4 +8,4 @@
 </script>
 
 <Breadcrumb crumbs={[{ name: team.name }, { name: 'home' }]} />
-<div class="flex w-full items-center justify-center">Home Dashboard</div>
+<div class="m-auto flex items-center justify-center">Home Dashboard</div>
