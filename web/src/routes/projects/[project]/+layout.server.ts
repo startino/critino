@@ -28,9 +28,22 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 		throw error(500, message);
 	}
 
+	const { data: critiques, error: eCritiques } = await supabase
+		.from('critiques')
+		.select('*')
+		.eq('team_name', team.name)
+		.eq('project_name', project.name);
+
+	if (!critiques || eCritiques) {
+		const message = `Error fetching critiques: ${eCritiques.message}`;
+		console.error(message);
+		throw error(500, message);
+	}
+
 	return {
 		team,
 		project,
 		agents,
+		critiques,
 	};
 };

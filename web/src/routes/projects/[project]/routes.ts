@@ -1,18 +1,22 @@
 import * as Icons from 'lucide-svelte';
 import type { Route } from '$lib/types/routes';
-import type { Project } from '$lib/supabase';
+import type { Critique, Agent, Project } from '$lib/supabase';
 
-export const primaryRoutes = (project: Project): Route[] => [
+export const primaryRoutes = (
+	project: Project,
+	agents: Agent[],
+	critiques: Critique[]
+): Route[] => [
 	{
 		title: 'Critiques',
-		label: null,
+		label: critiques.length.toString(),
 		href: `/projects/${project.name}/critiques`,
 		icon: Icons.ListTodo,
 		variant: 'ghost',
 	},
 	{
 		title: 'Agents',
-		label: null,
+		label: agents.length.toString(),
 		href: `/projects/${project.name}/agents`,
 		icon: Icons.Bot,
 		variant: 'ghost',

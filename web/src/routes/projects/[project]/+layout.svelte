@@ -4,14 +4,8 @@
 	import { Typography } from '$lib/components/ui/typography';
 	import { primaryRoutes } from './routes';
 
-	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
-	import * as Card from '$lib/components/ui/card';
-	import { ChevronRight } from 'lucide-svelte';
-	import { goto } from '$app/navigation';
-	import { Plus } from 'lucide-svelte';
-
 	export let data;
-	let { team, project, agents } = data;
+	let { team, project, agents, critiques } = data;
 </script>
 
 <div class="flex h-full w-full">
@@ -22,7 +16,7 @@
 		</div>
 		<Separator class="mt-0 pt-0 opacity-20" />
 
-		<Nav routes={primaryRoutes(project)} />
+		<Nav routes={primaryRoutes(project, agents, critiques)} />
 	</div>
 	<!-- /Nav -->
 
