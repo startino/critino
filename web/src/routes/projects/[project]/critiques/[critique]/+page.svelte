@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { TipTap } from '$lib/components/ui/tiptap';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import * as Form from '$lib/components/ui/form';
+	import * as Card from '$lib/components/ui/card';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { critiqueSchema } from '$lib/schema';
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
-	import { Typography } from '$lib/components/ui/typography/index.js';
+	import { Typography } from '$lib/components/ui/typography';
+	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 
 	export let data;
-	let { forms, agent, critique } = data;
+	let { forms, team, project, agent, critique } = data;
 
 	const form = superForm(forms.critique, {
 		dataType: 'json',
@@ -42,6 +44,16 @@
 <!-- 	<SuperDebug data={$formData}></SuperDebug> -->
 <!-- </div> -->
 
+<Breadcrumb
+	crumbs={[
+		{ name: team.name, href: '/' },
+		{ name: 'projects', href: '/projects' },
+		{ name: project.name, href: `/projects/${project.name}` },
+		{ name: 'critiques', href: `/projects/${project.name}/critiques` },
+		{ name: critique.id },
+	]}
+/>
+
 <form
 	class="mx-auto my-auto flex max-w-prose flex-col items-center justify-center gap-8 py-8"
 	method="POST"
@@ -55,58 +67,63 @@
 		</Typography>
 	</div>
 
-	<div class="flex flex-col rounded-lg border-2 border-primary bg-primary-container/20 p-4">
-		<!-- Context -->
-		<Typography variant="title-md" align="right" class="ml-auto text-primary">
-			Context
-		</Typography>
-		<Typography variant="title-sm" align="right" class="ml-auto pb-2 text-primary/70">
-			These are the previous messages that were sent.
-		</Typography>
-		<div class="flex w-full flex-col gap-2">
-			{#each $formData.context as context, index}
-				<div
-					class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
-				>
-					<TipTap
-						class="rounded-lg border border-primary/30 bg-primary-container/10 px-2 py-1 text-primary-container-on"
-						bind:content={$formData.context[index]!.content}
-					/>
-				</div>
-			{/each}
-		</div>
+	<Card.Root
+		class="mx-auto h-full w-full border-surface-variant/80 bg-primary-container/5 text-left"
+	>
+		<Card.Header>
+			<Card.Title>Context</Card.Title>
+			<Card.Description>These are the previous messages that were sent.</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<div class="flex w-full flex-col gap-2">
+				{#each $formData.context as context, index}
+					<div
+						class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
+					>
+						<TipTap
+							class="rounded-lg border border-primary/30 bg-primary-container/10 px-2 py-1 text-primary-container-on"
+							bind:content={$formData.context[index]!.content}
+						/>
+					</div>
+				{/each}
+			</div>
 
-		<hr class="my-8 border-primary/50" />
+			<hr class="my-8 border-primary/50" />
 
-		<Typography variant="title-md" align="left" class="mr-auto text-primary">
-			Agent's Response
-		</Typography>
+			<Typography variant="title-md" align="left" class="mr-auto text-primary">
+				Agent's Response
+			</Typography>
 
-		<Typography variant="title-sm" align="left" class="min-w-none mr-auto pb-2 text-primary/70">
-			This is the response that you're critiqueing.
-		</Typography>
+			<Typography
+				variant="title-sm"
+				align="left"
+				class="min-w-none mr-auto pb-2 text-primary/70"
+			>
+				This is the response that you're critiqueing.
+			</Typography>
 
-		<div class="flex justify-start">
-			<TipTap
-				class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary-container-on"
-				bind:content={$formData.response}
-			></TipTap>
-		</div>
+			<div class="flex justify-start">
+				<TipTap
+					class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary-container-on"
+					bind:content={$formData.response}
+				></TipTap>
+			</div>
 
-		<Typography variant="title-md" align="left" class="mr-auto pt-4 text-success">
-			Optimal Response
-		</Typography>
-		<Typography variant="title-sm" align="left" class="mr-auto pb-2 text-success/70">
-			This is what the response should've been.
-		</Typography>
+			<Typography variant="title-md" align="left" class="mr-auto pt-4 text-success">
+				Optimal Response
+			</Typography>
+			<Typography variant="title-sm" align="left" class="mr-auto pb-2 text-success/70">
+				This is what the response should've been.
+			</Typography>
 
-		<div class="flex justify-start">
-			<TipTap
-				class="rounded-lg border border-success/50 bg-success-container/10 px-2 py-1 text-success-container-on"
-				bind:content={$formData.optimal}
-			></TipTap>
-		</div>
-	</div>
+			<div class="flex justify-start">
+				<TipTap
+					class="rounded-lg border border-success/50 bg-success-container/10 px-2 py-1 text-success-container-on"
+					bind:content={$formData.optimal}
+				></TipTap>
+			</div>
+		</Card.Content>
+	</Card.Root>
 
-	<Form.Button class="w-full">Submit</Form.Button>
+	<Form.Button class="w-full">Save</Form.Button>
 </form>
