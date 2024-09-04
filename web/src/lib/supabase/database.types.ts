@@ -54,7 +54,7 @@ export type Database = {
           context: Json[]
           created_at: string
           critique: Json
-          id: number
+          id: string
           project_name: string
           tags: string[]
           team_name: string
@@ -64,7 +64,7 @@ export type Database = {
           context?: Json[]
           created_at?: string
           critique?: Json
-          id?: number
+          id?: string
           project_name: string
           tags?: string[]
           team_name: string
@@ -74,7 +74,7 @@ export type Database = {
           context?: Json[]
           created_at?: string
           critique?: Json
-          id?: number
+          id?: string
           project_name?: string
           tags?: string[]
           team_name?: string
