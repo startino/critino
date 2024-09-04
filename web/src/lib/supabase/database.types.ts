@@ -55,7 +55,9 @@ export type Database = {
           created_at: string
           critique: Json
           id: string
+          optimal: string
           project_name: string
+          response: string
           tags: string[]
           team_name: string
         }
@@ -65,7 +67,9 @@ export type Database = {
           created_at?: string
           critique?: Json
           id?: string
+          optimal?: string
           project_name: string
+          response?: string
           tags?: string[]
           team_name: string
         }
@@ -75,7 +79,9 @@ export type Database = {
           created_at?: string
           critique?: Json
           id?: string
+          optimal?: string
           project_name?: string
+          response?: string
           tags?: string[]
           team_name?: string
         }
