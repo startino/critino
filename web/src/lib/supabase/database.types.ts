@@ -16,13 +16,15 @@ export type Database = {
           name: string
           project_name: string
           team_name: string
+          workflow_name: string
         }
         Insert: {
           created_at?: string
           description?: string
-          name?: string
+          name: string
           project_name: string
           team_name: string
+          workflow_name: string
         }
         Update: {
           created_at?: string
@@ -30,21 +32,15 @@ export type Database = {
           name?: string
           project_name?: string
           team_name?: string
+          workflow_name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "agents_project_name_fkey"
-            columns: ["project_name"]
+            foreignKeyName: "agents_workflows_project_team_fkey"
+            columns: ["team_name", "project_name", "workflow_name"]
             isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["name"]
-          },
-          {
-            foreignKeyName: "agents_team_name_fkey"
-            columns: ["team_name"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["name"]
+            referencedRelation: "workflows"
+            referencedColumns: ["team_name", "project_name", "name"]
           },
         ]
       }
@@ -60,18 +56,20 @@ export type Database = {
           response: string
           tags: string[]
           team_name: string
+          workflow_name: string
         }
         Insert: {
           agent_name: string
-          context?: Json[]
+          context: Json[]
           created_at?: string
           critique?: Json
           id?: string
           optimal?: string
           project_name: string
-          response?: string
+          response: string
           tags?: string[]
           team_name: string
+          workflow_name: string
         }
         Update: {
           agent_name?: string
@@ -84,28 +82,25 @@ export type Database = {
           response?: string
           tags?: string[]
           team_name?: string
+          workflow_name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "critiques_agent_name_fkey"
-            columns: ["agent_name"]
+            foreignKeyName: "critiques_agents_workflows_project_team_fkey"
+            columns: [
+              "team_name",
+              "project_name",
+              "workflow_name",
+              "agent_name",
+            ]
             isOneToOne: false
             referencedRelation: "agents"
-            referencedColumns: ["name"]
-          },
-          {
-            foreignKeyName: "critiques_project_name_fkey"
-            columns: ["project_name"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["name"]
-          },
-          {
-            foreignKeyName: "critiques_team_name_fkey"
-            columns: ["team_name"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["name"]
+            referencedColumns: [
+              "team_name",
+              "project_name",
+              "workflow_name",
+              "name",
+            ]
           },
         ]
       }
@@ -142,7 +137,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string
-          name?: string
+          name: string
           team_name: string
         }
         Update: {
@@ -170,7 +165,7 @@ export type Database = {
         Insert: {
           created_at?: string
           icon_url?: string
-          name?: string
+          name: string
         }
         Update: {
           created_at?: string
@@ -178,6 +173,38 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      workflows: {
+        Row: {
+          created_at: string
+          description: string
+          name: string
+          project_name: string
+          team_name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          name: string
+          project_name: string
+          team_name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          name?: string
+          project_name?: string
+          team_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflows_project_team_fkey"
+            columns: ["team_name", "project_name"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["team_name", "name"]
+          },
+        ]
       }
     }
     Views: {
