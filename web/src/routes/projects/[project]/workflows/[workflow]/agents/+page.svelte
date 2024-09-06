@@ -6,14 +6,16 @@
 	import { ChevronRight, Plus } from 'lucide-svelte';
 	export let data;
 
-	let { team, project, agents } = data;
+	let { team, project, workflow, agents } = data;
 </script>
 
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: '/' },
 		{ name: 'projects', href: '/projects' },
-		{ name: project.name, href: '/projects/' + project.name },
+		{ name: project.name, href: `/projects/${project.name}` },
+		{ name: 'workflows', href: `/projects/${project.name}/workflows` },
+		{ name: workflow.name, href: `/projects/${project.name}/workflows/${workflow.name}` },
 		{ name: 'agents' },
 	]}
 />

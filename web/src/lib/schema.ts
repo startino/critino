@@ -7,9 +7,10 @@ const ZodJson: z.ZodSchema<Json> = z.lazy(() =>
 
 export const critiqueSchema = z.object({
 	id: z.string(),
-	team_name: z.string(),
-	project_name: z.string(),
 	agent_name: z.string(),
+	workflow_name: z.string(),
+	project_name: z.string(),
+	team_name: z.string(),
 	response: z.string(),
 	optimal: z.string(),
 	context: z.array(

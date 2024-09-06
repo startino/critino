@@ -11,7 +11,7 @@
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 
 	export let data;
-	let { forms, team, project, agent, critique } = data;
+	let { forms, team, project, workflow, agent, critique } = data;
 
 	const form = superForm(forms.critique, {
 		dataType: 'json',
@@ -28,6 +28,7 @@
 
 	onMount(async () => {
 		$formData.id = critique.id;
+		$formData.workflow_name = critique.workflow_name;
 		$formData.agent_name = critique.agent_name;
 		$formData.project_name = critique.project_name;
 		$formData.team_name = critique.team_name;
@@ -40,16 +41,17 @@
 	});
 </script>
 
-<!-- <div class="fixed bottom-5 left-5 opacity-30"> -->
-<!-- 	<SuperDebug data={$formData}></SuperDebug> -->
-<!-- </div> -->
-
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: '/' },
 		{ name: 'projects', href: '/projects' },
 		{ name: project.name, href: `/projects/${project.name}` },
-		{ name: 'critiques', href: `/projects/${project.name}/critiques` },
+		{ name: 'workflows', href: `/projects/${project.name}/workflows` },
+		{ name: workflow.name, href: `/projects/${project.name}/workflows/${workflow.name}` },
+		{
+			name: 'critiques',
+			href: `/projects/${project.name}/workflows/${workflow.name}/critiques`,
+		},
 		{ name: critique.id },
 	]}
 />

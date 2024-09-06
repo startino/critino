@@ -4,17 +4,17 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, parent, locals: { user, supabase } }) => {
-	const { team } = await parent();
+	const { team, project } = await parent();
 
-	const { data: project, error: eProject } = await supabase
-		.from('projects')
+	const { data: workflow, error: eWorkflow } = await supabase
+		.from('workflows')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('name', params.project)
+		.eq('name', params.workflow)
 		.single();
 
-	if (!project || eProject) {
-		const message = `Error fetching project: ${eProject.message}`;
+	if (!workflow || eWorkflow) {
+		const message = `Error fetching workflow: ${eWorkflow.message}`;
 		console.error(message);
 		throw error(500, message);
 	}
@@ -46,6 +46,7 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 	return {
 		team,
 		project,
+		workflow,
 		agents,
 		critiques,
 	};

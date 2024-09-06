@@ -14,7 +14,8 @@ export type { Tables, Enums, Views, Functions, CompositeTypes, Json };
 type Profile = Tables['profiles']['Row'];
 type Team = Tables['teams']['Row'];
 type Project = Tables['projects']['Row'];
+type Workflow = Tables['workflows']['Row'];
 type Agent = Tables['agents']['Row'];
 type Critique = Tables['critiques']['Row'];
 
-export type { Database, Profile, Team, Project, Agent, Critique };
+export type { Database, Profile, Team, Project, Workflow, Agent, Critique };

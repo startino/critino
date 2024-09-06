@@ -42,12 +42,12 @@
 			header: 'Agent',
 		}),
 		table.column({
-			accessor: ({ critique }) => JSON.stringify(critique),
-			header: 'Critique',
+			accessor: ({ response }) => response,
+			header: 'Response',
 		}),
 		table.column({
-			accessor: ({ context }) => JSON.stringify(context),
-			header: 'Context',
+			accessor: ({ optimal }) => optimal,
+			header: 'Optimal Response',
 		}),
 		table.column({
 			accessor: ({ id }) => id,

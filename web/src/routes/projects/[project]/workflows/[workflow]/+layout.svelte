@@ -5,7 +5,7 @@
 	import { primaryRoutes } from './routes';
 
 	export let data;
-	let { team, project, agents, critiques } = data;
+	let { team, project, workflow, agents, critiques } = data;
 </script>
 
 <div class="flex h-full w-full">
@@ -16,7 +16,7 @@
 		</div>
 		<Separator class="mt-0 pt-0 opacity-20" />
 
-		<Nav routes={primaryRoutes(project, agents, critiques)} />
+		<Nav routes={primaryRoutes(project, workflow, agents, critiques)} />
 	</div>
 	<!-- /Nav -->
 

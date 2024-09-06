@@ -4,14 +4,16 @@
 	import * as Card from '$lib/components/ui/card';
 	export let data;
 
-	let { supabase, team, project, agents, critiques } = data;
+	let { supabase, team, project, workflow, agents, critiques } = data;
 </script>
 
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: '/' },
 		{ name: 'projects', href: '/projects' },
-		{ name: project.name, href: '/projects/' + project.name },
+		{ name: project.name, href: `/projects/${project.name}` },
+		{ name: 'workflows', href: `/projects/${project.name}/workflows` },
+		{ name: workflow.name, href: `/projects/${project.name}/workflows/${workflow.name}` },
 		{ name: 'critiques' },
 	]}
 />

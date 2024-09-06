@@ -2,6 +2,16 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
+import { PUBLIC_SITE_URL } from '$env/static/public';
+
+export const getURL = () => {
+	let url = PUBLIC_SITE_URL; // Use dynamic port or default to 5173
+	// Make sure to include `https://` when not localhost.
+	url = url.includes('http') ? url : `https://${url}`;
+	// Make sure to include a trailing `/`.
+	url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+	return url;
+};
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
