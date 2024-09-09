@@ -16,6 +16,15 @@
 	const form = superForm(forms.critique, {
 		dataType: 'json',
 		validators: zodClient(critiqueSchema),
+		onSubmit() {
+			toast('Saving critique...');
+		},
+		onResult() {
+			toast('Critique Saved!');
+		},
+		onError() {
+			toast.error('Error saving critique.');
+		},
 	});
 
 	const { form: formData, enhance } = form;
@@ -60,7 +69,6 @@
 	class="mx-auto my-auto flex max-w-prose flex-col items-center justify-center gap-8 py-8"
 	method="POST"
 	use:enhance
-	on:submit={() => toast('Submitting critique...')}
 >
 	<div class="flex flex-col items-center justify-center gap-1 text-primary">
 		<Typography as="h1" variant="display-sm">Editing Critique</Typography>
