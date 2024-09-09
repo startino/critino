@@ -1,4 +1,5 @@
 import { getURL } from '$lib/utils.js';
+import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 export const GET = async ({ params, request, locals: { supabase } }) => {
 	if (request.headers.get('Content-Length')) {
@@ -19,9 +20,18 @@ export const GET = async ({ params, request, locals: { supabase } }) => {
 		return Response.json({ status: 500, message });
 	}
 
+	critiques.map((critique) => {
+		critique.optimal = NodeHtmlMarkdown.translate(critique.optimal);
+		critique.context.map((context) => {
+			context.content = NodeHtmlMarkdown.translate(context.content);
+		});
+	});
+
 	return Response.json({
 		status: 200,
-		critiques: critiques.map(({ context, optimal }) => ({ context, optimal })),
+		critiques: critiques
+			.filter((critique) => critique.optimal && critique.optimal.trim() !== '')
+			.map(({ context, optimal }) => ({ context, optimal })),
 	});
 };
 
