@@ -24,7 +24,7 @@
 			<Card.Title>Critiques</Card.Title>
 		</Card.Header>
 		<Card.Content class="p-0">
-			<CritiqueTable {supabase} {project} {critiques} />
+			<CritiqueTable {supabase} {project} {workflow} {critiques} />
 		</Card.Content>
 	</Card.Root>
 </div>
