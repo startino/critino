@@ -123,7 +123,9 @@
 				Optimal Response
 			</Typography>
 			<Typography variant="title-sm" align="left" class="mr-auto pb-2 text-success/70">
-				This is what the response should've been.
+				This is the optimal response, what the response should've been.
+				<br />
+				(can be the same if the agents answer was good)
 			</Typography>
 
 			<div class="flex justify-start">

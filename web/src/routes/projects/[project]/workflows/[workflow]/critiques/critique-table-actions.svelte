@@ -32,7 +32,7 @@
 	};
 </script>
 
-<div class="flex gap-1">
+<div class="flex flex-shrink justify-end gap-1">
 	<Button
 		variant="ghost"
 		class="aspect-1 p-1 text-primary hover:bg-transparent hover:text-primary-container-on"

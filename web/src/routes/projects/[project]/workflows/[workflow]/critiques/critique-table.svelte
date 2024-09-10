@@ -52,7 +52,7 @@
 		}),
 		table.column({
 			accessor: ({ id }) => id,
-			header: '',
+			header: 'actions',
 			cell: ({ value: id }) => {
 				return createRender(CritiqueTableActions, {
 					supabase,
@@ -86,17 +86,11 @@
 									let:props
 								>
 									<Table.Head {...attrs}>
-										{#if cell.id === 'amount'}
-											<div class="text-right">
-												<Render of={cell.render()} />
-											</div>
-										{:else if cell.id === 'email'}
+										{#if cell.id === 'actions'}{:else}
 											<Button variant="ghost" on:click={props.sort.toggle}>
 												<Render of={cell.render()} />
 												<ArrowUpDown class={'ml-2 h-4 w-4'} />
 											</Button>
-										{:else}
-											<Render of={cell.render()} />
 										{/if}
 									</Table.Head>
 								</Subscribe>
