@@ -1,4 +1,5 @@
 import { getURL } from '$lib/utils.js';
+import { fewShotExampleMessages } from './fewShot';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 export const GET = async ({ params, request, locals: { supabase } }) => {
@@ -6,7 +7,7 @@ export const GET = async ({ params, request, locals: { supabase } }) => {
 		const data = await request.json();
 	}
 
-	const { data: critiques, error: eCritiques } = await supabase
+	let { data: critiques, error: eCritiques } = await supabase
 		.from('critiques')
 		.select()
 		.eq('team_name', params.team)
@@ -20,6 +21,15 @@ export const GET = async ({ params, request, locals: { supabase } }) => {
 		return Response.json({ status: 500, message });
 	}
 
+	critiques = critiques.filter(
+		(critique) =>
+			critique.optimal &&
+			critique.optimal.trim() !== '' &&
+			critique.optimal.trim() !== '<p></p>'
+	);
+
+	const message = fewShotExampleMessages(critiques, `<user>hello</user>`);
+
 	critiques.map((critique) => {
 		critique.optimal = NodeHtmlMarkdown.translate(critique.optimal);
 		critique.context.map((context) => {
@@ -29,9 +39,8 @@ export const GET = async ({ params, request, locals: { supabase } }) => {
 
 	return Response.json({
 		status: 200,
-		critiques: critiques
-			.filter((critique) => critique.optimal && critique.optimal.trim() !== '')
-			.map(({ context, optimal }) => ({ context, optimal })),
+		message,
+		critiques: critiques.map(({ context, optimal }) => ({ context, optimal })),
 	});
 };
 
