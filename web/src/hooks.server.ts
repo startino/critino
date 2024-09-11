@@ -18,10 +18,6 @@ export const supabase: Handle = async ({ event, resolve }) => {
 				await event.locals.supabase.auth.exchangeCodeForSession(code);
 			}
 
-			if (eUser) {
-				console.error(`Error retrieving user: ${JSON.stringify(eUser, null)}`);
-			}
-
 			if (user) {
 				return user;
 			}
@@ -32,21 +28,14 @@ export const supabase: Handle = async ({ event, resolve }) => {
 					return { data: r.data.user, error: r.error };
 				});
 
-			if (eNewUser) {
-				console.error(
-					`Error creating anonymous user: ${JSON.stringify(eNewUser, null, 2)}`
-				);
+			if (!newUser || eNewUser) {
+				const message = `Error fetching existing user: ${JSON.stringify(eUser, null, 2)}.\nError creating anonymous user: ${JSON.stringify(eNewUser, null, 2)}`;
+
+				console.error(message);
+				throw error(500, message);
 			}
 
-			if (newUser) {
-				return newUser;
-			}
-
-			const message =
-				'Failed to find or create user. Please report the issue and try again later.';
-
-			console.error(message);
-			throw error(500, message);
+			return newUser;
 		};
 
 		const getExistingProfileOrCreateNewProfile = async (user: User) => {
@@ -56,15 +45,11 @@ export const supabase: Handle = async ({ event, resolve }) => {
 				.eq('id', user.id)
 				.single();
 
-			if (eProfile) {
-				console.error(`Error retrieving profile: ${JSON.stringify(eProfile, null, 2)}`);
-			}
-
 			if (profile) {
 				return profile;
 			}
 
-			const { data: newProfile, error: eProfile2 } = await event.locals.supabase
+			const { data: newProfile, error: eNewProfile } = await event.locals.supabase
 				.from('profiles')
 				.insert({
 					id: user.id,
@@ -72,18 +57,14 @@ export const supabase: Handle = async ({ event, resolve }) => {
 				.select()
 				.single();
 
-			if (eProfile2) {
-				console.error(`Error making new profile: ${JSON.stringify(eProfile2, null, 2)}`);
+			if (!newProfile || eNewProfile) {
+				const message = `Error fetching existing profile: ${JSON.stringify(eProfile, null, 2)}.\nError creating anonymous profile: ${JSON.stringify(eNewProfile, null, 2)}`;
+
+				console.error(message);
+				throw error(500, message);
 			}
 
-			if (newProfile) {
-				return newProfile;
-			}
-
-			const message =
-				'Failed to find or create profile. Please report the issue and try again later.';
-			console.error(message);
-			throw error(500, message);
+			return newProfile;
 		};
 
 		if (event.url.pathname.startsWith('/api')) {
