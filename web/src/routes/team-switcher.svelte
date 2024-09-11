@@ -1,28 +1,31 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
 	import { Typography } from '$lib/components/ui/typography';
-	import type { Team } from '$lib/supabase';
+	import type { Database, Profile, Team } from '$lib/supabase';
 	import { Icon } from '$lib/icons';
 	import { ChevronDown } from 'lucide-svelte';
+	import type { SupabaseClient, User } from '@supabase/supabase-js';
 
+	export let user: User & Profile;
+	export let supabase: SupabaseClient<Database>;
+	export let selectedTeam: Team;
 	export let isCollapsed: boolean;
 	export let teams: Team[];
-
-	console.log('team-switcher teams', JSON.stringify(teams));
-
-	let selectedTeam = teams[0];
-
-	$: if (typeof document !== 'undefined') {
-		document.cookie = 'team=' + selectedTeam.name;
-	}
 </script>
 
 {#if selectedTeam}
 	<Select.Root
 		portal={null}
 		selected={{ value: selectedTeam.name, label: selectedTeam.name }}
-		onSelectedChange={(e) => {
+		onSelectedChange={async (e) => {
 			selectedTeam = teams.find((team) => team.name === e?.value) || teams[0];
+
+			await supabase
+				.from('profiles')
+				.update({ selected_team: selectedTeam.name })
+				.eq('id', user.id);
+
+			window.location.reload();
 		}}
 	>
 		<Select.Trigger class="relative grid h-12 border-primary/0" aria-label="Select team">

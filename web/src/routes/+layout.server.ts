@@ -12,23 +12,10 @@ export const load = async ({ cookies, locals: { user, supabase } }) => {
 		throw error(500, message);
 	}
 
-	let team_name = cookies.get('team') as string | null;
-
-	if (!team_name) {
-		const message = `Error getting team cookie. Using first team.`;
-		console.error(message);
-		if (!teams[0]) {
-			throw error(500, `No teams exist`);
-		}
-		cookies.set('team', teams[0].name, { path: '/' });
-
-		team_name = teams[0].name;
-	}
-
 	let { data: team, error: eTeam } = await supabase
 		.from('teams')
 		.select('*')
-		.eq('name', team_name)
+		.eq('name', user.selected_team)
 		.single();
 
 	if (!team || eTeam) {
@@ -40,12 +27,12 @@ export const load = async ({ cookies, locals: { user, supabase } }) => {
 		}
 		cookies.set('team', teams[0].name, { path: '/' });
 
-		team_name = teams[0].name;
+		user.selected_team = teams[0].name;
 
 		const { data: team2, error: eTeam2 } = await supabase
 			.from('teams')
 			.select('*')
-			.eq('name', team_name)
+			.eq('name', user.selected_team)
 			.single();
 
 		if (!team2 || eTeam2) {

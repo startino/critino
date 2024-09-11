@@ -63,7 +63,7 @@ export type Database = {
           context: Json[]
           created_at?: string
           critique?: Json
-          id?: string
+          id: string
           optimal?: string
           project_name: string
           response: string
@@ -108,14 +108,17 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          selected_team: string | null
         }
         Insert: {
           created_at?: string
           id: string
+          selected_team?: string | null
         }
         Update: {
           created_at?: string
           id?: string
+          selected_team?: string | null
         }
         Relationships: [
           {
@@ -124,6 +127,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_selected_team_fkey"
+            columns: ["selected_team"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["name"]
           },
         ]
       }

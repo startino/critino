@@ -4,6 +4,7 @@
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import { goto } from '$app/navigation';
 	import { ChevronRight, Plus } from 'lucide-svelte';
+	import { TipTap } from '$lib/components/ui/tiptap';
 
 	export let data;
 
@@ -18,9 +19,15 @@
 		{#each projects as project}
 			<button class="h-full" on:click={() => goto(`projects/${project.name}`)}>
 				<Card.Root class="group h-full w-full text-left">
-					<Card.Header class="relative">
+					<Card.Header class="relative gap-2">
 						<Card.Title>{project.name}</Card.Title>
-						<Card.Description>{project.description}</Card.Description>
+						<Card.Description>
+							<TipTap
+								class="text-background-on"
+								editable={false}
+								content={project.description}
+							></TipTap>
+						</Card.Description>
 						<ChevronRight
 							class="transition-100 absolute right-5 top-5 opacity-50 group-hover:opacity-100"
 						/>

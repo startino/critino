@@ -12,7 +12,7 @@
 	export let data;
 
 	$: ({ user, supabase } = data);
-	let { teams } = data;
+	let { teams, team } = data;
 	console.log('routes/+layout.svelte teams', JSON.stringify(teams));
 
 	onMount(() => {
@@ -41,7 +41,7 @@
 	<ThemeSwitcher />
 </div>
 <main class="flex h-screen w-screen items-stretch bg-background text-background-on">
-	<SidePanel {teams} />
+	<SidePanel {user} {supabase} {team} {teams} />
 	<Separator orientation="vertical" class="ml-0 pl-0 opacity-20 " />
 
 	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
