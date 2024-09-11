@@ -91,7 +91,7 @@
 						class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
 					>
 						<TipTap
-							class="rounded-lg border border-primary/30 bg-primary-container/10 px-2 py-1 text-primary-container-on"
+							class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
 							bind:content={$formData.context[index]!.content}
 						/>
 					</div>
@@ -114,15 +114,15 @@
 
 			<div class="flex justify-start">
 				<TipTap
-					class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary-container-on"
+					class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
 					bind:content={$formData.response}
 				></TipTap>
 			</div>
 
-			<Typography variant="title-md" align="left" class="mr-auto pt-4 text-success">
+			<Typography variant="title-md" align="left" class="mr-auto pt-4 text-secondary">
 				Optimal Response
 			</Typography>
-			<Typography variant="title-sm" align="left" class="mr-auto pb-2 text-success/70">
+			<Typography variant="title-sm" align="left" class="mr-auto pb-2 text-secondary/70">
 				This is the optimal response, what the response should've been.
 				<br />
 				(can be the same if the agents answer was good)
@@ -130,7 +130,7 @@
 
 			<div class="flex justify-start">
 				<TipTap
-					class="rounded-lg border border-success/50 bg-success-container/10 px-2 py-1 text-success-container-on"
+					class="rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
 					bind:content={$formData.optimal}
 				></TipTap>
 			</div>

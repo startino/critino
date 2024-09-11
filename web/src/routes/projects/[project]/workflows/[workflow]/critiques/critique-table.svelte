@@ -14,6 +14,7 @@
 	import type { Critique, Database, Project, Workflow } from '$lib/supabase';
 	import { readable } from 'svelte/store';
 	import type { SupabaseClient } from '@supabase/supabase-js';
+	import { TipTap } from '$lib/components/ui/tiptap';
 
 	export let supabase: SupabaseClient<Database>;
 	export let project: Project;
@@ -43,12 +44,12 @@
 			header: 'Agent',
 		}),
 		table.column({
-			accessor: ({ response }) => response,
-			header: 'Response',
+			accessor: 'optimal',
+			header: 'Optimal Response',
 		}),
 		table.column({
-			accessor: ({ optimal }) => optimal,
-			header: 'Optimal Response',
+			accessor: 'response',
+			header: 'Response',
 		}),
 		table.column({
 			accessor: ({ id }) => id,
@@ -105,11 +106,16 @@
 						<Table.Row class="border-surface-variant/80" {...rowAttrs}>
 							{#each row.cells as cell (cell.id)}
 								<Subscribe attrs={cell.attrs()} let:attrs>
-									<Table.Cell
-										class="text-elipsis max-w-96 overflow-hidden"
-										{...attrs}
-									>
-										<Render of={cell.render()} />
+									<Table.Cell class="text-elipsis overflow-hidden" {...attrs}>
+										{#if cell.id === 'response' || cell.id === 'optimal'}
+											<TipTap
+												class="text-background-on"
+												editable={false}
+												content={cell.render().toString()}
+											></TipTap>
+										{:else}
+											<Render of={cell.render()} />
+										{/if}
 									</Table.Cell>
 								</Subscribe>
 							{/each}
