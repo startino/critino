@@ -5,6 +5,7 @@
 	import { Icon } from '$lib/icons';
 	import { ChevronDown } from 'lucide-svelte';
 	import type { SupabaseClient, User } from '@supabase/supabase-js';
+	import { goto } from '$app/navigation';
 
 	export let user: User & Profile;
 	export let supabase: SupabaseClient<Database>;
@@ -25,7 +26,7 @@
 				.update({ selected_team: selectedTeam.name })
 				.eq('id', user.id);
 
-			window.location.reload();
+			window.location.href = '/';
 		}}
 	>
 		<Select.Trigger class="relative grid h-12 border-primary/0" aria-label="Select team">
