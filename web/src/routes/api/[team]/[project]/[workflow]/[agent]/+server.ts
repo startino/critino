@@ -131,6 +131,6 @@ export const POST = async ({ params, request, locals: { supabase } }) => {
 		status: 200,
 		message: 'Success',
 		critique,
-		redirect_url: `${getURL()}projects/${project.name}/workflows/${workflow.name}/critiques/${critique.id}`,
+		redirect_url: `${getURL()}${team.name}/projects/${project.name}/workflows/${workflow.name}/critiques/${critique.id}`,
 	});
 };
