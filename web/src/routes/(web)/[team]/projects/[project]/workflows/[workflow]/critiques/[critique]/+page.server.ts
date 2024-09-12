@@ -22,6 +22,9 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 		.from('agents')
 		.select('*')
 		.eq('name', critique.agent_name)
+		.eq('workflow_name', critique.workflow_name)
+		.eq('project_name', critique.project_name)
+		.eq('team_name', critique.team_name)
 		.single();
 
 	if (!agent || eAgent) {
