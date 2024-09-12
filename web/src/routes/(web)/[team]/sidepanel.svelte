@@ -30,7 +30,7 @@
 
 	<Separator class="mt-14 opacity-20" />
 
-	<Nav routes={primaryRoutes} />
+	<Nav routes={primaryRoutes(team)} />
 
 	<Separator
 		class="ml-2 min-w-10 max-w-10 pt-0 opacity-40 transition-all duration-200 ease-in-out group-hover:min-w-48 group-hover:max-w-48"

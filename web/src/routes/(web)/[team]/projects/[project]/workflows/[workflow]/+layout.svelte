@@ -16,7 +16,7 @@
 		</div>
 		<Separator class="mt-0 pt-0 opacity-20" />
 
-		<Nav routes={primaryRoutes(project, workflow, agents, critiques)} />
+		<Nav routes={primaryRoutes(team, project, workflow, agents, critiques)} />
 	</div>
 	<!-- /Nav -->
 
