@@ -12,12 +12,13 @@
 
 <Breadcrumb
 	crumbs={[
-		{ name: team.name, href: '/' },
-		{ name: 'projects', href: '/projects' },
-		{ name: project.name, href: `/projects/${project.name}` },
+		{ name: team.name, href: `/${team.name}` },
+		{ name: 'projects', href: `/${team.name}/projects` },
+		{ name: project.name, href: `/${team.name}/projects/${project.name}` },
 		{ name: 'workflows' },
 	]}
 />
+
 <div>
 	<div
 		class="grid h-fit w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"

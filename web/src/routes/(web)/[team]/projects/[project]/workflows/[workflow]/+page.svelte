@@ -7,10 +7,10 @@
 
 <Breadcrumb
 	crumbs={[
-		{ name: team.name, href: '/' },
-		{ name: 'projects', href: '/projects' },
-		{ name: project.name, href: `/projects/${project.name}` },
-		{ name: 'workflows', href: `/projects/${project.name}/workflows` },
+		{ name: team.name, href: `/${team.name}` },
+		{ name: 'projects', href: `/${team.name}/projects` },
+		{ name: project.name, href: `/${team.name}/projects/${project.name}` },
+		{ name: 'workflows', href: `/${team.name}/projects/${project.name}/workflows` },
 		{ name: workflow.name },
 	]}
 />
