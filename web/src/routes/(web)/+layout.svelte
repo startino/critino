@@ -6,14 +6,10 @@
 	import * as schemes from '$lib/theme/schemes';
 	import ThemeSwitcher from './theme-switcher.svelte';
 	import { getMode } from '$lib/theme/index.js';
-	import SidePanel from './sidepanel.svelte';
-	import { Separator } from '$lib/components/ui/separator/index.js';
 
 	export let data;
 
 	$: ({ user, supabase } = data);
-	let { teams, team } = data;
-	console.log('routes/+layout.svelte teams', JSON.stringify(teams));
 
 	onMount(() => {
 		if (typeof window !== 'undefined') {
@@ -40,11 +36,4 @@
 <div class="absolute right-2 top-2 z-10">
 	<ThemeSwitcher />
 </div>
-<main class="flex h-screen w-screen items-stretch bg-background text-background-on">
-	<SidePanel {user} {supabase} {team} {teams} />
-	<Separator orientation="vertical" class="ml-0 pl-0 opacity-20 " />
-
-	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
-		<slot />
-	</div>
-</main>
+<slot />

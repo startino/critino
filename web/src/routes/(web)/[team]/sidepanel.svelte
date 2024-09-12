@@ -1,11 +1,11 @@
 <script lang="ts">
-	import TeamSwitcher from './team-switcher.svelte';
 	import Nav from '$lib/components/ui/nav.svelte';
 	import { Separator } from '$lib/components/ui/separator';
 	import { primaryRoutes, profileRoutes, teamRoutes } from './routes';
 	import { Typography } from '$lib/components/ui/typography/index.js';
 	import type { Database, Profile, Team } from '$lib/supabase';
 	import type { SupabaseClient, User } from '@supabase/supabase-js';
+	import TeamSwitcher from './team-switcher.svelte';
 
 	export let user: User & Profile;
 	export let supabase: SupabaseClient<Database>;

@@ -2,9 +2,10 @@ import { getURL } from '$lib/utils.js';
 import { fewShotExampleMessages } from './fewShot';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
-export const GET = async ({ params, request, locals: { supabase } }) => {
-	if (request.headers.get('Content-Length')) {
-		const data = await request.json();
+export const GET = async ({ params, url, request, locals: { supabase } }) => {
+	const query = url.searchParams.get('query');
+	if (!query) {
+		return Response.json({ status: 400, message: 'query is required' });
 	}
 
 	let { data: critiques, error: eCritiques } = await supabase
@@ -28,7 +29,7 @@ export const GET = async ({ params, request, locals: { supabase } }) => {
 			critique.optimal.trim() !== '<p></p>'
 	);
 
-	const message = fewShotExampleMessages(critiques, `<user>hello</user>`);
+	const message = await fewShotExampleMessages(critiques, `<user>${query}</user>`);
 
 	critiques.map((critique) => {
 		critique.optimal = NodeHtmlMarkdown.translate(critique.optimal);
