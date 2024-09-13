@@ -46,6 +46,13 @@ export const GET = async ({ params, url, request, locals: { supabase } }) => {
 };
 
 export const POST = async ({ params, request, locals: { supabase } }) => {
+	if (!request.body) {
+		return Response.json({
+			status: 400,
+			message: 'Missing request body',
+		});
+	}
+
 	const data = await request.json();
 
 	const { data: team, error: eTeam } = await supabase
@@ -55,9 +62,17 @@ export const POST = async ({ params, request, locals: { supabase } }) => {
 		.single();
 
 	if (!team || eTeam) {
-		const message = `Error fetching team: ${JSON.stringify(eTeam, null, 2)}`;
-		console.error(message);
-		return Response.json({ status: 500, message });
+		switch (eTeam.code) {
+			case '404':
+				return Response.json({
+					status: 404,
+					message: `Team '${params.team}' not found`,
+				});
+			default:
+				const message = `Error fetching team: ${JSON.stringify(eTeam, null, 2)}`;
+				console.error(message);
+				return Response.json({ status: 500, message });
+		}
 	}
 
 	const { data: project, error: eProject } = await supabase
@@ -68,9 +83,17 @@ export const POST = async ({ params, request, locals: { supabase } }) => {
 		.single();
 
 	if (!project || eProject) {
-		const message = `Error fetching project: ${JSON.stringify(eProject, null, 2)}`;
-		console.error(message);
-		return Response.json({ status: 500, message });
+		switch (eProject.code) {
+			case '404':
+				return Response.json({
+					status: 404,
+					message: `Project '${params.project}' not found`,
+				});
+			default:
+				const message = `Error fetching project: ${JSON.stringify(eProject, null, 2)}`;
+				console.error(message);
+				return Response.json({ status: 500, message });
+		}
 	}
 
 	const { data: workflow, error: eWorkflow } = await supabase
