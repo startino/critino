@@ -107,6 +107,17 @@ const authGuard: Handle = async ({ event, resolve }) => {
 };
 
 const apiGuard: Handle = async ({ event, resolve }) => {
+	if (event.request.method === 'OPTIONS') {
+		// Preflight request. Reply successfully:
+		return new Response(null, {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+				'Access-Control-Allow-Headers': '*',
+			},
+		});
+	}
+
 	const response = await resolve(event);
 	if (event.url.pathname.startsWith('/api')) {
 		response.headers.append('Access-Control-Allow-Credentials', 'true');
