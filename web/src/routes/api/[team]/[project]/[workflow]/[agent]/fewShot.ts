@@ -71,8 +71,8 @@ export const fewShotExampleMessages = async (critiques: Critique[], query: strin
 		exampleSelector,
 		examplePrompt,
 		exampleSeparator: '',
-		prefix: `<fewshot><examples>`,
-		suffix: '</examples><query>{query}</query></fewshot>',
+		prefix: `<examples>`,
+		suffix: '</examples>',
 		inputVariables: ['query'],
 	});
 	console.log('test3');

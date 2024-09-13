@@ -29,7 +29,7 @@ export const GET = async ({ params, url, request, locals: { supabase } }) => {
 			critique.optimal.trim() !== '<p></p>'
 	);
 
-	const message = await fewShotExampleMessages(critiques, `<user>${query}</user>`);
+	const examples = await fewShotExampleMessages(critiques, `<user>${query}</user>`);
 
 	critiques.map((critique) => {
 		critique.optimal = NodeHtmlMarkdown.translate(critique.optimal);
@@ -40,7 +40,7 @@ export const GET = async ({ params, url, request, locals: { supabase } }) => {
 
 	return Response.json({
 		status: 200,
-		message,
+		examples,
 		critiques: critiques.map(({ context, optimal }) => ({ context, optimal })),
 	});
 };
