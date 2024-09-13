@@ -21,6 +21,25 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter({
 			maxDuration: 300, // Set the timeout to 300 seconds
+			headers: [
+				{
+					source: '/api/(.*)',
+					headers: [
+						{
+							key: 'Access-Control-Allow-Origin',
+							value: '*',
+						},
+						{
+							key: 'Access-Control-Allow-Methods',
+							value: 'GET,POST,PUT,DELETE,OPTIONS',
+						},
+						{
+							key: 'Access-Control-Allow-Headers',
+							value: '*',
+						},
+					],
+				},
+			],
 		}),
 		alias: {
 			$styling: './src/app.pcss',
