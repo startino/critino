@@ -4,9 +4,8 @@
 	import type { Database, Profile, Team } from '$lib/supabase';
 	import { Icon } from '$lib/icons';
 	import { ChevronDown } from 'lucide-svelte';
-	import type { SupabaseClient, User } from '@supabase/supabase-js';
+	import type { SupabaseClient } from '@supabase/supabase-js';
 
-	export let user: User & Profile;
 	export let supabase: SupabaseClient<Database>;
 	export let selectedTeam: Team;
 	export let isCollapsed: boolean;

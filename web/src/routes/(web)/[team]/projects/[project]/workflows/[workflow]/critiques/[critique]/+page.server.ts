@@ -3,7 +3,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params, parent, locals: { user, supabase } }) => {
+export const load = async ({ params, parent, locals: { supabase } }) => {
 	const { team, project } = await parent();
 
 	const { data: critique, error: eCritique } = await supabase

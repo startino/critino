@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 
-export const load = async ({ cookies, parent, locals: { user, supabase } }) => {
+export const load = async ({ parent, locals: { supabase } }) => {
 	const { team } = await parent();
 
 	const { data: projects, error: eProjects } = await supabase

@@ -71,32 +71,16 @@ export const supabase: Handle = async ({ event, resolve }) => {
 			return resolve(event);
 		}
 
-		const user = await getExistingUserOrCreateAnonymousUser(code);
+		try {
+			const user = await getExistingUserOrCreateAnonymousUser(code);
 
-		const profile = await getExistingProfileOrCreateNewProfile(user);
+			const profile = await getExistingProfileOrCreateNewProfile(user);
 
-		return { ...user, ...profile };
-	};
-
-	/**
-	 * Unlike `supabase.auth.getSession()`, which returns the session _without_
-	 * validating the JWT, this function also calls `getUser()` to validate the
-	 * JWT before returning the session.
-	 */
-	event.locals.getSession = async (code: string | null = null) => {
-		const {
-			data: { session },
-		} = await event.locals.supabase.auth.getSession();
-		if (!session) {
+			return { ...user, ...profile };
+		} catch (e) {
+			console.error(JSON.stringify(e, null, 2));
 			return null;
 		}
-
-		const userProfile = await event.locals.getUser(code);
-		if (!userProfile) {
-			return null;
-		}
-
-		return { ...session, ...userProfile };
 	};
 
 	return resolve(event, {
