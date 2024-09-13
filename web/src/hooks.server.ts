@@ -125,6 +125,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
 const apiGuard: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 	if (event.url.pathname.startsWith('/api')) {
+		response.headers.append('Access-Control-Allow-Credentials', 'true');
 		response.headers.append('Access-Control-Allow-Methods', '*');
 		response.headers.append('Access-Control-Allow-Origin', `*`);
 		response.headers.append('Access-Control-Allow-Headers', `*`);

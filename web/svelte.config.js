@@ -23,15 +23,19 @@ const config = {
 			maxDuration: 300, // Set the timeout to 300 seconds
 			headers: [
 				{
-					source: '/api/(.*)',
+					source: '/(.*)',
 					headers: [
 						{
 							key: 'Access-Control-Allow-Origin',
 							value: '*',
 						},
 						{
+							key: 'Access-Control-Allow-Credentials',
+							value: 'true',
+						},
+						{
 							key: 'Access-Control-Allow-Methods',
-							value: 'GET,POST,PUT,DELETE,OPTIONS',
+							value: 'GET, OPTIONS, PATCH, DELETE, POST, PUT',
 						},
 						{
 							key: 'Access-Control-Allow-Headers',
