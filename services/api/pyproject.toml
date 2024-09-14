@@ -12,6 +12,9 @@ repository = "https://github.com/startino"
 documentation = "https://starti.no/docs"
 license = "BSL-1.1 (https://github.com/startino/relevantino/blob/alpha/LICENSE)"
 
+[tool.poetry.scripts]
+start = "src.__init__:run" # Assuming you have a main function in __init__.py
+
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
 uvicorn = "^0.27.1"
