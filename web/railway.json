@@ -11,7 +11,7 @@
 				}
 			}
 		},
-		"buildCommand": "pnpm i --frozen-lockfile --force && pnpm run preview"
+		"buildCommand": "pnpm i --frozen-lockfile --force && pnpm run build"
 	},
 	"deploy": {
 		"startCommand": "pnpm run preview",
