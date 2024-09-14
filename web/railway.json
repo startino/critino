@@ -6,7 +6,7 @@
 			"providers": ["python"],
 			"phases": {
 				"setup": {
-					"nixPkgs": ["nodePackages.pnpm"]
+					"nixPkgs": ["...", "nodePackages.pnpm"]
 				}
 			}
 		},
