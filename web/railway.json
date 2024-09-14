@@ -7,7 +7,7 @@
 			"packageManager": "pnpm@latest",
 			"phases": {
 				"setup": {
-					"nixPkgs": ["..."]
+					"nixPkgs": ["...", "nodePackages.pnpm"]
 				}
 			}
 		},
