@@ -13,7 +13,7 @@ documentation = "https://starti.no/docs"
 license = "BSL-1.1 (https://github.com/startino/relevantino/blob/alpha/LICENSE)"
 
 [tool.poetry.scripts]
-start = "src.__init__:run" # Assuming you have a main function in __init__.py
+start = "src.__init__:run"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
