@@ -3,10 +3,11 @@
 	"build": {
 		"builder": "NIXPACKS",
 		"nixpacksPlan": {
-			"providers": ["python"],
+			"providers": ["node"],
+			"packageManager": "pnpm@latest",
 			"phases": {
 				"setup": {
-					"nixPkgs": ["...", "nodePackages.pnpm"]
+					"nixPkgs": ["..."]
 				}
 			}
 		},
