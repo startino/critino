@@ -71,16 +71,16 @@ export const supabase: Handle = async ({ event, resolve }) => {
 			return resolve(event);
 		}
 
-		try {
-			const user = await getExistingUserOrCreateAnonymousUser(code);
-
-			const profile = await getExistingProfileOrCreateNewProfile(user);
-
-			return { ...user, ...profile };
-		} catch (e) {
-			console.error(JSON.stringify(e, null, 2));
-			return null;
-		}
+		// try {
+		// 	const user = await getExistingUserOrCreateAnonymousUser(code);
+		//
+		// 	const profile = await getExistingProfileOrCreateNewProfile(user);
+		//
+		// 	return { ...user, ...profile };
+		// } catch (e) {
+		// 	console.error(JSON.stringify(e, null, 2));
+		return null;
+		// }
 	};
 
 	return resolve(event, {
