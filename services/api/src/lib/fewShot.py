@@ -1,15 +1,13 @@
-from langchain.core.prompts import FewShotPromptTemplate, PromptTemplate
-from langchain.core.example_selectors import SemanticSimilarityExampleSelector
-from langchain.openai import OpenAIEmbeddings
-from langchain.vectorstores.memory import MemoryVectorStore
+import logging
+from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
+from langchain_core.example_selectors import SemanticSimilarityExampleSelector
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import InMemoryVectorStore
 from pydantic import BaseModel
-from typing import List, Optional
 import os
 import markdown
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY)
+from src.lib import xml_utils
 
 
 class ContextItem(BaseModel):
@@ -20,7 +18,7 @@ class ContextItem(BaseModel):
 
 class Critique(BaseModel):
     optimal: str
-    context: List[ContextItem]
+    context: list[ContextItem]
 
 
 def format_one(critique: Critique) -> dict:
@@ -38,38 +36,69 @@ def format_one(critique: Critique) -> dict:
     }
 
 
-def format_critiques(critiques: List[Critique]) -> List[dict]:
+def format_critiques(critiques: list[Critique]) -> list[dict]:
     return [format_one(critique) for critique in critiques]
 
 
-async def few_shot_example_messages(critiques: List[Critique], query: str) -> str:
+def few_shot_example_messages(critiques: list[Critique], query: str) -> str:
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+    if not OPENAI_API_KEY:
+        logging.error("OPENAI_API_KEY is not set")
+        raise ValueError("OPENAI_API_KEY is not set")
+
+    embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY)
+
     examples = format_critiques(critiques)
-    print("examples", examples)
-    example_selector = await SemanticSimilarityExampleSelector.from_examples(
-        examples,
-        embeddings,
-        MemoryVectorStore,
-        {
-            "k": 2,
-        },
+
+    example_selector = SemanticSimilarityExampleSelector.from_examples(
+        examples=examples,
+        embeddings=embeddings,
+        vectorstore_cls=InMemoryVectorStore,
+        k=2,
+        input_keys=["query"],
     )
-    print("test1")
+
+    examples = example_selector.select_examples({"query": query})
+
     example_prompt = PromptTemplate.from_template(
         "<example><context>{context}</context><query>{query}</query><output>{output}</output></example>"
     )
-    print("test2")
     few_shot_prompt = FewShotPromptTemplate(
-        {
-            "example_selector": example_selector,
-            "example_prompt": example_prompt,
-            "example_separator": "",
-            "prefix": "<examples>",
-            "suffix": "</examples>",
-            "input_variables": ["query"],
-        }
+        examples=examples,
+        example_prompt=example_prompt,
+        example_separator="",
+        prefix="<examples>",
+        suffix="</examples>",
     )
-    print("test3")
-    formatval = await few_shot_prompt.format({"query": query})
-    print("test4")
+    formatval = few_shot_prompt.format()
     print("xml input:\n", formatval)
-    return formatval
+    print("xml output:\n", xml_utils.format_xml(formatval))
+    return xml_utils.format_xml(formatval)
+
+
+if __name__ == "__main__":
+    examples = [
+        Critique(
+            optimal="This is the optimal output 1",
+            context=[
+                ContextItem(name="user", content="This is the context 1", index=0),
+                ContextItem(
+                    name="facilitator", content="This is the context 2", index=1
+                ),
+            ],
+        ),
+        Critique(
+            optimal="This is the optimal output 2",
+            context=[
+                ContextItem(name="user", content="This is the context 1", index=0),
+                ContextItem(
+                    name="facilitator", content="This is the context 2", index=1
+                ),
+            ],
+        ),
+    ]
+
+    query = "This is the query"
+
+    few_shot_example_messages(examples, query)
