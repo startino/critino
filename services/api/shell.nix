@@ -4,6 +4,7 @@
     targetPkgs = pkgs: (with pkgs; [
         python312
         poetry
+        nixpacks
     ]);
     runScript = "fish";
 }).env
