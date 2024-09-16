@@ -2,7 +2,7 @@ import logging
 from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import InMemoryVectorStore
+from langchain_chroma import Chroma
 from pydantic import BaseModel
 import os
 import markdown
@@ -41,29 +41,36 @@ def format_critiques(critiques: list[Critique]) -> list[dict]:
 
 
 def few_shot_example_messages(critiques: list[Critique], query: str) -> str:
+    print("1")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
     if not OPENAI_API_KEY:
         logging.error("OPENAI_API_KEY is not set")
         raise ValueError("OPENAI_API_KEY is not set")
 
+    print("2")
     embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY)
+    print("3")
 
     examples = format_critiques(critiques)
+
+    print("4")
 
     example_selector = SemanticSimilarityExampleSelector.from_examples(
         examples=examples,
         embeddings=embeddings,
-        vectorstore_cls=InMemoryVectorStore,
-        k=2,
-        input_keys=["query"],
+        vectorstore_cls=Chroma,
+        k=1,
     )
+    print("5")
 
     examples = example_selector.select_examples({"query": query})
 
+    print("6")
     example_prompt = PromptTemplate.from_template(
         "<example><context>{context}</context><query>{query}</query><output>{output}</output></example>"
     )
+    print("7")
     few_shot_prompt = FewShotPromptTemplate(
         examples=examples,
         example_prompt=example_prompt,
@@ -71,6 +78,7 @@ def few_shot_example_messages(critiques: list[Critique], query: str) -> str:
         prefix="<examples>",
         suffix="</examples>",
     )
+    print("8")
     formatval = few_shot_prompt.format()
     print("xml input:\n", formatval)
     print("xml output:\n", xml_utils.format_xml(formatval))

@@ -1,16 +1,16 @@
 [tool.poetry]
 name = "src"
 version = "0.0.1"
-description = "descritpion"
+description = "API for Critino, the LLM Critique Platform."
 authors = [
     "Jonas Lindberg <jonas.lindberg@futi.no>",
     "Jorge Lewis <jorge.lewis@futi.no>",
 ]
 readme = "./README.md"
-homepage = "https://starti.no"
-repository = "https://github.com/startino"
-documentation = "https://starti.no/docs"
-license = "BSL-1.1 (https://github.com/startino/relevantino/blob/alpha/LICENSE)"
+homepage = "https://critino.starti.no"
+repository = "https://github.com/startino/critino"
+documentation = "https://api.critino.starti.no/docs"
+license = "BSL-1.1 (https://github.com/startino/critino/blob/alpha/LICENSE)"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
@@ -25,14 +25,13 @@ praw = "*"
 markdown = "*"
 gptrim = "*"
 pandas = "*"
-reddit-chatbot-python = "*"
 selenium = "*"
 mail = "*"
 python-dotenv = "*"
 diskcache = "*"
 pydantic = "*"
-python-upwork-oauth2 = "*"
 sse-starlette = "*"
+langchain-chroma = "*"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "*"
