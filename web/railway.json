@@ -1,20 +1,9 @@
 {
 	"$schema": "https://railway.app/railway.schema.json",
 	"build": {
-		"builder": "NIXPACKS",
-		"nixpacksPlan": {
-			"providers": ["node"],
-			"packageManager": "pnpm@latest",
-			"phases": {
-				"setup": {
-					"nixPkgs": ["..."]
-				}
-			}
-		},
-		"buildCommand": "pnpm i --frozen-lockfile --force && pnpm run build"
+		"builder": "NIXPACKS"
 	},
 	"deploy": {
-		"startCommand": "pnpm run preview --host",
 		"restartPolicyType": "ON_FAILURE",
 		"restartPolicyMaxRetries": 10
 	}

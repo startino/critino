@@ -1,0 +1,10 @@
+providers = ['...', 'node']
+
+[phases.setup]
+nixPkgs = ['...']
+
+[phases.build]
+cmds = ['pnpm i --frozen-lockfile --force && pnpm run build']
+
+[start]
+cmds = ['pnpm run preview --host']
