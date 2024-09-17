@@ -17,21 +17,18 @@ python = ">=3.11,<3.13"
 fastapi = { extras = ["standard"], version = "*" }
 tenacity = "*"
 supabase = "*"
-aiohttp = "*"
 langchain = "*"
 langchain-community = "*"
 langchain-openai = "*"
 praw = "*"
 markdown = "*"
 gptrim = "*"
-pandas = "*"
 selenium = "*"
-mail = "*"
 python-dotenv = "*"
 diskcache = "*"
 pydantic = "*"
 sse-starlette = "*"
-langchain-chroma = "*"
+watchfiles = "0.23.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "*"
@@ -41,7 +38,7 @@ autoflake = "*"
 flake8 = "*"
 pytest = "*"
 pytest-cov = "*"
-pyright = "*"
+# pyright = "*"
 
 [tool.isort]
 multi_line_output = 3
