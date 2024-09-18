@@ -1,5 +1,6 @@
 services:
   web:
+    restart: always
     build:
       context: ./web
       dockerfile: ./.nixpacks/Dockerfile
@@ -12,7 +13,11 @@ services:
       - "5173:5173"
     volumes:
       - ./web:/app
+    networks:
+      critino_net:
+        ipv4_address: 172.16.238.12
   api:
+    restart: always
     build:
       context: ./services/api
       dockerfile: ./.nixpacks/Dockerfile
@@ -30,3 +35,14 @@ services:
       - "8000:8000"
     volumes:
       - ./services/api:/app
+    networks:
+      critino_net:
+        ipv4_address: 172.16.238.11
+
+networks:
+  critino_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
