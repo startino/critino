@@ -126,4 +126,4 @@ def upsert_a_critique(q: PostCritiquesRequest) -> str:
 
     supabase.table("critiques").upsert(q.model_dump()).execute()
 
-    return f"{PUBLIC_SITE_URL}/{q.team_name}/projects/{q.project_name}/workflows/{q.workflow_name}/{q.agent_name}/critiques/{q.id}"
+    return f"{PUBLIC_SITE_URL}/{q.team_name}/projects/{q.project_name}/workflows/{q.workflow_name}/critiques/{q.id}"
