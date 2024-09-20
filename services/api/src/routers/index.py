@@ -1,5 +1,5 @@
 import os
-from pydantic import UUID4, BaseModel
+from pydantic import BaseModel
 from src.interfaces import db
 from src.lib.few_shot import (
     format_example_string,

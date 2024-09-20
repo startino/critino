@@ -1,14 +1,10 @@
 import logging
-from langchain_core import vectorstores
-from langchain_core.documents import Document
 from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 from langchain_openai import OpenAIEmbeddings
-from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from pydantic import BaseModel, SecretStr
 import os
-import markdown
 
 from src.lib import xml_utils
 
