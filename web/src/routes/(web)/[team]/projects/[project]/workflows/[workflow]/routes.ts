@@ -16,18 +16,18 @@ export const primaryRoutes = (
 		icon: Icons.ListTodo,
 		variant: 'ghost',
 	},
-	{
-		title: 'Agents',
-		label: agents.length.toString(),
-		href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}/agents`,
-		icon: Icons.Bot,
-		variant: 'ghost',
-	},
-	{
-		title: 'Endpoints',
-		label: null,
-		href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}/endpoints`,
-		icon: Icons.Unplug,
-		variant: 'ghost',
-	},
+	// {
+	// 	title: 'Agents',
+	// 	label: agents.length.toString(),
+	// 	href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}/agents`,
+	// 	icon: Icons.Bot,
+	// 	variant: 'ghost',
+	// },
+	// {
+	// 	title: 'Endpoints',
+	// 	label: null,
+	// 	href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}/endpoints`,
+	// 	icon: Icons.Unplug,
+	// 	variant: 'ghost',
+	// },
 ];
