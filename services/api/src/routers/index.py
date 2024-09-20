@@ -1,3 +1,4 @@
+import os
 from pydantic import UUID4, BaseModel
 from src.interfaces import db
 from src.lib.few_shot import (
@@ -10,6 +11,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 
 router = APIRouter()
+
+PUBLIC_SITE_URL = os.getenv("PUBLIC_SITE_URL", "http://0.0.0.0:5173")
 
 
 @router.get("/")
@@ -93,7 +96,7 @@ class PostCritiquesRequest(BaseModel):
 
 
 @router.post("/critiques")
-def upsert_a_critique(q: PostCritiquesRequest) -> None:
+def upsert_a_critique(q: PostCritiquesRequest) -> str:
     supabase = db.client()
 
     (
@@ -122,3 +125,5 @@ def upsert_a_critique(q: PostCritiquesRequest) -> None:
     )
 
     supabase.table("critiques").upsert(q.model_dump()).execute()
+
+    return f"{PUBLIC_SITE_URL}/{q.team_name}/projects/{q.project_name}/workflows/{q.workflow_name}/{q.agent_name}/critiques/{q.id}"
