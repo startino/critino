@@ -29,19 +29,19 @@
 			$formData.context = critique.context as Context[];
 			$formData.critique = critique.critique;
 
-            const { data: savedCritique, error: eCritique } = await supabase
-                .from('critiques')
-                .update($formData)
-                .eq('id', $formData.id)
-                .select('*')
-                .single();
+			const { data: savedCritique, error: eCritique } = await supabase
+				.from('critiques')
+				.update($formData)
+				.eq('id', $formData.id)
+				.select('*')
+				.single();
 
-            if (!savedCritique || eCritique) {
-                toast.error('Error saving critique.');
-                return;
-            }
+			if (!savedCritique || eCritique) {
+				toast.error('Error saving critique.');
+				return;
+			}
 
-            critique = savedCritique
+			critique = savedCritique;
 			toast('Saving critique...');
 		},
 		onResult() {
@@ -57,8 +57,24 @@
 	type Context = {
 		name: string;
 		content: string;
-		index: number;
 	};
+
+	// Function to split string by dynamic agent tags
+	const splitByAgents = (input: string): Context[] => {
+		const agentPattern = /<(\w+)>([\s\S]*?)<\/\1>/g;
+		let match;
+		const result: Context[] = [];
+
+		while ((match = agentPattern.exec(input)) !== null) {
+			const agent = match[1]; // Captures the agent's name (e.g., user, facilitator)
+			const content = match[2]; // Captures the content within the tags
+			result.push({ name: agent ?? '', content: content ?? '' }); // Adds agent and its content to the result object
+		}
+
+		return result;
+	};
+
+	$: conversation = splitByAgents(critique.context);
 </script>
 
 <Breadcrumb
@@ -100,23 +116,18 @@
 			<Card.Description>These are the previous messages that were sent.</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<!-- <div class="flex w-full flex-col gap-2"> -->
-			<!-- 	{#each critique.context as context, index} -->
-			<!-- 		<div -->
-			<!-- 			class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`} -->
-			<!-- 		> -->
-			<!-- 			<TipTap -->
-			<!-- 				class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125" -->
-			<!-- 				bind:content={$formData.context[index]!.content} -->
-			<!-- 			/> -->
-			<!-- 		</div> -->
-			<!-- 	{/each} -->
-			<!-- </div> -->
-			<div class="flex justify-start">
-				<TipTap
-					class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
-					bind:content={critique.context}
-				></TipTap>
+			<div class="flex w-full flex-col gap-2">
+				{#each conversation as context, index}
+					<div
+						class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
+					>
+						<TipTap
+							editable={false}
+							class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+							bind:content={conversation[index]!.content}
+						/>
+					</div>
+				{/each}
 			</div>
 
 			<hr class="my-8 border-primary/50" />

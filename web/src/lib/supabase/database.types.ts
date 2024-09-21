@@ -47,12 +47,12 @@ export type Database = {
       critiques: {
         Row: {
           agent_name: string
-          context: Json[]
+          context: string
           created_at: string
-          critique: Json
           id: string
           optimal: string
           project_name: string
+          query: string
           response: string
           tags: string[]
           team_name: string
@@ -60,25 +60,25 @@ export type Database = {
         }
         Insert: {
           agent_name: string
-          context: Json[]
+          context?: string
           created_at?: string
-          critique?: Json
           id: string
           optimal?: string
           project_name: string
-          response: string
+          query?: string
+          response?: string
           tags?: string[]
           team_name: string
           workflow_name: string
         }
         Update: {
           agent_name?: string
-          context?: Json[]
+          context?: string
           created_at?: string
-          critique?: Json
           id?: string
           optimal?: string
           project_name?: string
+          query?: string
           response?: string
           tags?: string[]
           team_name?: string
