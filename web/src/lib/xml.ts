@@ -7,6 +7,49 @@ type XmlObject = {
 	[key: string]: any;
 };
 
+export const tryParseXmlEvent = (input: string): { name: string; content: string } | null => {
+	const regex = /<(.+?)>(.*?)<\/\1>/;
+	const match = input.match(regex);
+
+	if (!match) {
+		return null;
+	}
+
+	if (!match[1] || !match[2]) {
+		return null; // Return null if the format is not matched
+	}
+
+	return {
+		name: match[1], // Extracts the agent name
+		content: match[2], // Extracts the message content
+	};
+};
+
+export const tryParseXmlEvents = (input: string): { name: string; content: string }[] | null => {
+	const regex = /<(.+?)>(.*?)<\/\1>/g;
+	const matches = [...input.matchAll(regex)];
+
+	if (matches.length === 0) {
+		return [];
+	}
+
+	const result = matches.map((match) => {
+		if (match[1] === undefined || match[2] === undefined) {
+			return null;
+		}
+		return {
+			name: match[1], // Extracts the agent name
+			content: match[2], // Extracts the message content
+		};
+	});
+
+	if (result.includes(null)) {
+		return null;
+	}
+
+	return result as { name: string; content: string }[];
+};
+
 // Function to format XML
 export async function formatXml(xmlString: string): Promise<string> {
 	try {

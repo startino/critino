@@ -6,9 +6,9 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { critiqueSchema } from '$lib/schema';
 	import { toast } from 'svelte-sonner';
-	import { onMount } from 'svelte';
 	import { Typography } from '$lib/components/ui/typography';
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
+	import * as xml from '$lib/xml';
 
 	export let data;
 	let { supabase, forms, team, project, workflow, agent, critique } = data;
@@ -59,22 +59,8 @@
 		content: string;
 	};
 
-	// Function to split string by dynamic agent tags
-	const splitByAgents = (input: string): Context[] => {
-		const agentPattern = /<(\w+)>([\s\S]*?)<\/\1>/g;
-		let match;
-		const result: Context[] = [];
-
-		while ((match = agentPattern.exec(input)) !== null) {
-			const agent = match[1]; // Captures the agent's name (e.g., user, facilitator)
-			const content = match[2]; // Captures the content within the tags
-			result.push({ name: agent ?? '', content: content ?? '' }); // Adds agent and its content to the result object
-		}
-
-		return result;
-	};
-
-	$: conversation = splitByAgents(critique.context);
+	$: conversation = xml.tryParseXmlEvents(critique.context);
+	$: query = xml.tryParseXmlEvent(critique.query);
 </script>
 
 <Breadcrumb
@@ -96,7 +82,7 @@
 />
 
 <form
-	class="mx-auto my-auto flex max-w-prose flex-col items-center justify-center gap-8 py-8"
+	class="mx-auto my-auto flex max-w-prose flex-col items-center justify-center gap-8 overflow-y-scroll py-8"
 	method="POST"
 	action="?/send"
 	use:enhance
@@ -117,17 +103,52 @@
 		</Card.Header>
 		<Card.Content>
 			<div class="flex w-full flex-col gap-2">
-				{#each conversation as context, index}
-					<div
-						class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
-					>
+				{#if conversation}
+					{#each conversation as context, index}
+						<div
+							class={`flex flex-col ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
+						>
+							<small class={`${context.name === 'user' ? 'ml-auto' : ''}`}>
+								{conversation[index]!.name}
+							</small>
+							<TipTap
+								editable={false}
+								class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+								bind:content={conversation[index]!.content}
+							/>
+						</div>
+					{/each}
+				{:else}
+					<div class="flexml-16 justify-end">
 						<TipTap
 							editable={false}
 							class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
-							bind:content={conversation[index]!.content}
+							bind:content={critique.context}
 						/>
 					</div>
-				{/each}
+				{/if}
+				{#if query}
+					<div
+						class={`flex flex-col ${query.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
+					>
+						<small class={`${query.name === 'user' ? 'ml-auto' : ''}`}>
+							{query.name}
+						</small>
+						<TipTap
+							editable={false}
+							class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+							bind:content={query.content}
+						/>
+					</div>
+				{:else}
+					<div class="flexml-16 justify-end">
+						<TipTap
+							editable={false}
+							class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+							bind:content={critique.query}
+						/>
+					</div>
+				{/if}
 			</div>
 
 			<hr class="my-8 border-primary/50" />
