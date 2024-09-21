@@ -81,7 +81,7 @@ class PostCritiquesRelevantResult(BaseModel):
     examples: str
 
 
-@router.get("/critiques/relevant")
+@router.post("/critiques/relevant")
 @ahandle_error
 async def post_relevant_critiques(
     q: PostCritiquesRelevantRequest,
