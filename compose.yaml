@@ -10,12 +10,19 @@ services:
         NODE_ENV: "production"
         NPM_CONFIG_PRODUCTION: "false"
     ports:
-      - "5173:5173"
+      - "1357:5173"
     volumes:
       - ./web:/app
     networks:
       critino_net:
         ipv4_address: 172.16.238.12
+    environment:
+      - PUBLIB_API_URL=http://api.intellaigent:8000
+      - PUBLIC_SITE_URL=http://0.0.0.0:1357
+      - PUBLIC_SUPABASE_URL
+      - PUBLIC_SUPABASE_ANON_KEY
+    env_file: ./web/.env
+
   api:
     restart: always
     build:
@@ -32,12 +39,22 @@ services:
         PYTHONHASHSEED: random
         PYTHONUNBUFFERED: 1
     ports:
-      - "8000:8000"
+      - "7531:8000"
     volumes:
       - ./services/api:/app
     networks:
       critino_net:
         ipv4_address: 172.16.238.11
+    environment:
+      - PUBLIC_SUPABASE_URL
+      - PUBLIC_SUPABASE_ANON_KEY
+      - OPENAI_API_KEY
+      - LANGCHAIN_PROJECT
+      - LANGCHAIN_TRACING_V2
+      - LANGCHAIN_CALLBACKS_BACKGROUND
+      - LANGCHAIN_ENDPOINT
+      - LANGCHAIN_API_KEY
+    env_file: ./services/api/.env
 
 networks:
   critino_net:
