@@ -11,12 +11,37 @@
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 
 	export let data;
-	let { forms, team, project, workflow, agent, critique } = data;
+	let { supabase, forms, team, project, workflow, agent, critique } = data;
 
 	const form = superForm(forms.critique, {
 		dataType: 'json',
 		validators: zodClient(critiqueSchema),
-		onSubmit() {
+		async onSubmit() {
+			$formData.id = critique.id;
+			$formData.workflow_name = critique.workflow_name;
+			$formData.agent_name = critique.agent_name;
+			$formData.project_name = critique.project_name;
+			$formData.team_name = critique.team_name;
+			$formData.tags = critique.tags;
+			$formData.response = critique.response;
+			$formData.optimal = critique.optimal;
+
+			$formData.context = critique.context as Context[];
+			$formData.critique = critique.critique;
+
+            const { data: savedCritique, error: eCritique } = await supabase
+                .from('critiques')
+                .update($formData)
+                .eq('id', $formData.id)
+                .select('*')
+                .single();
+
+            if (!savedCritique || eCritique) {
+                toast.error('Error saving critique.');
+                return;
+            }
+
+            critique = savedCritique
 			toast('Saving critique...');
 		},
 		onResult() {
@@ -34,20 +59,6 @@
 		content: string;
 		index: number;
 	};
-
-	onMount(async () => {
-		$formData.id = critique.id;
-		$formData.workflow_name = critique.workflow_name;
-		$formData.agent_name = critique.agent_name;
-		$formData.project_name = critique.project_name;
-		$formData.team_name = critique.team_name;
-		$formData.tags = critique.tags;
-		$formData.response = critique.response;
-		$formData.optimal = critique.optimal;
-
-		$formData.context = critique.context as Context[];
-		$formData.critique = critique.critique;
-	});
 </script>
 
 <Breadcrumb
@@ -71,6 +82,7 @@
 <form
 	class="mx-auto my-auto flex max-w-prose flex-col items-center justify-center gap-8 py-8"
 	method="POST"
+	action="?/send"
 	use:enhance
 >
 	<div class="flex flex-col items-center justify-center gap-1 text-primary">
@@ -88,17 +100,23 @@
 			<Card.Description>These are the previous messages that were sent.</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<div class="flex w-full flex-col gap-2">
-				{#each $formData.context as context, index}
-					<div
-						class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`}
-					>
-						<TipTap
-							class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
-							bind:content={$formData.context[index]!.content}
-						/>
-					</div>
-				{/each}
+			<!-- <div class="flex w-full flex-col gap-2"> -->
+			<!-- 	{#each critique.context as context, index} -->
+			<!-- 		<div -->
+			<!-- 			class={`flex ${context.name === 'user' ? 'ml-16 justify-end' : 'mr-16 justify-start'}`} -->
+			<!-- 		> -->
+			<!-- 			<TipTap -->
+			<!-- 				class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125" -->
+			<!-- 				bind:content={$formData.context[index]!.content} -->
+			<!-- 			/> -->
+			<!-- 		</div> -->
+			<!-- 	{/each} -->
+			<!-- </div> -->
+			<div class="flex justify-start">
+				<TipTap
+					class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+					bind:content={critique.context}
+				></TipTap>
 			</div>
 
 			<hr class="my-8 border-primary/50" />
@@ -118,7 +136,7 @@
 			<div class="flex justify-start">
 				<TipTap
 					class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
-					bind:content={$formData.response}
+					bind:content={critique.response}
 				></TipTap>
 			</div>
 
@@ -134,11 +152,11 @@
 			<div class="flex justify-start">
 				<TipTap
 					class="rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
-					bind:content={$formData.optimal}
+					bind:content={critique.optimal}
 				></TipTap>
 			</div>
 		</Card.Content>
 	</Card.Root>
 
-	<Form.Button class="w-full">Save</Form.Button>
+	<Form.Button type="submit" class="w-full">Save</Form.Button>
 </form>

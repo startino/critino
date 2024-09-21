@@ -1,5 +1,9 @@
+import traceback
+import logging
+from functools import wraps
 import os
-from pydantic import BaseModel
+from typing import Annotated
+from pydantic import AfterValidator, BaseModel
 from src.interfaces import db
 from src.lib.few_shot import (
     format_example_string,
@@ -13,6 +17,42 @@ from fastapi.responses import RedirectResponse
 router = APIRouter()
 
 PUBLIC_SITE_URL = os.getenv("PUBLIC_SITE_URL", "http://0.0.0.0:5173")
+
+
+def handle_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            response = func(*args, **kwargs)
+            return response
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            tb_str = "".join(traceback.format_exception(e))
+            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            raise HTTPException(
+                status_code=500, detail={"message": str(e), "traceback": tb_str}
+            )
+
+    return wrapper
+
+
+def ahandle_error(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        try:
+            response = await func(*args, **kwargs)
+            return response
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            tb_str = "".join(traceback.format_exception(e))
+            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            raise HTTPException(
+                status_code=500, detail={"message": str(e), "traceback": tb_str}
+            )
+
+    return wrapper
 
 
 @router.get("/")
@@ -42,7 +82,8 @@ class GetCritiquesRelevantResult(BaseModel):
 
 
 @router.get("/critiques/relevant")
-def get_relevant_critiques(
+@ahandle_error
+async def get_relevant_critiques(
     q: GetCritiquesRelevantRequest = Depends(),
 ) -> GetCritiquesRelevantResult:
     if (q.agent_name is not None) and (q.workflow_name is None):
@@ -83,21 +124,38 @@ def get_relevant_critiques(
     )
 
 
+def check_empty(v: str):
+    assert v != "", "must not be an empty string"
+    return v
+
+
 class PostCritiquesRequest(BaseModel):
     id: str
     context: str | None = None
     query: str | None = None
     optimal: str | None = None
     response: str | None = None
-    team_name: str
-    project_name: str
-    workflow_name: str
-    agent_name: str
+    team_name: Annotated[str, AfterValidator(check_empty)]
+    project_name: Annotated[str, AfterValidator(check_empty)]
+    workflow_name: Annotated[str, AfterValidator(check_empty)]
+    agent_name: Annotated[str, AfterValidator(check_empty)]
 
 
 @router.post("/critiques")
-def upsert_a_critique(q: PostCritiquesRequest) -> str:
+@ahandle_error
+async def upsert_a_critique(q: PostCritiquesRequest) -> str:
     supabase = db.client()
+
+    (
+        supabase.table("projects")
+        .upsert(
+            {
+                "team_name": q.team_name,
+                "name": q.project_name,
+            }
+        )
+        .execute()
+    )
 
     (
         supabase.table("workflows")

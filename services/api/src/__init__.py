@@ -1,5 +1,6 @@
-from dotenv import load_dotenv
 import time
+import logging
+from dotenv import load_dotenv
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +11,13 @@ from src.routers import (
 )
 
 load_dotenv()
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s:%(msecs)03d - %(levelname)s - %(message)s",
+    datefmt="%M:%S",
+)
 
 
 def create_app() -> FastAPI:

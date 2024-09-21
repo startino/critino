@@ -45,23 +45,3 @@ export const load = async ({ params, parent, locals: { supabase } }) => {
 		forms,
 	};
 };
-
-export const actions = {
-	default: async ({ request, locals: { supabase } }) => {
-		const form = await superValidate(request, zod(critiqueSchema));
-
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		const review = await supabase
-			.from('critiques')
-			.update(form.data)
-			.eq('id', form.data.id)
-			.single();
-
-		if (review) {
-			throw redirect(303, '?success');
-		}
-	},
-};
