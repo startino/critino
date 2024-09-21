@@ -67,7 +67,7 @@ def get_critique_ids() -> list[str]:
     return [critique["id"] for critique in response.data]
 
 
-class GetCritiquesRelevantRequest(BaseModel):
+class PostCritiquesRelevantRequest(BaseModel):
     query: str
     k: int = 4
     team_name: str
@@ -76,16 +76,16 @@ class GetCritiquesRelevantRequest(BaseModel):
     agent_name: str | None = None
 
 
-class GetCritiquesRelevantResult(BaseModel):
+class PostCritiquesRelevantResult(BaseModel):
     critiques: list[StrippedCritique]
     examples: str
 
 
 @router.get("/critiques/relevant")
 @ahandle_error
-async def get_relevant_critiques(
-    q: GetCritiquesRelevantRequest = Depends(),
-) -> GetCritiquesRelevantResult:
+async def post_relevant_critiques(
+    q: PostCritiquesRelevantRequest,
+) -> PostCritiquesRelevantResult:
     if (q.agent_name is not None) and (q.workflow_name is None):
         raise HTTPException(
             status_code=400,
@@ -119,7 +119,7 @@ async def get_relevant_critiques(
 
     relevant_critiques = find_relevant_critiques(critiques, q.query, k=q.k)
 
-    return GetCritiquesRelevantResult(
+    return PostCritiquesRelevantResult(
         critiques=relevant_critiques, examples=format_example_string(relevant_critiques)
     )
 
