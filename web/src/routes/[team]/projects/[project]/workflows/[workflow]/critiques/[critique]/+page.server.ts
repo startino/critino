@@ -4,31 +4,26 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, parent, locals: { supabase } }) => {
-	const { team, project } = await parent();
+	const { team, project, agents, critiques } = await parent();
 
-	const { data: critique, error: eCritique } = await supabase
-		.from('critiques')
-		.select('*')
-		.eq('id', params.critique)
-		.single();
+	const critique = critiques.find((c) => c.id === params.critique);
 
-	if (!critique || eCritique) {
-		const message = `Error fetching critique: ${eCritique.message}`;
+	if (!critique) {
+		const message = `Critique ${params.critique} not found`;
 		console.error(message);
 		throw error(500, message);
 	}
 
-	const { data: agent, error: eAgent } = await supabase
-		.from('agents')
-		.select('*')
-		.eq('name', critique.agent_name)
-		.eq('workflow_name', critique.workflow_name)
-		.eq('project_name', critique.project_name)
-		.eq('team_name', critique.team_name)
-		.single();
+	const agent = agents.find(
+		(a) =>
+			a.name === critique.agent_name &&
+			a.workflow_name === critique.workflow_name &&
+			a.project_name === critique.project_name &&
+			a.team_name === critique.team_name
+	);
 
-	if (!agent || eAgent) {
-		const message = `Error fetching agent: ${eAgent.message}`;
+	if (!agent) {
+		const message = `Agent ${critique.agent_name} not found`;
 		console.error(message);
 		throw error(500, message);
 	}
