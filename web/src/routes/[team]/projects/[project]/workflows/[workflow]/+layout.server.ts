@@ -23,7 +23,8 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 		.from('agents')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('project_name', project.name);
+		.eq('project_name', project.name)
+		.eq('workflow_name', workflow.name);
 
 	if (!agents || eAgents) {
 		const message = `Error fetching agents: ${eAgents.message}`;
