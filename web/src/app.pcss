@@ -5,38 +5,171 @@
 @layer base {
 	* {
 		min-width: 0;
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+		font-feature-settings:
+			'rlig' 1,
+			'calt' 1;
+	}
+}
+
+@layer base {
+	:root {
+		--color-primary: 33, 106, 77;
+		--color-primary-on: 255, 255, 255;
+		--color-primary-container: 169, 242, 205;
+		--color-primary-container-on: 0, 33, 20;
+		--color-primary-inverse: 141, 213, 178;
+		--color-primary-foreground: 255, 255, 255;
+		--color-secondary: 0, 107, 95;
+		--color-secondary-on: 255, 255, 255;
+		--color-secondary-container: 159, 242, 226;
+		--color-secondary-container-on: 0, 32, 28;
+		--color-tertiary: 137, 74, 105;
+		--color-tertiary-on: 255, 255, 255;
+		--color-tertiary-container: 255, 216, 231;
+		--color-tertiary-container-on: 56, 7, 36;
+		--color-surface: 245, 251, 245;
+		--color-surface-on: 23, 29, 25;
+		--color-surface-variant: 220, 229, 221;
+		--color-surface-variant-on: 64, 73, 67;
+		--color-background: 245, 251, 245;
+		--color-background-on: 23, 29, 25;
+		--color-outline: 112, 121, 115;
+		--color-outline-variant: 191, 201, 193;
+		--color-error: 186, 26, 26;
+		--color-error-on: 255, 255, 255;
+		--color-error-container: 255, 218, 214;
+		--color-error-container-on: 65, 0, 2;
+		--color-success: 0, 107, 95;
+		--color-success-on: 255, 255, 255;
+		--color-success-container: 159, 242, 226;
+		--color-success-container-on: 0, 32, 28;
+
+		--darkreader-bg--color-primary: 141, 213, 178;
+		--darkreader-text--color-primary: 141, 213, 178;
+		--darkreader-border--color-primary: 141, 213, 178;
+		--darkreader-bg--color-primary-on: 169, 242, 205;
+		--darkreader-text--color-primary-on: 169, 242, 205;
+		--darkreader-border--color-primary-on: 169, 242, 205;
+
+		--darkreader-bg--color-primary-container: 0, 81, 55;
+		--darkreader-text--color-primary-container: 0, 81, 55;
+		--darkreader-border--color-primary-container: 0, 81, 55;
+		--darkreader-bg--color-primary-container-on: 169, 242, 205;
+		--darkreader-text--color-primary-container-on: 169, 242, 205;
+		--darkreader-border--color-primary-container-on: 169, 242, 205;
+
+		--darkreader-bg--color-secondary: 131, 213, 198;
+		--darkreader-text--color-secondary: 131, 213, 198;
+		--darkreader-border--color-secondary: 131, 213, 198;
+		--darkreader-bg--color-secondary-on: 159, 242, 226;
+		--darkreader-text--color-secondary-on: 159, 242, 226;
+		--darkreader-border--color-secondary-on: 159, 242, 226;
+
+		--darkreader-bg--color-secondary-container: 0, 80, 71;
+		--darkreader-text--color-secondary-container: 0, 80, 71;
+		--darkreader-border--color-secondary-container: 0, 80, 71;
+		--darkreader-bg--color-secondary-container-on: 159, 242, 226;
+		--darkreader-text--color-secondary-container-on: 159, 242, 226;
+		--darkreader-border--color-secondary-container-on: 159, 242, 226;
+
+		--darkreader-bg--color-tertiary: 254, 176, 211;
+		--darkreader-text--color-tertiary: 254, 176, 211;
+		--darkreader-border--color-tertiary: 254, 176, 211;
+		--darkreader-bg--color-tertiary-on: 255, 216, 231;
+		--darkreader-text--color-tertiary-on: 255, 216, 231;
+		--darkreader-border--color-tertiary-on: 255, 216, 231;
+
+		--darkreader-bg--color-tertiary-container: 109, 51, 81;
+		--darkreader-text--color-tertiary-container: 109, 51, 81;
+		--darkreader-border--color-tertiary-container: 109, 51, 81;
+		--darkreader-bg--color-tertiary-container-on: 255, 216, 231;
+		--darkreader-text--color-tertiary-container-on: 255, 216, 231;
+		--darkreader-border--color-tertiary-container-on: 255, 216, 231;
+
+		--darkreader-bg--color-surface: 15, 21, 17;
+		--darkreader-text--color-surface: 15, 21, 17;
+		--darkreader-border--color-surface: 15, 21, 17;
+		--darkreader-bg--color-surface-on: 191, 201, 193;
+		--darkreader-text--color-surface-on: 191, 201, 193;
+		--darkreader-border--color-surface-on: 191, 201, 193;
+
+		--darkreader-bg--color-surface-variant: 64, 73, 67;
+		--darkreader-text--color-surface-variant: 64, 73, 67;
+		--darkreader-border--color-surface-variant: 64, 73, 67;
+		--darkreader-bg--color-surface-variant-on: 191, 201, 193;
+		--darkreader-text--color-surface-variant-on: 191, 201, 193;
+		--darkreader-border--color-surface-variant-on: 191, 201, 193;
+
+		--darkreader-bg--color-background: 15, 21, 17;
+		--darkreader-text--color-background: 15, 21, 17;
+		--darkreader-border--color-background: 15, 21, 17;
+		--darkreader-bg--color-background-on: 191, 201, 193;
+		--darkreader-text--color-background-on: 191, 201, 193;
+		--darkreader-border--color-background-on: 191, 201, 193;
+
+		--darkreader-bg--color-error: 255, 180, 171;
+		--darkreader-text--color-error: 255, 180, 171;
+		--darkreader-border--color-error: 255, 180, 171;
+		--darkreader-bg--color-error-on: 255, 218, 214;
+		--darkreader-text--color-error-on: 255, 218, 214;
+		--darkreader-border--color-error-on: 255, 218, 214;
+
+		--darkreader-bg--color-error-container: 147, 0, 10;
+		--darkreader-text--color-error-container: 147, 0, 10;
+		--darkreader-border--color-error-container: 147, 0, 10;
+		--darkreader-bg--color-error-container-on: 255, 218, 214;
+		--darkreader-text--color-error-container-on: 255, 218, 214;
+		--darkreader-border--color-error-container-on: 255, 218, 214;
+
+		--darkreader-bg--color-success: 131, 213, 198;
+		--darkreader-text--color-success: 131, 213, 198;
+		--darkreader-border--color-success: 131, 213, 198;
+		--darkreader-bg--color-success-on: 159, 242, 226;
+		--darkreader-text--color-success-on: 159, 242, 226;
+		--darkreader-border--color-success-on: 159, 242, 226;
+
+		--darkreader-bg--color-success-container: 0, 80, 71;
+		--darkreader-text--color-success-container: 0, 80, 71;
+		--darkreader-border--color-success-container: 0, 80, 71;
+		--darkreader-bg--color-success-container-on: 159, 242, 226;
+		--darkreader-text--color-success-container-on: 159, 242, 226;
+		--darkreader-border--color-success-container-on: 159, 242, 226;
 	}
 
-    :root {
-        --color-primary: 141, 213, 178;
-        --color-primary-on: 0, 56, 37;
-        --color-primary-container: 0, 81, 55;
-        --color-primary-container-on: 169, 242, 205;
-        --color-primary-inverse: 33, 106, 77;
-        --color-primary-foreground: 0, 56, 37;
-        --color-secondary: 131, 213, 198;
-        --color-secondary-on: 0, 55, 48;
-        --color-secondary-container: 0, 80, 71;
-        --color-secondary-container-on: 159, 242, 226;
-        --color-tertiary: 254, 176, 211;
-        --color-tertiary-on: 82, 29, 58;
-        --color-tertiary-container: 109, 51, 81;
-        --color-tertiary-container-on: 255, 216, 231;
-        --color-surface: 15, 21, 17;
-        --color-surface-on: 222, 228, 222;
-        --color-surface-variant: 64, 73, 67;
-        --color-surface-variant-on: 191, 201, 193;
-        --color-background: 15, 21, 17;
-        --color-background-on: 222, 228, 222;
-        --color-outline: 138, 147, 140;
-        --color-outline-variant: 64, 73, 67;
-        --color-error: 255, 180, 171;
-        --color-error-on: 105, 0, 5;
-        --color-error-container: 147, 0, 10;
-        --color-error-container-on: 255, 218, 214;
-        --color-success: 131, 213, 198;
-        --color-success-on: 0, 55, 48;
-        --color-success-container: 0, 80, 71;
-        --color-success-container-on: 159, 242, 226;
-    }
+	.dark {
+		--color-primary: 141, 213, 178;
+		--color-primary-on: 0, 56, 37;
+		--color-primary-container: 0, 81, 55;
+		--color-primary-container-on: 169, 242, 205;
+		--color-primary-inverse: 33, 106, 77;
+		--color-primary-foreground: 0, 56, 37;
+		--color-secondary: 131, 213, 198;
+		--color-secondary-on: 0, 55, 48;
+		--color-secondary-container: 0, 80, 71;
+		--color-secondary-container-on: 159, 242, 226;
+		--color-tertiary: 254, 176, 211;
+		--color-tertiary-on: 82, 29, 58;
+		--color-tertiary-container: 109, 51, 81;
+		--color-tertiary-container-on: 255, 216, 231;
+		--color-surface: 15, 21, 17;
+		--color-surface-on: 222, 228, 222;
+		--color-surface-variant: 64, 73, 67;
+		--color-surface-variant-on: 191, 201, 193;
+		--color-background: 15, 21, 17;
+		--color-background-on: 222, 228, 222;
+		--color-outline: 138, 147, 140;
+		--color-outline-variant: 64, 73, 67;
+		--color-error: 255, 180, 171;
+		--color-error-on: 105, 0, 5;
+		--color-error-container: 147, 0, 10;
+		--color-error-container-on: 255, 218, 214;
+		--color-success: 131, 213, 198;
+		--color-success-on: 0, 55, 48;
+		--color-success-container: 0, 80, 71;
+		--color-success-container-on: 159, 242, 226;
+	}
 }
