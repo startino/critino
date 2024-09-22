@@ -21,8 +21,13 @@
 	export let project: Project;
 	export let workflow: Workflow;
 	export let critiques: Critique[];
+	export let agent: string;
 
-	let table = createTable(readable(critiques), {
+	const filteredCritiques: Critique[] = critiques.filter(
+		(critique) => critique.agent_name === agent
+	);
+
+	let table = createTable(readable(filteredCritiques), {
 		page: addPagination({ initialPageSize: 10 }),
 		sort: addSortBy(),
 		filter: addTableFilter({
@@ -33,10 +38,6 @@
 	});
 
 	const columns = table.createColumns([
-		table.column({
-			accessor: 'agent_name',
-			header: 'Agent',
-		}),
 		table.column({
 			accessor: 'query',
 			header: 'Query',
@@ -65,7 +66,7 @@
 					id,
 					project,
 					workflow,
-					critiques,
+					critiques: filteredCritiques,
 				});
 			},
 		}),
@@ -79,7 +80,7 @@
 
 <Card.Root class="mx-auto h-full w-full border-surface-variant/80 bg-primary/5 text-left">
 	<Card.Header class="border-b border-surface-variant/80">
-		<Card.Title>Critiques</Card.Title>
+		<Card.Title>{agent}'s critiques</Card.Title>
 	</Card.Header>
 	<Card.Content class="p-0">
 		{#if table}
