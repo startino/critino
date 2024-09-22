@@ -118,7 +118,7 @@
 								>
 									<TipTap
 										editable={false}
-										class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+										class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 font-medium text-primary dark:brightness-125"
 										bind:content={context.content}
 									/>
 								</div>
@@ -128,7 +128,7 @@
 						<div class="flex justify-end">
 							<TipTap
 								editable={false}
-								class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+								class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 font-medium text-primary dark:brightness-125"
 								bind:content={critique.context}
 							/>
 						</div>
@@ -145,7 +145,7 @@
 							>
 								<TipTap
 									editable={false}
-									class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+									class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 font-medium text-primary dark:brightness-125"
 									bind:content={query.content}
 								/>
 							</div>
@@ -154,7 +154,7 @@
 						<div class="flexml-16 justify-end">
 							<TipTap
 								editable={false}
-								class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+								class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 font-medium text-primary brightness-125"
 								bind:content={critique.query}
 							/>
 						</div>
