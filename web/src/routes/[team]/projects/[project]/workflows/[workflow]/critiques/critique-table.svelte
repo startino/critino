@@ -33,15 +33,12 @@
 
 	const columns = table.createColumns([
 		table.column({
-			accessor: 'created_at',
-			header: 'Date',
-			cell: ({ value }) => {
-				return new Date(value).toLocaleDateString();
-			},
-		}),
-		table.column({
 			accessor: 'agent_name',
 			header: 'Agent',
+		}),
+		table.column({
+			accessor: 'query',
+			header: 'Query',
 		}),
 		table.column({
 			accessor: 'optimal',
@@ -49,7 +46,14 @@
 		}),
 		table.column({
 			accessor: 'response',
-			header: 'Response',
+			header: 'Original Response',
+		}),
+		table.column({
+			accessor: 'created_at',
+			header: 'Date',
+			cell: ({ value }) => {
+				return new Date(value).toLocaleDateString();
+			},
 		}),
 		table.column({
 			accessor: ({ id }) => id,
@@ -106,17 +110,19 @@
 						<Table.Row class="border-surface-variant/80" {...rowAttrs}>
 							{#each row.cells as cell (cell.id)}
 								<Subscribe attrs={cell.attrs()} let:attrs>
-									<Table.Cell class="text-elipsis overflow-hidden" {...attrs}>
-										{#if cell.id === 'response' || cell.id === 'optimal'}
+									{#if cell.id === 'response' || cell.id === 'optimal' || cell.id === 'query'}
+										<Table.Cell class="w-max max-w-[65ch]" {...attrs}>
 											<TipTap
-												class="text-background-on"
+												class="w-max max-w-[65ch] pr-2 text-background-on"
 												editable={false}
 												content={cell.render().toString()}
 											></TipTap>
-										{:else}
+										</Table.Cell>
+									{:else}
+										<Table.Cell class="text-elipsis overflow-hidden" {...attrs}>
 											<Render of={cell.render()} />
-										{/if}
-									</Table.Cell>
+										</Table.Cell>
+									{/if}
 								</Subscribe>
 							{/each}
 						</Table.Row>
