@@ -36,7 +36,8 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 		.from('critiques')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('project_name', project.name);
+		.eq('project_name', project.name)
+		.eq('workflow_name', workflow.name);
 
 	if (!critiques || eCritiques) {
 		const message = `Error fetching critiques: ${eCritiques.message}`;
