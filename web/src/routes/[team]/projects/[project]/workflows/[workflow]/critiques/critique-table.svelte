@@ -39,6 +39,19 @@
 
 	const columns = table.createColumns([
 		table.column({
+			accessor: ({ id }) => id,
+			header: 'actions',
+			cell: ({ value: id }) => {
+				return createRender(CritiqueTableActions, {
+					supabase,
+					id,
+					project,
+					workflow,
+					critiques: filteredCritiques,
+				});
+			},
+		}),
+		table.column({
 			accessor: 'query',
 			header: 'Query',
 		}),
@@ -55,19 +68,6 @@
 			header: 'Date',
 			cell: ({ value }) => {
 				return new Date(value).toLocaleDateString();
-			},
-		}),
-		table.column({
-			accessor: ({ id }) => id,
-			header: 'actions',
-			cell: ({ value: id }) => {
-				return createRender(CritiqueTableActions, {
-					supabase,
-					id,
-					project,
-					workflow,
-					critiques: filteredCritiques,
-				});
 			},
 		}),
 	]);
