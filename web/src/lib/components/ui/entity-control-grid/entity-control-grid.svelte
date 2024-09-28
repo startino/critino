@@ -13,6 +13,7 @@
 	type Entity = {
 		name: string;
 		description: string;
+		[key: string]: any;
 	};
 	export let entities: Entity[];
 
@@ -49,12 +50,14 @@
 							on:click={(event) => {
 								event.stopPropagation();
 								deleteOpen = true;
+								deleteEntity = entity;
 							}}
 							on:keydown={(event) => {
 								if (event.key === 'Enter' || event.key === ' ') {
 									event.preventDefault();
 									event.stopPropagation();
-									dispatch('delete', entity);
+									deleteOpen = true;
+									deleteEntity = entity;
 								}
 							}}
 						>
@@ -94,7 +97,8 @@
 				Delete {deleteEntity!.name}?
 			</Dialog.Title>
 			<Dialog.Description>
-				{deleteEntity!.name} will be deleted and unrecoverable.
+				<strong>{deleteEntity!.name}</strong>
+				will be deleted and unrecoverable.
 			</Dialog.Description>
 		</Dialog.Header>
 		<div class="ml-auto flex gap-2">
@@ -102,6 +106,7 @@
 				variant="destructive"
 				on:click={() => {
 					dispatch('delete', deleteEntity);
+					deleteOpen = false;
 				}}
 			>
 				Delete

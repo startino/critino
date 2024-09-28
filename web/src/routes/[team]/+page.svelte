@@ -3,24 +3,59 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import type { Tables } from '$lib/supabase';
-	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import * as Form from '$lib/components/ui/form';
+	import { superForm, superValidate } from 'sveltekit-superforms';
+	import { zod, zodClient } from 'sveltekit-superforms/adapters';
+	import { toast } from 'svelte-sonner';
+	import { formSchema } from './schema';
 
 	export let data;
 
-	let { team, environments } = data;
+	let { supabase, team, environments } = data;
 
 	let createOpen = false;
-	let deleteEnvironment: string = '';
+
+	const form = superForm(data.form, {
+		validators: zodClient(formSchema),
+		onUpdated: ({ form: f }) => {
+			if (!f.valid) {
+				toast.error('Please fix the errors in the form.');
+			}
+		},
+		onResult: async (event) => {
+			if (event.result.type !== 'success') return;
+
+			environments = [...environments, $formData];
+			createOpen = false;
+
+			toast.success(`Created ${$formData.name}`);
+		},
+	});
+
+	const { form: formData, enhance } = form;
 </script>
 
 <Breadcrumb crumbs={[{ name: team.name }]} />
 
 <EntityControlGrid
-	on:click={async (e) => {}}
+	on:click={({ detail: env }: CustomEvent<Tables<'environments'>>) => {
+		console.log(env.name);
+	}}
 	on:create={async () => {
 		createOpen = true;
 	}}
-	on:delete={async (e) => {}}
+	on:delete={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
+		await supabase
+			.from('environments')
+			.delete()
+			.eq('name', env.name)
+			.eq('team_name', env.team_name);
+
+		environments = environments.filter((e) => e.name !== env.name);
+
+		toast.success(`Deleted ${env.name}`);
+	}}
 	entities={environments}
 />
 
@@ -29,6 +64,24 @@
 	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Creating Environment</Dialog.Title>
+			<Dialog.Description>Creating Environment</Dialog.Description>
 		</Dialog.Header>
+		<form method="POST" class="w-2/3 space-y-6" use:enhance>
+			<Form.Field {form} name="name">
+				<Form.Control let:attrs>
+					<Form.Label>Name</Form.Label>
+					<Input {...attrs} bind:value={$formData.name} />
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Field {form} name="description">
+				<Form.Control let:attrs>
+					<Form.Label>Description</Form.Label>
+					<Input {...attrs} bind:value={$formData.description} />
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+			<Form.Button>Submit</Form.Button>
+		</form>
 	</Dialog.Content>
 </Dialog.Root>
