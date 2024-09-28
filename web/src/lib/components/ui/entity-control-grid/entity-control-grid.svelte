@@ -1,10 +1,8 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
-	import { goto } from '$app/navigation';
 	import { ChevronRight, Plus, X } from 'lucide-svelte';
 	import { TipTap } from '$lib/components/ui/tiptap';
 	import { createEventDispatcher } from 'svelte';
-	import { Button } from '../button';
 
 	const dispatch = createEventDispatcher();
 
