@@ -15,7 +15,7 @@
 		class="grid h-fit w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
 	>
 		{#each entities as entity}
-			<button class="h-full" on:click={() => dispatch(`onclick`, { entity })}>
+			<button class="h-full" on:click={() => dispatch(`click`, entity)}>
 				<Card.Root
 					class="duration-400 group h-full w-full text-left transition-all ease-in-out hover:scale-[102%] hover:shadow-lg"
 				>

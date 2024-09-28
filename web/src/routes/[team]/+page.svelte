@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import { EntityControlGrid } from '$lib/components/ui/entity-control-grid';
 
@@ -9,4 +10,9 @@
 
 <Breadcrumb crumbs={[{ name: team.name }]} />
 
-<EntityControlGrid entities={environments} />
+<EntityControlGrid
+	on:click={async (e) => {
+		await goto(`/${team.name}/${e.detail.name}`);
+	}}
+	entities={environments}
+/>
