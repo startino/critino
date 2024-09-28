@@ -11,7 +11,7 @@
 	let { team, environments } = data;
 </script>
 
-<Breadcrumb crumbs={[{ name: team.name, href: `/${team.name}` }, { name: 'environments' }]} />
+<Breadcrumb crumbs={[{ name: team.name }]} />
 
 <div>
 	<div
