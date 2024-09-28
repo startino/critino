@@ -24,11 +24,16 @@
 					<span class="px-4 text-2xl opacity-30">/</span>
 				{/if}
 				{#if crumb.href}
-					<a class="rounded-lg px-2 pb-0.5 hover:bg-surface-variant/40" href={crumb.href}>
+					<a
+						class="overflow-hidden text-ellipsis rounded-lg px-2 pb-0.5 hover:bg-surface-variant/40"
+						href={crumb.href}
+					>
 						{crumb.name}
 					</a>
 				{:else}
-					<span class="cursor-default rounded-lg px-2 pb-0.5">{crumb.name}</span>
+					<span class="cursor-default overflow-hidden rounded-lg px-2 pb-0.5">
+						{crumb.name}
+					</span>
 				{/if}
 			{/each}
 		</Typography>
