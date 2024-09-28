@@ -7,14 +7,14 @@
 
 	export let data;
 
-	let { team, project, workflows } = data;
+	let { team, environment, workflows } = data;
 </script>
 
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: `/${team.name}` },
-		{ name: 'projects', href: `/${team.name}/projects` },
-		{ name: project.name, href: `/${team.name}/projects/${project.name}` },
+		{ name: 'environments', href: `/${team.name}/environments` },
+		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
 		{ name: 'workflows' },
 	]}
 />

@@ -1,32 +1,29 @@
 <script lang="ts">
-	import { Separator } from '$lib/components/ui/separator';
 	import * as Card from '$lib/components/ui/card';
-	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import { goto } from '$app/navigation';
 	import { ChevronRight, Plus } from 'lucide-svelte';
 	import { TipTap } from '$lib/components/ui/tiptap';
+	import { createEventDispatcher } from 'svelte';
 
-	export let data;
+	const dispatch = createEventDispatcher();
 
-	let { team, environments } = data;
+	export let entities: { name: string; description: string }[];
 </script>
-
-<Breadcrumb crumbs={[{ name: team.name, href: `/${team.name}` }, { name: 'environments' }]} />
 
 <div>
 	<div
 		class="grid h-fit w-full grid-cols-1 items-start justify-center gap-4 p-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
 	>
-		{#each environments as environment}
-			<button class="h-full" on:click={() => goto(`environments/${environment.name}`)}>
+		{#each entities as entity}
+			<button class="h-full" on:click={() => dispatch(`onclick`)}>
 				<Card.Root class="group h-full w-full text-left">
 					<Card.Header class="relative gap-2">
-						<Card.Title>{environment.name}</Card.Title>
+						<Card.Title>{entity.name}</Card.Title>
 						<Card.Description>
 							<TipTap
 								class="text-background-on"
 								editable={false}
-								content={environment.description}
+								content={entity.description}
 							></TipTap>
 						</Card.Description>
 						<ChevronRight

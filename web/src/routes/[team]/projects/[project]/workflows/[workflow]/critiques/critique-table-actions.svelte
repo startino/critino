@@ -4,18 +4,18 @@
 
 	import { Button } from '$lib/components/ui/button';
 	import { Pencil, Trash2 } from 'lucide-svelte';
-	import type { Critique, Database, Project, Workflow } from '$lib/supabase';
+	import type { Critique, Database, Environment, Workflow } from '$lib/supabase';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 
 	type Props = {
 		supabase: SupabaseClient<Database>;
 		id: string;
-		project: Project;
+		environment: Environment;
 		workflow: Workflow;
 		critiques: Critique[];
 	};
 
-	let { supabase, id, project, workflow, critiques }: Props = $props();
+	let { supabase, id, environment, workflow, critiques }: Props = $props();
 
 	const handleDelete = async (id: string) => {
 		const { error: e } = await supabase.from('critiques').delete().eq('id', id);

@@ -3,15 +3,15 @@ import { error, redirect } from '@sveltejs/kit';
 export const load = async ({ params, parent, locals: { supabase } }) => {
 	const { team } = await parent();
 
-	const { data: project, error: eProject } = await supabase
-		.from('projects')
+	const { data: environment, error: eEnvironment } = await supabase
+		.from('environments')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('name', params.project)
+		.eq('name', params.environment)
 		.single();
 
-	if (!project || eProject) {
-		const message = `Error fetching project: ${eProject.message}`;
+	if (!environment || eEnvironment) {
+		const message = `Error fetching environment: ${eEnvironment.message}`;
 		console.error(message);
 		throw error(500, message);
 	}
@@ -20,7 +20,7 @@ export const load = async ({ params, parent, locals: { supabase } }) => {
 		.from('workflows')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('project_name', project.name);
+		.eq('environment_name', environment.name);
 
 	if (!workflows || eWorkflows) {
 		const message = `Error fetching workflows: ${eWorkflows.message}`;
@@ -30,7 +30,7 @@ export const load = async ({ params, parent, locals: { supabase } }) => {
 
 	return {
 		team,
-		project,
+		environment,
 		workflows,
 	};
 };

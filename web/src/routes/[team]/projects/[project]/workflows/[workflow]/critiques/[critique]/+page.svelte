@@ -12,7 +12,7 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 
 	export let data;
-	let { supabase, forms, team, project, workflow, agent, critique } = data;
+	let { supabase, forms, team, environment, workflow, agent, critique } = data;
 
 	const form = superForm(forms.critique, {
 		dataType: 'json',
@@ -21,7 +21,7 @@
 			$formData.id = critique.id;
 			$formData.workflow_name = critique.workflow_name;
 			$formData.agent_name = critique.agent_name;
-			$formData.project_name = critique.project_name;
+			$formData.environment_name = critique.environment_name;
 			$formData.team_name = critique.team_name;
 			$formData.tags = critique.tags;
 			$formData.response = critique.response;
@@ -67,16 +67,16 @@
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: `/${team.name}` },
-		{ name: 'projects', href: `/${team.name}/projects` },
-		{ name: project.name, href: `/${team.name}/projects/${project.name}` },
-		{ name: 'workflows', href: `/${team.name}/projects/${project.name}/workflows` },
+		{ name: 'environments', href: `/${team.name}/environments` },
+		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
+		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
 		{
 			name: workflow.name,
-			href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}`,
+			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}`,
 		},
 		{
 			name: 'critiques',
-			href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}/critiques`,
+			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}/critiques`,
 		},
 		{ name: critique.id },
 	]}

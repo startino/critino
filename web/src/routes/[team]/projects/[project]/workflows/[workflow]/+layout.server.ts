@@ -4,7 +4,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, parent, locals: { user, supabase } }) => {
-	const { team, project } = await parent();
+	const { team, environment } = await parent();
 
 	const { data: workflow, error: eWorkflow } = await supabase
 		.from('workflows')
@@ -23,7 +23,7 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 		.from('agents')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('project_name', project.name)
+		.eq('environment_name', environment.name)
 		.eq('workflow_name', workflow.name);
 
 	if (!agents || eAgents) {
@@ -36,7 +36,7 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 		.from('critiques')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('project_name', project.name)
+		.eq('environment_name', environment.name)
 		.eq('workflow_name', workflow.name);
 
 	if (!critiques || eCritiques) {
@@ -47,7 +47,7 @@ export const load = async ({ params, parent, locals: { user, supabase } }) => {
 
 	return {
 		team,
-		project,
+		environment,
 		workflow,
 		agents,
 		critiques,

@@ -5,18 +5,18 @@
 	import { getURL } from '$lib/utils.js';
 	export let data;
 
-	let { team, project, workflow } = data;
+	let { team, environment, workflow } = data;
 </script>
 
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: `/${team.name}` },
-		{ name: 'projects', href: `/${team.name}/projects` },
-		{ name: project.name, href: `/${team.name}/projects/${project.name}` },
-		{ name: 'workflows', href: `/${team.name}/projects/${project.name}/workflows` },
+		{ name: 'environments', href: `/${team.name}/environments` },
+		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
+		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
 		{
 			name: workflow.name,
-			href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}`,
+			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}`,
 		},
 		{ name: 'endpoints' },
 	]}
@@ -30,7 +30,7 @@
 		If you are not a developer you do not have to worry about this page.
 	</Typography>
 	<Typography align="left" as="p" variant="body-md">
-		{`POST: ${getURL()}${team.name}/${project.name}/${workflow.name}/[agent-name]`}
+		{`POST: ${getURL()}${team.name}/${environment.name}/${workflow.name}/[agent-name]`}
 		<br />
 		body:
 		<br />

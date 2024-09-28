@@ -2,15 +2,15 @@
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	export let data;
 
-	let { team, project, workflow } = data;
+	let { team, environment, workflow } = data;
 </script>
 
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: `/${team.name}` },
-		{ name: 'projects', href: `/${team.name}/projects` },
-		{ name: project.name, href: `/${team.name}/projects/${project.name}` },
-		{ name: 'workflows', href: `/${team.name}/projects/${project.name}/workflows` },
+		{ name: 'environments', href: `/${team.name}/environments` },
+		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
+		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
 		{ name: workflow.name },
 	]}
 />

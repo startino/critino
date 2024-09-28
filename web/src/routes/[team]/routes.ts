@@ -13,9 +13,9 @@ export const primaryRoutes = (team: Team): Route[] => [
 		variant: 'ghost',
 	},
 	{
-		title: 'Projects',
+		title: 'Environments',
 		label: null,
-		href: `/${team.name}/projects`,
+		href: `/${team.name}/environments`,
 		icon: Icons.PanelsTopLeft,
 		variant: 'ghost',
 	},

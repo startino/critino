@@ -9,7 +9,7 @@ export const critiqueSchema = z.object({
 	id: z.string(),
 	agent_name: z.string(),
 	workflow_name: z.string(),
-	project_name: z.string(),
+	environment_name: z.string(),
 	team_name: z.string(),
 	response: z.string(),
 	optimal: z.string(),

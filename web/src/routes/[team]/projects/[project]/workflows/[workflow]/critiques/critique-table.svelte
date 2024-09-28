@@ -12,13 +12,13 @@
 	import * as Table from '$lib/components/ui/table';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import CritiqueTableActions from './critique-table-actions.svelte';
-	import type { Critique, Database, Project, Workflow } from '$lib/supabase';
+	import type { Critique, Database, Environment, Workflow } from '$lib/supabase';
 	import { readable } from 'svelte/store';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { TipTap } from '$lib/components/ui/tiptap';
 
 	export let supabase: SupabaseClient<Database>;
-	export let project: Project;
+	export let environment: Environment;
 	export let workflow: Workflow;
 	export let critiques: Critique[];
 	export let agent: string;
@@ -45,7 +45,7 @@
 				return createRender(CritiqueTableActions, {
 					supabase,
 					id,
-					project,
+					environment,
 					workflow,
 					critiques: filteredCritiques,
 				});

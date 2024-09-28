@@ -6,18 +6,18 @@
 	import { ChevronRight, Plus } from 'lucide-svelte';
 	export let data;
 
-	let { team, project, workflow, agents } = data;
+	let { team, environment, workflow, agents } = data;
 </script>
 
 <Breadcrumb
 	crumbs={[
 		{ name: team.name, href: `/${team.name}` },
-		{ name: 'projects', href: `/${team.name}/projects` },
-		{ name: project.name, href: `/${team.name}/projects/${project.name}` },
-		{ name: 'workflows', href: `/${team.name}/projects/${project.name}/workflows` },
+		{ name: 'environments', href: `/${team.name}/environments` },
+		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
+		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
 		{
 			name: workflow.name,
-			href: `/${team.name}/projects/${project.name}/workflows/${workflow.name}`,
+			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}`,
 		},
 		{ name: 'agents' },
 	]}
@@ -38,7 +38,7 @@
 				</Card.Root>
 			</button>
 		{/each}
-		<button disabled class="h-full opacity-50" on:click={() => goto(`${project.name}`)}>
+		<button disabled class="h-full opacity-50" on:click={() => goto(`${environment.name}`)}>
 			<Card.Root class="group h-full w-full text-left">
 				<Card.Header class="relative">
 					<div class="flex h-full w-full flex-col items-center justify-center">
