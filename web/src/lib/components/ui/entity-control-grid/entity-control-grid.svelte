@@ -3,11 +3,21 @@
 	import { ChevronRight, Plus, X } from 'lucide-svelte';
 	import { TipTap } from '$lib/components/ui/tiptap';
 	import { createEventDispatcher } from 'svelte';
+	import * as Dialog from '../dialog';
+	import { Button } from '../button';
 
 	const dispatch = createEventDispatcher();
 
 	export let name: string = '';
-	export let entities: { name: string; description: string }[];
+
+	type Entity = {
+		name: string;
+		description: string;
+	};
+	export let entities: Entity[];
+
+	let deleteEntity: Entity | null = null;
+	let deleteOpen = false;
 </script>
 
 <div>
@@ -38,13 +48,13 @@
 							class="duration-400 absolute bottom-5 right-5 scale-100 cursor-pointer text-error opacity-60 transition-all ease-in-out hover:scale-150 hover:opacity-100"
 							on:click={(event) => {
 								event.stopPropagation();
-								dispatch('delete');
+								deleteOpen = true;
 							}}
 							on:keydown={(event) => {
 								if (event.key === 'Enter' || event.key === ' ') {
 									event.preventDefault();
 									event.stopPropagation();
-									dispatch('delete');
+									dispatch('delete', entity);
 								}
 							}}
 						>
@@ -75,3 +85,34 @@
 		</button>
 	</div>
 </div>
+
+<Dialog.Root bind:open={deleteOpen}>
+	<Dialog.Trigger />
+	<Dialog.Content>
+		<Dialog.Header class="gap-2 text-destructive">
+			<Dialog.Title>
+				Delete {deleteEntity!.name}?
+			</Dialog.Title>
+			<Dialog.Description>
+				{deleteEntity!.name} will be deleted and unrecoverable.
+			</Dialog.Description>
+		</Dialog.Header>
+		<div class="ml-auto flex gap-2">
+			<Button
+				variant="destructive"
+				on:click={() => {
+					dispatch('delete', deleteEntity);
+				}}
+			>
+				Delete
+			</Button>
+			<Button
+				on:click={() => {
+					deleteOpen = false;
+				}}
+			>
+				Cancel
+			</Button>
+		</div>
+	</Dialog.Content>
+</Dialog.Root>
