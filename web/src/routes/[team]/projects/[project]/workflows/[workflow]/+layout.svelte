@@ -12,7 +12,9 @@
 	<!-- Nav -->
 	<div class="flex h-full w-64 flex-col items-start justify-start">
 		<div class="flex h-14 w-full items-center justify-start px-4">
-			<Typography variant="title-md" class="mb-0 pb-0">Project {project.name}</Typography>
+			<Typography variant="title-md" class="mb-0 w-full overflow-hidden text-ellipsis pb-0">
+				{project.name}
+			</Typography>
 		</div>
 		<Separator class="mt-0 pt-0 opacity-20" />
 
