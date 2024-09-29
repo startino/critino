@@ -8,19 +8,7 @@
 	let { team, environment, workflow } = data;
 </script>
 
-<Breadcrumb
-	crumbs={[
-		{ name: team.name, href: `/${team.name}` },
-		{ name: 'environments', href: `/${team.name}/environments` },
-		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
-		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
-		{
-			name: workflow.name,
-			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}`,
-		},
-		{ name: 'endpoints' },
-	]}
-/>
+<Breadcrumb />
 
 <div class="m-auto flex flex-col items-start justify-center gap-6">
 	<Typography align="left" as="h1" variant="headline-sm">API Endpoints:</Typography>

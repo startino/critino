@@ -64,23 +64,7 @@
 	$: query = xml.tryParseXmlEvent(critique.query);
 </script>
 
-<Breadcrumb
-	crumbs={[
-		{ name: team.name, href: `/${team.name}` },
-		{ name: 'environments', href: `/${team.name}/environments` },
-		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
-		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
-		{
-			name: workflow.name,
-			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}`,
-		},
-		{
-			name: 'critiques',
-			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}/critiques`,
-		},
-		{ name: critique.id },
-	]}
-/>
+<Breadcrumb />
 
 <ScrollArea class="flex h-full w-full">
 	<form

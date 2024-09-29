@@ -8,19 +8,7 @@
 	let { supabase, team, environment, workflow, agents, critiques } = data;
 </script>
 
-<Breadcrumb
-	crumbs={[
-		{ name: team.name, href: `/${team.name}` },
-		{ name: 'environments', href: `/${team.name}/environments` },
-		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
-		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
-		{
-			name: workflow.name,
-			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}`,
-		},
-		{ name: 'critiques' },
-	]}
-/>
+<Breadcrumb />
 
 <div class="flex w-full items-center justify-center p-12">
 	{#if agents.length > 1}
@@ -35,7 +23,13 @@
 			</Tabs.List>
 			{#each agents as agent}
 				<Tabs.Content value={agent.name}>
-					<CritiqueTable agent={agent.name} {supabase} {environment} {workflow} {critiques} />
+					<CritiqueTable
+						agent={agent.name}
+						{supabase}
+						{environment}
+						{workflow}
+						{critiques}
+					/>
 				</Tabs.Content>
 			{/each}
 		</Tabs.Root>

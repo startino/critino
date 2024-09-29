@@ -9,19 +9,7 @@
 	let { team, environment, workflow, agents } = data;
 </script>
 
-<Breadcrumb
-	crumbs={[
-		{ name: team.name, href: `/${team.name}` },
-		{ name: 'environments', href: `/${team.name}/environments` },
-		{ name: environment.name, href: `/${team.name}/environments/${environment.name}` },
-		{ name: 'workflows', href: `/${team.name}/environments/${environment.name}/workflows` },
-		{
-			name: workflow.name,
-			href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}`,
-		},
-		{ name: 'agents' },
-	]}
-/>
+<Breadcrumb />
 
 <div class="flex w-full flex-col items-center justify-start">
 	<div
