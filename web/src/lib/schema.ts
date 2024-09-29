@@ -33,7 +33,6 @@ export const environmentSchema = z.object({
 		.max(50)
 		.regex(/^[^/]*$/, "Name must not contain '/'"),
 	description: z.string().min(0).max(100),
-	full_name: z.string(),
 	parent_name: z.string().nullable(),
 });
 

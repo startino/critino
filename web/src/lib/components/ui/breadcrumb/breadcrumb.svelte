@@ -3,10 +3,26 @@
 	import { type Props } from '.';
 	import { cn } from '$lib/utils';
 	import { Separator } from '../separator';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
 	type $$Props = Props;
 
-	export let crumbs: $$Props['crumbs'];
+	let crumbs: { name: string; href?: string }[] = [];
+
+	onMount(() => {
+		if (browser) {
+			crumbs = generateCrumbs(window.location.pathname);
+		}
+	});
+
+	function generateCrumbs(url: string) {
+		const segments = url.split('/').filter((segment) => segment);
+		return segments.map((segment, index) => {
+			const href = '/' + segments.slice(0, index + 1).join('/');
+			return { name: segment, href };
+		});
+	}
 
 	let className: $$Props['class'] = undefined;
 	export { className as class };

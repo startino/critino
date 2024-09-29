@@ -7,7 +7,7 @@ export const load = async ({ params, parent, locals: { supabase } }) => {
 		.from('environments')
 		.select('*')
 		.eq('team_name', team.name)
-		.eq('name', params.environment)
+		.eq('name', params.env)
 		.single();
 
 	if (!environment || eEnvironment) {

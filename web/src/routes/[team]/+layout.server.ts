@@ -34,5 +34,6 @@ export const load = async ({ params, locals: { supabase } }) => {
 		},
 		team,
 		environments,
+		params,
 	};
 };

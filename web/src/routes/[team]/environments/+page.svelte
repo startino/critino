@@ -9,24 +9,46 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
 	import { environmentSchema } from '$lib/schema';
+	import { goto } from '$app/navigation';
+	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Typography } from '$lib/components/ui/typography/index.js';
 
 	export let data;
 
 	let { supabase, params, team, environments: allEnvironments } = data;
 
-	let environments = allEnvironments.filter((env) => env.name.includes('/'));
+	let environments = allEnvironments.filter((env) => !env.name.includes('/'));
 
 	let createOpen = false;
 
 	const form = superForm(data.form.environment, {
 		validators: zodClient(environmentSchema),
-		onUpdated: ({ form: f }) => {
+		onSubmit: () => {
+			$formData.parent_name = null;
+		},
+		onUpdated: async ({ form: f }) => {
 			if (!f.valid) {
 				toast.error('Please fix the errors in the form.');
 			}
 		},
 		onResult: async (event) => {
 			if (event.result.type !== 'success') return;
+
+			const { error: eEnvironment } = await supabase.from('environments').insert({
+				name: $formData.name,
+				parent_name: $formData.parent_name,
+				team_name: params.team,
+				description: $formData.description,
+			});
+
+			if (eEnvironment) {
+				console.error(
+					`Error creating new environment\nError: ${JSON.stringify(eEnvironment, null, 2)}\nForm: ${JSON.stringify(form, null, 2)}`
+				);
+				toast.error('Error creating new environment');
+				return;
+			}
 
 			environments = [...environments, $formData];
 			createOpen = false;
@@ -35,23 +57,14 @@
 		},
 	});
 
-	$: {
-		$formData.name = $formData.name;
-		$formData.description = $formData.description;
-		$formData.full_name = params.env + '/' + $formData.name;
-		$formData.parent_name = params.env;
-
-		console.log(`form data: ${JSON.stringify($formData, null, 2)}`);
-	}
-
 	const { form: formData, enhance } = form;
 </script>
 
-<Breadcrumb crumbs={[{ name: team.name }]} />
+<Breadcrumb />
 
 <EntityControlGrid
-	on:click={({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		console.log(env.name);
+	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
+		await goto(`environments/${env.name}`);
 	}}
 	on:create={async () => {
 		createOpen = true;
@@ -77,7 +90,7 @@
 			<Dialog.Title>Creating Environment</Dialog.Title>
 			<Dialog.Description>Creating Environment</Dialog.Description>
 		</Dialog.Header>
-		<form action={`/${team.name}`} method="POST" class="w-2/3 space-y-6" use:enhance>
+		<form method="POST" class="w-2/3 space-y-6" use:enhance>
 			<Form.Field {form} name="name">
 				<Form.Control let:attrs>
 					<Form.Label>Name</Form.Label>
