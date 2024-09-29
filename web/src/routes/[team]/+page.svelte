@@ -5,19 +5,26 @@
 	import type { Tables } from '$lib/supabase';
 	import { Input } from '$lib/components/ui/input';
 	import * as Form from '$lib/components/ui/form';
-	import { superForm, superValidate } from 'sveltekit-superforms';
-	import { zod, zodClient } from 'sveltekit-superforms/adapters';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
-	import { formSchema } from './schema';
+	import { environmentSchema } from '$lib/schema';
+	import { goto } from '$app/navigation';
 
 	export let data;
 
-	let { supabase, team, environments } = data;
+	let { supabase, team, environments: allEnvironments } = data;
+
+	let environments = allEnvironments.filter((env) => !env.name.includes('/'));
 
 	let createOpen = false;
 
-	const form = superForm(data.form, {
-		validators: zodClient(formSchema),
+	const form = superForm(data.form.environment, {
+		validators: zodClient(environmentSchema),
+		onSubmit: () => {
+			$formData.full_name = $formData.name;
+			$formData.parent_name = null;
+		},
 		onUpdated: ({ form: f }) => {
 			if (!f.valid) {
 				toast.error('Please fix the errors in the form.');
@@ -39,8 +46,8 @@
 <Breadcrumb crumbs={[{ name: team.name }]} />
 
 <EntityControlGrid
-	on:click={({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		console.log(env.name);
+	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
+		await goto(`/${team.name}/${env.name}`);
 	}}
 	on:create={async () => {
 		createOpen = true;

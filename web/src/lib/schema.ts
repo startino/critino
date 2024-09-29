@@ -25,3 +25,16 @@ export const critiqueSchema = z.object({
 });
 
 export type CritiqueSchema = typeof critiqueSchema;
+
+export const environmentSchema = z.object({
+	name: z
+		.string()
+		.min(2)
+		.max(50)
+		.regex(/^[^/]*$/, "Name must not contain '/'"),
+	description: z.string().min(0).max(100),
+	full_name: z.string(),
+	parent_name: z.string().nullable(),
+});
+
+export type FormSchema = typeof environmentSchema;
