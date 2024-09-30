@@ -90,7 +90,7 @@
 	{#if !authenticated}
 		<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
 			<div
-				class="m-auto flex h-full w-full max-w-3xl flex-col items-center justify-center gap-4 p-16"
+				class="m-auto flex h-full w-full max-w-3xl flex-col items-start justify-start gap-4 p-16"
 			>
 				<Breadcrumb />
 				<Typography variant="title-md" class="mb-0">

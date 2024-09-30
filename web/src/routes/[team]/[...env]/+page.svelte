@@ -70,7 +70,7 @@
 
 	const genKey = () => {
 		key =
-			'sp-critino-' +
+			'sp-critino-env-' +
 			sha256.update(uuidv4().replace('-', '') + uuidv4().replace('-', '')).hex();
 	};
 </script>
@@ -81,7 +81,7 @@
 
 <EntityControlGrid
 	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		await goto(`${env.parent_name.split('/').pop()}/${env.name}`, {
+		await goto(`${env.parent_name!.split('/').pop()}/${env.name}`, {
 			replaceState: true,
 			invalidateAll: true,
 		});
