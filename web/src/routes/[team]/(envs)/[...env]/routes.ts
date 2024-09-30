@@ -22,18 +22,11 @@ export const primaryRoutes = (
 		icon: Icons.Workflow,
 		variant: 'ghost',
 	},
-	// {
-	// 	title: 'Agents',
-	// 	label: agents.length.toString(),
-	// 	href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}/agents`,
-	// 	icon: Icons.Bot,
-	// 	variant: 'ghost',
-	// },
-	// {
-	// 	title: 'Endpoints',
-	// 	label: null,
-	// 	href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}/endpoints`,
-	// 	icon: Icons.Unplug,
-	// 	variant: 'ghost',
-	// },
+	{
+		title: 'Settings',
+		label: null,
+		href: `/${team.name}/${environment.name}/settings`,
+		icon: Icons.Settings,
+		variant: 'ghost',
+	},
 ];

@@ -12,11 +12,9 @@
 
 	export let data;
 
-	$: ({ supabase, team, params, environments: allEnvironments, workflows } = data);
+	$: ({ supabase, team, params, environment, environments: allEnvironments, workflows } = data);
 
 	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
-
-	$: environment = allEnvironments.find((env) => env.name === params.env);
 
 	let authenticated = false;
 
@@ -32,12 +30,15 @@
 		}
 
 		if (
-			sha256.update(localStorage.getItem('key' + environment.name) ?? '').hex() !==
-			environment.key
+			sha256
+				.update(localStorage.getItem('key' + team.name + environment.name) ?? '')
+				.hex() !== environment.key
 		) {
 			authenticated = false;
 			return;
 		}
+
+		authenticated = true;
 	};
 
 	const authenticate = () => {
@@ -50,14 +51,14 @@
 			return;
 		}
 		if (sha256.update(key).hex() !== environment.key) {
-			key = localStorage.getItem('key' + environment.name) ?? '';
+			key = localStorage.getItem('key' + team.name + environment.name) ?? '';
 			if (sha256.update(key).hex() !== environment.key) {
 				toast.error('Invalid key.');
 				return;
 			}
 		}
 
-		localStorage.setItem('key' + environment.name, key!);
+		localStorage.setItem('key' + team.name + environment.name, key!);
 		authenticated = true;
 	};
 
@@ -71,34 +72,16 @@
 </script>
 
 <div class="flex h-full w-full">
-	<!-- Nav -->
-	<div class="flex h-full w-64 flex-col items-start justify-start">
-		<div class="flex h-14 w-full items-center justify-start px-4">
-			<Typography
-				variant="title-md"
-				class="mb-0 w-full overflow-hidden text-ellipsis pb-0 text-left"
-			>
-				{environment.name.split('/').pop()}
-			</Typography>
-		</div>
-		<Separator class="mt-0 pt-0 opacity-20" />
-
-		<Nav routes={primaryRoutes(team, environments, environment, workflows)} />
-	</div>
-
-	<Separator orientation="vertical" class="ml-0 pl-0 opacity-20" />
-	<!-- /Nav -->
-
 	{#if !authenticated}
 		<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
+			<Breadcrumb />
 			<div
 				class="m-auto flex h-full w-full max-w-3xl flex-col items-start justify-start gap-4 p-16"
 			>
-				<Breadcrumb />
 				<Typography variant="title-md" class="mb-0">
 					Please enter the key for this environment
 				</Typography>
-				<Input bind:value={key} placeholder="sp-critino-..." />
+				<Input bind:value={key} placeholder="sp-critino-env-..." />
 				<Button
 					on:click={() => {
 						authenticate();
@@ -109,6 +92,24 @@
 			</div>
 		</div>
 	{:else}
+		<!-- Nav -->
+		<div class="flex h-full w-64 flex-col items-start justify-start">
+			<div class="flex h-14 w-full items-center justify-start px-4">
+				<Typography
+					variant="title-md"
+					class="mb-0 w-full overflow-hidden text-ellipsis pb-0 text-left"
+				>
+					{environment.name.split('/').pop()}
+				</Typography>
+			</div>
+			<Separator class="mt-0 pt-0 opacity-20" />
+
+			<Nav routes={primaryRoutes(team, environments, environment, workflows)} />
+		</div>
+
+		<Separator orientation="vertical" class="ml-0 pl-0 opacity-20" />
+		<!-- /Nav -->
+
 		<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
 			<Breadcrumb />
 			<slot />

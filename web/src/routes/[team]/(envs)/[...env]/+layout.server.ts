@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ params, locals: { supabase } }) => {
+export const load = async ({ parent, params, locals: { supabase } }) => {
 	const { data: workflows, error: eWorkflows } = await supabase
 		.from('workflows')
 		.select('*')
@@ -13,8 +13,10 @@ export const load = async ({ params, locals: { supabase } }) => {
 		console.error(message);
 		throw error(500, message);
 	}
+	const environment = (await parent()).environments.find((env) => env.name === params.env);
 
 	return {
 		workflows,
+		environment,
 	};
 };

@@ -6,7 +6,6 @@
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb/index.js';
-	import { Separator } from '$lib/components/ui/separator';
 
 	export let data;
 
@@ -71,7 +70,7 @@
 			<Typography variant="title-md" class="mb-0">
 				Please enter the key for this team
 			</Typography>
-			<Input bind:value={key} placeholder="sp-critino-..." />
+			<Input bind:value={key} placeholder="sp-critino-team-..." />
 			<Button
 				on:click={() => {
 					authenticate();
