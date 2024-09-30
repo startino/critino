@@ -66,7 +66,9 @@
 </script>
 
 <div class="m-auto flex h-full w-full max-w-3xl flex-col items-start justify-start gap-4 p-16">
-	<Typography align="left" variant="headline-lg">{environment.name}'s settings</Typography>
+	<Typography align="left" variant="headline-lg">
+		{environment.name.split('/').pop()}'s settings
+	</Typography>
 
 	<div class="mr-auto flex gap-2">
 		<Button on:click={genKey}>Generate Access Key</Button>
