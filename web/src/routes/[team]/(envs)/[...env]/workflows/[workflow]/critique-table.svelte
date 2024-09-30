@@ -16,6 +16,8 @@
 	import { readable } from 'svelte/store';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { TipTap } from '$lib/components/ui/tiptap';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import TooltipContent from '$lib/components/ui/tooltip/tooltip-content.svelte';
 
 	export let supabase: SupabaseClient<Database>;
 	export let environment: Environment;
@@ -28,7 +30,7 @@
 	);
 
 	let table = createTable(readable(filteredCritiques), {
-		page: addPagination({ initialPageSize: 10 }),
+		page: addPagination({ initialPageSize: 6 }),
 		sort: addSortBy(),
 		filter: addTableFilter({
 			fn: ({ filterValue, value }) => value.includes(filterValue),
@@ -117,16 +119,30 @@
 					<Table.Body {...$tableBodyAttrs}>
 						{#each $pageRows as row (row.id)}
 							<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-								<Table.Row class="border-surface-variant/80" {...rowAttrs}>
+								<Table.Row class=" border-surface-variant/80" {...rowAttrs}>
 									{#each row.cells as cell (cell.id)}
 										<Subscribe attrs={cell.attrs()} let:attrs>
 											{#if cell.id === 'response' || cell.id === 'optimal' || cell.id === 'query'}
-												<Table.Cell class="w-max max-w-[65ch]" {...attrs}>
-													<TipTap
-														class="w-max max-w-[65ch] pr-2 text-background-on"
-														editable={false}
-														content={cell.render().toString()}
-													></TipTap>
+												<Table.Cell
+													class="max-h-[10ch] w-max max-w-[65ch] overflow-hidden text-ellipsis"
+													{...attrs}
+												>
+													<Tooltip.Root>
+														<Tooltip.Trigger>
+															<TipTap
+																class="max-h-[12ch] w-max max-w-[65ch] overflow-hidden text-ellipsis text-left text-background-on"
+																editable={false}
+																content={cell.render().toString()}
+															></TipTap>
+														</Tooltip.Trigger>
+														<Tooltip.Content>
+															<TipTap
+																class="w-max max-w-prose text-left text-background-on"
+																editable={false}
+																content={cell.render().toString()}
+															></TipTap>
+														</Tooltip.Content>
+													</Tooltip.Root>
 												</Table.Cell>
 											{:else}
 												<Table.Cell

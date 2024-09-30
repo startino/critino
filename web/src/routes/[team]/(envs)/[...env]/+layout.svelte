@@ -155,7 +155,7 @@
 		<Separator orientation="vertical" class="ml-0 pl-0 opacity-20" />
 		<!-- /Nav -->
 
-		<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
+		<div class="relative flex max-h-screen w-full flex-col overflow-x-hidden text-nowrap">
 			<Breadcrumb />
 			<slot />
 		</div>

@@ -13,7 +13,7 @@
 	<Sidepanel {supabase} {team} {teams} {environments} />
 	<Separator orientation="vertical" class="ml-0 pl-0 opacity-20 " />
 
-	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
+	<div class="relative flex w-full flex-col">
 		<slot />
 	</div>
 </main>

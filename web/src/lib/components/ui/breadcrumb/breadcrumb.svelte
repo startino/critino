@@ -29,8 +29,10 @@
 	export { className as class };
 </script>
 
-<div class="absolute left-0 right-0 top-0 h-14 w-full flex-col items-center justify-center px-4">
-	<div class="flex h-full w-full items-center justify-start">
+<div
+	class="absolute left-0 right-0 top-0 h-14 w-full max-w-full flex-col items-center justify-center bg-background px-4"
+>
+	<div class="flex h-full w-full max-w-full items-center justify-start">
 		<Typography
 			as="h1"
 			variant="body-lg"

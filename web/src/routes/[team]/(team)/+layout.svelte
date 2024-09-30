@@ -60,7 +60,7 @@
 </script>
 
 {#if !authenticated}
-	<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
+	<div class="relative flex w-full flex-col overflow-hidden">
 		<Breadcrumb />
 		<div
 			class="m-auto flex h-full w-full max-w-3xl flex-col items-start justify-start gap-4 p-16"
