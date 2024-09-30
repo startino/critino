@@ -83,7 +83,8 @@
 			</Typography>
 		</div>
 		<Typography align="left" class="w-full text-wrap text-destructive">
-			Save this key, it is required to access everything in your environment.
+			You can now authenticate using the team key and for this environment individually using
+			the environment key.
 		</Typography>
 	{/if}
 </div>
