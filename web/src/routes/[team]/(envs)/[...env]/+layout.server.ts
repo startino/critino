@@ -15,6 +15,10 @@ export const load = async ({ parent, params, locals: { supabase } }) => {
 	}
 	const environment = (await parent()).environments.find((env) => env.name === params.env);
 
+	if (!environment) {
+		throw error(404, 'Environment not found');
+	}
+
 	return {
 		workflows,
 		environment,

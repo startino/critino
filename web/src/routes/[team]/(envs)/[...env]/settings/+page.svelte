@@ -47,7 +47,7 @@
 
 		if (eenvironment) {
 			console.error(
-				`Error deleting environment key\nError: ${JSON.stringify(eenvironment, null, 2)}`
+				`Error deleting environment key\nError: ${JSON.stringify(environment, null, 2)}`
 			);
 			toast.error('Error deleting environment key');
 			return;
