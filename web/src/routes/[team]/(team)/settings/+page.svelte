@@ -36,12 +36,6 @@
 	};
 
 	const deleteKey = async () => {
-		const storedKey = localStorage.getItem('key' + team.name);
-		if (!storedKey) {
-			toast.error('No key found to delete');
-			return;
-		}
-
 		const { error: eTeam } = await supabase
 			.from('teams')
 			.update({
@@ -54,10 +48,12 @@
 			toast.error('Error deleting team key');
 			return;
 		}
-
-		localStorage.removeItem('key' + team.name);
 		key = null;
 		toast.success('Key deleted successfully');
+
+		if (localStorage.getItem('key' + team.name)) {
+			localStorage.removeItem('key' + team.name);
+		}
 	};
 
 	onMount(() => {

@@ -23,40 +23,42 @@
 	let key = '';
 
 	const persistentAuth = () => {
-		if (environment) {
-			if (environment.key) {
-				if (
-					sha256.update(localStorage.getItem('key' + environment.name) ?? '').hex() !==
-					environment.key
-				) {
-					authenticated = false;
-					return;
-				}
-				authenticated = true;
-			} else {
-				authenticated = true;
-			}
+		if (!environment) {
+			return;
+		}
+		if (!environment.key) {
+			authenticated = true;
+			return;
+		}
+
+		if (
+			sha256.update(localStorage.getItem('key' + environment.name) ?? '').hex() !==
+			environment.key
+		) {
+			authenticated = false;
+			return;
 		}
 	};
 
 	const authenticate = () => {
 		authenticated = false;
-		if (environment) {
-			if (environment.key) {
-				if (sha256.update(key).hex() !== environment.key) {
-					key = localStorage.getItem('key' + environment.name) ?? '';
-					if (sha256.update(key).hex() !== environment.key) {
-						toast.error('Invalid key.');
-						return;
-					}
-				}
-
-				localStorage.setItem('key' + environment.name, key!);
-				authenticated = true;
-			} else {
-				authenticated = true;
+		if (!environment) {
+			return;
+		}
+		if (!environment.key) {
+			authenticated = true;
+			return;
+		}
+		if (sha256.update(key).hex() !== environment.key) {
+			key = localStorage.getItem('key' + environment.name) ?? '';
+			if (sha256.update(key).hex() !== environment.key) {
+				toast.error('Invalid key.');
+				return;
 			}
 		}
+
+		localStorage.setItem('key' + environment.name, key!);
+		authenticated = true;
 	};
 
 	onMount(() => {

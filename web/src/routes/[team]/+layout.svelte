@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Breadcrumb } from '$lib/components/ui/breadcrumb/index.js';
 	import { Separator } from '$lib/components/ui/separator';
 	import Sidepanel from './sidepanel.svelte';
 
 	export let data;
 
-	const { user, supabase, team, teams, environments } = data;
+	$: ({ supabase, team, teams, environments: allEnvironments } = data);
+
+	$: environments = allEnvironments.filter((env) => !env.name.includes('/'));
 </script>
 
 <main class="flex h-screen w-screen items-stretch bg-background text-background-on">
