@@ -47,7 +47,6 @@
 		if (sha256.update(envKey).hex() !== environment.key) {
 			envKey = localStorage.getItem('key' + team.name + environment.name) ?? '';
 			if (sha256.update(envKey).hex() !== environment.key) {
-				toast.error('Invalid key.');
 				return false;
 			}
 		}
@@ -83,7 +82,6 @@
 		if (sha256.update(teamKey).hex() !== team.key) {
 			teamKey = localStorage.getItem('key' + team.name) ?? '';
 			if (sha256.update(teamKey).hex() !== team.key) {
-				toast.error('Invalid key.');
 				return false;
 			}
 		}
@@ -124,7 +122,13 @@
 				<Input bind:value={envKey} placeholder="sp-critino-env-..." />
 				<Button
 					on:click={() => {
-						authenticateEnv();
+						authenticated = authenticateTeam();
+						if (!authenticated) {
+							authenticated = authenticateEnv();
+						}
+						if (!authenticated) {
+							toast.error('Invalid team and env key');
+						}
 					}}
 				>
 					Enter
