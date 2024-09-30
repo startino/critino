@@ -31,7 +31,7 @@
 					class="duration-400 group h-full w-full text-left transition-all ease-in-out hover:scale-[102%] hover:shadow-lg"
 				>
 					<Card.Header class="relative min-h-28 gap-2 space-y-0">
-						<Card.Title class="w-full overflow-hidden text-ellipsis pr-6">
+						<Card.Title class="w-full overflow-hidden text-ellipsis pb-1 pr-6">
 							{entity.name}
 						</Card.Title>
 						<Card.Description>
