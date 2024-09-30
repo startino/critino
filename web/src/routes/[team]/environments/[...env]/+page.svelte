@@ -76,8 +76,6 @@
 	};
 </script>
 
-<Breadcrumb />
-
 <div class="m-5 flex w-full flex-col items-start">
 	<Button
 		on:click={async () => {
