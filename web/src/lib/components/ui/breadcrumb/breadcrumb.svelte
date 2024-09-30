@@ -33,6 +33,7 @@
 		<Typography
 			as="h1"
 			variant="body-lg"
+			overflow="ellipsis"
 			class={cn('flex items-center justify-center', className)}
 		>
 			{#each crumbs as crumb, index (crumb)}
