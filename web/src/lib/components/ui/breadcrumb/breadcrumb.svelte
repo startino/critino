@@ -8,7 +8,7 @@
 
 	type $$Props = Props;
 
-	let crumbs: { name: string; href?: string }[] = [];
+	let crumbs: { name: string; href: string | null }[] = [];
 
 	onMount(() => {
 		if (browser) {
@@ -16,13 +16,14 @@
 		}
 	});
 
-	function generateCrumbs(url: string) {
+	const generateCrumbs = (url: string): { name: string; href: string | null }[] => {
 		const segments = url.split('/').filter((segment) => segment);
 		return segments.map((segment, index) => {
-			const href = '/' + segments.slice(0, index + 1).join('/');
+			const href =
+				index === segments.length - 1 ? null : '/' + segments.slice(0, index + 1).join('/');
 			return { name: segment, href };
 		});
-	}
+	};
 
 	let className: $$Props['class'] = undefined;
 	export { className as class };
