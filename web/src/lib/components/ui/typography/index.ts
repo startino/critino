@@ -19,26 +19,25 @@ const typographyVariants = tv({
 			'body-md': 'text-base font-light leading-relaxed',
 			'body-sm': 'text-sm font-light leading-normal',
 		},
-		align: {
-			center: 'text-center',
-			left: 'text-left',
-			right: 'text-right',
+		overflow: {
+			ellipsis: 'overflow-hidden text-ellipsis whitespace-nowrap',
+			wrap: 'text-wrap',
 		},
 	},
 	defaultVariants: {
 		variant: 'body-md',
-		align: 'center',
+		overflow: 'wrap',
 	},
 });
 
 type As = string;
 type Variant = VariantProps<typeof typographyVariants>['variant'];
-type Align = VariantProps<typeof typographyVariants>['align'];
+type Overflow = VariantProps<typeof typographyVariants>['overflow'];
 
 type Props = {
 	as?: As;
 	variant?: Variant;
-	align?: Align;
+	overflow?: Overflow;
 	class?: HTMLParamAttributes['class'];
 };
 

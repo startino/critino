@@ -66,8 +66,12 @@
 </script>
 
 <div class="m-auto flex h-full w-full max-w-3xl flex-col items-start justify-start gap-4 p-16">
-	<Typography align="left" variant="headline-lg">
+	<Typography class="text-left" variant="headline-lg">
 		{environment.name.split('/').pop()}'s settings
+	</Typography>
+	<Typography class="text-left" variant="title-sm">
+		You only need to generate a key here if you want to give access to this environment without
+		giving access to the whole team.
 	</Typography>
 
 	<div class="mr-auto flex gap-2">
@@ -82,9 +86,9 @@
 				{key}
 			</Typography>
 		</div>
-		<Typography align="left" class="w-full text-wrap text-destructive">
-			You can now authenticate using the team key and for this environment individually using
-			the environment key.
+		<Typography class="w-full text-left">
+			You can now authenticate for this environment individually using the generated key
+			above.
 		</Typography>
 	{/if}
 </div>

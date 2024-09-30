@@ -64,7 +64,7 @@
 <Breadcrumb />
 
 <div class="m-auto flex h-full w-full max-w-3xl flex-col items-start justify-start gap-4 p-16">
-	<Typography align="left" variant="headline-lg">{team.name}'s settings</Typography>
+	<Typography class="text-left" variant="headline-lg">{team.name}'s settings</Typography>
 
 	<div class="mr-auto flex gap-2">
 		<Button on:click={genKey}>Generate Access Key</Button>
@@ -78,7 +78,7 @@
 				{key}
 			</Typography>
 		</div>
-		<Typography align="left" class="w-full text-wrap text-destructive">
+		<Typography class="w-full text-left text-destructive">
 			Save this key, it is required to access your team's administrative settings along with
 			creating new root environments.
 		</Typography>

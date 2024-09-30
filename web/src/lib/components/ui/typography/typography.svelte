@@ -6,11 +6,11 @@
 
 	export let as: $$Props['as'] = 'p';
 	export let variant: $$Props['variant'] = 'body-md';
-	export let align: $$Props['align'] = 'center';
+	export let overflow: $$Props['overflow'] = 'wrap';
 	let className: $$Props['class'] = undefined;
 	export { className as class };
 </script>
 
-<svelte:element this={as} class={cn(typographyVariants({ className, variant, align }))}>
+<svelte:element this={as} class={cn(typographyVariants({ className, variant, overflow }))}>
 	<slot />
 </svelte:element>

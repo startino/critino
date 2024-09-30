@@ -147,14 +147,13 @@
 
 				<hr class="my-8 border-primary/50" />
 
-				<Typography variant="title-md" align="left" class="mr-auto text-primary">
+				<Typography variant="title-md" class="mr-auto text-left text-primary">
 					Agent's Response
 				</Typography>
 
 				<Typography
 					variant="title-sm"
-					align="left"
-					class="min-w-none mr-auto pb-2 text-primary/70"
+					class="min-w-none mr-auto pb-2 text-left text-primary/70"
 				>
 					This is the response that you're critiqueing.
 				</Typography>
@@ -166,10 +165,10 @@
 					></TipTap>
 				</div>
 
-				<Typography variant="title-md" align="left" class="mr-auto pt-4 text-secondary">
+				<Typography variant="title-md" class="mr-auto pt-4 text-left text-secondary">
 					Optimal Response
 				</Typography>
-				<Typography variant="title-sm" align="left" class="mr-auto pb-2 text-secondary/70">
+				<Typography variant="title-sm" class="mr-auto pb-2 text-left text-secondary/70">
 					This is the optimal response, what the response should've been.
 					<br />
 					(can be the same if the agents answer was good)

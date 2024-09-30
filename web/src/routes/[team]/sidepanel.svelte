@@ -39,16 +39,14 @@
 
 	<div class="relative grid h-8">
 		<Typography
-			align="left"
 			variant="body-lg"
-			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2"
+			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2 text-left"
 		>
 			T
 		</Typography>
 		<Typography
-			align="left"
 			variant="body-lg"
-			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2 opacity-0 transition-all duration-200 ease-in-out group-hover:opacity-100"
+			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2 text-left opacity-0 transition-all duration-200 ease-in-out group-hover:opacity-100"
 		>
 			Team Management
 		</Typography>
@@ -61,16 +59,14 @@
 
 	<div class="relative grid h-8">
 		<Typography
-			align="left"
 			variant="body-lg"
-			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2"
+			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2 text-left"
 		>
 			P
 		</Typography>
 		<Typography
-			align="left"
 			variant="body-lg"
-			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2 opacity-0 transition-all duration-200 ease-in-out group-hover:opacity-100"
+			class="absolute bottom-0 left-0 right-0 top-0 h-full px-[1.45rem] py-2 text-left opacity-0 transition-all duration-200 ease-in-out group-hover:opacity-100"
 		>
 			Profile Management
 		</Typography>

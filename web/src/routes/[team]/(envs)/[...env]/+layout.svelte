@@ -137,6 +137,7 @@
 			<div class="flex h-14 w-full items-center justify-start px-4">
 				<Typography
 					variant="title-md"
+					overflow="ellipsis"
 					class="mb-0 w-full overflow-hidden text-ellipsis pb-0 text-left"
 				>
 					{environment.name.split('/').pop()}

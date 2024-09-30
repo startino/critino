@@ -74,7 +74,7 @@
 
 <Breadcrumb />
 
-<Typography class="p-4" align="left" variant="headline-lg">{team.name}'s environments</Typography>
+<Typography class="p-4 text-left" variant="headline-lg">{team.name}'s environments</Typography>
 
 <EntityControlGrid
 	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {

@@ -75,7 +75,7 @@
 	};
 </script>
 
-<Typography class="p-4" align="left" variant="headline-lg">
+<Typography class="p-4 text-left" variant="headline-lg">
 	{params.env?.toString().split('/').pop()}'s environments
 </Typography>
 
