@@ -20,14 +20,20 @@
 	let key = '';
 
 	const persistentAuth = () => {
-		if (
-			sha256.update(localStorage.getItem('key' + environment.name) ?? '').hex() !==
-			environment.key
-		) {
-			authenticated = false;
-			return;
+		if (environment) {
+			if (environment.key) {
+				if (
+					sha256.update(localStorage.getItem('key' + environment.name) ?? '').hex() !==
+					environment.key
+				) {
+					authenticated = false;
+					return;
+				}
+				authenticated = true;
+			} else {
+				authenticated = true;
+			}
 		}
-		authenticated = true;
 	};
 
 	const authenticate = () => {
