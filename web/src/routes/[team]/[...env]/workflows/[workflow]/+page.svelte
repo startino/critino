@@ -1,14 +1,11 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs';
 	import CritiqueTable from './critique-table.svelte';
-	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import { Typography } from '$lib/components/ui/typography';
 	export let data;
 
-	let { supabase, team, environment, workflow, agents, critiques } = data;
+	$: ({ supabase, team, environment, workflow, agents, critiques } = data);
 </script>
-
-<Breadcrumb />
 
 <div class="flex w-full items-center justify-center p-12">
 	{#if agents.length > 1}

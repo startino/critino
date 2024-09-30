@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { EntityControlGrid } from '$lib/components/ui/entity-control-grid';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import type { Tables } from '$lib/supabase';
 	import { Input } from '$lib/components/ui/input';
 	import * as Form from '$lib/components/ui/form';
@@ -10,23 +9,24 @@
 	import { toast } from 'svelte-sonner';
 	import { environmentSchema } from '$lib/schema';
 	import { goto } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
 	import { Typography } from '$lib/components/ui/typography';
 	import { v4 as uuidv4 } from 'uuid';
 	import { sha256 } from 'js-sha256';
+	import { Button } from '$lib/components/ui/button';
+	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 
 	export let data;
 
 	$: ({ supabase, team, params, environments: allEnvironments } = data);
 
-	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
+	$: environments = allEnvironments.filter((env) => !env.name.includes('/'));
 
 	$: createOpen = false;
 
 	const form = superForm(data.form.environment, {
 		validators: zodClient(environmentSchema),
 		onSubmit: () => {
-			$formData.parent_name = params.env;
+			$formData.parent_name = null;
 		},
 		onUpdated: async ({ form: f }) => {
 			if (!f.valid) {
@@ -39,7 +39,7 @@
 			const encryptedKey = key ? sha256.update(key).hex() : null;
 
 			const { error: eEnvironment } = await supabase.from('environments').insert({
-				name: $formData.parent_name + '/' + $formData.name,
+				name: $formData.name,
 				parent_name: $formData.parent_name,
 				team_name: params.team,
 				description: $formData.description,
@@ -54,11 +54,7 @@
 				return;
 			}
 
-			environments = [
-				...environments,
-				{ ...$formData, name: $formData.parent_name + '/' + $formData.name },
-			];
-
+			environments = [...environments, $formData];
 			createOpen = false;
 
 			toast.success(`Created ${$formData.name}`);
@@ -71,35 +67,21 @@
 
 	const genKey = () => {
 		key =
-			'sp-critino-' +
+			'sp-critino-env-' +
 			sha256.update(uuidv4().replace('-', '') + uuidv4().replace('-', '')).hex();
 	};
 </script>
 
-<div class="m-5 flex w-full flex-col items-start">
-	<Button
-		on:click={async () => {
-			await goto(`${params.env.split('/').pop()}/workflows`, {
-				replaceState: true,
-				invalidateAll: true,
-			});
-		}}
-		size="lg"
-	>
-		Workflows
-	</Button>
+<Breadcrumb />
 
-	<Typography as="h1" variant="headline-lg" class="pt-5">Environments</Typography>
-</div>
+<Typography class="p-4" align="left" variant="headline-lg">{team.name}'s environments</Typography>
 
 <EntityControlGrid
 	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		await goto(`${env.parent_name.split('/').pop()}/${env.name}`, {
-			replaceState: true,
-			invalidateAll: true,
-		});
+		await goto(`${team.name}/${env.name}`, { replaceState: true, invalidateAll: true });
 	}}
 	on:create={async () => {
+		key = null;
 		createOpen = true;
 	}}
 	on:delete={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
@@ -113,7 +95,7 @@
 
 		toast.success(`Deleted ${env.name}`);
 	}}
-	entities={environments.map((env) => ({ ...env, name: env.name.split('/').pop() }))}
+	entities={environments}
 />
 
 <Dialog.Root bind:open={createOpen}>
@@ -122,12 +104,7 @@
 		<Dialog.Header>
 			<Dialog.Title>Creating Environment</Dialog.Title>
 		</Dialog.Header>
-		<form
-			action={`/${team.name}/environments`}
-			method="POST"
-			class="flex flex-col gap-6"
-			use:enhance
-		>
+		<form method="POST" class="flex flex-col gap-6" use:enhance>
 			<Form.Field {form} name="name">
 				<Form.Control let:attrs>
 					<Form.Label>Name</Form.Label>

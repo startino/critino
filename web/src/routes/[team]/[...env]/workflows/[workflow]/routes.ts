@@ -12,7 +12,7 @@ export const primaryRoutes = (
 	{
 		title: 'Critiques',
 		label: critiques.length.toString(),
-		href: `/${team.name}/environments/${environment.name}/workflows/${workflow.name}/critiques`,
+		href: `/${team.name}/${environment.name}/workflows/${workflow.name}/critiques`,
 		icon: Icons.ListTodo,
 		variant: 'ghost',
 	},

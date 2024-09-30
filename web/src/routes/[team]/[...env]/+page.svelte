@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { EntityControlGrid } from '$lib/components/ui/entity-control-grid';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import type { Tables } from '$lib/supabase';
 	import { Input } from '$lib/components/ui/input';
 	import * as Form from '$lib/components/ui/form';
@@ -10,23 +9,23 @@
 	import { toast } from 'svelte-sonner';
 	import { environmentSchema } from '$lib/schema';
 	import { goto } from '$app/navigation';
-	import { Typography } from '$lib/components/ui/typography/index.js';
+	import { Button } from '$lib/components/ui/button';
+	import { Typography } from '$lib/components/ui/typography';
 	import { v4 as uuidv4 } from 'uuid';
 	import { sha256 } from 'js-sha256';
-	import { Button } from '$lib/components/ui/button';
 
 	export let data;
 
-	$: ({ supabase, params, environments: allEnvironments } = data);
+	$: ({ supabase, team, params, environments: allEnvironments } = data);
 
-	$: environments = allEnvironments.filter((env) => !env.name.includes('/'));
+	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
 
 	$: createOpen = false;
 
 	const form = superForm(data.form.environment, {
 		validators: zodClient(environmentSchema),
 		onSubmit: () => {
-			$formData.parent_name = null;
+			$formData.parent_name = params.env;
 		},
 		onUpdated: async ({ form: f }) => {
 			if (!f.valid) {
@@ -39,7 +38,7 @@
 			const encryptedKey = key ? sha256.update(key).hex() : null;
 
 			const { error: eEnvironment } = await supabase.from('environments').insert({
-				name: $formData.name,
+				name: $formData.parent_name + '/' + $formData.name,
 				parent_name: $formData.parent_name,
 				team_name: params.team,
 				description: $formData.description,
@@ -54,7 +53,11 @@
 				return;
 			}
 
-			environments = [...environments, $formData];
+			environments = [
+				...environments,
+				{ ...$formData, name: $formData.parent_name + '/' + $formData.name },
+			];
+
 			createOpen = false;
 
 			toast.success(`Created ${$formData.name}`);
@@ -72,14 +75,18 @@
 	};
 </script>
 
-<Breadcrumb />
+<Typography class="p-4" align="left" variant="headline-lg">
+	{params.env?.toString().split('/').pop()}'s environments
+</Typography>
 
 <EntityControlGrid
 	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		await goto(`environments/${env.name}`, { replaceState: true, invalidateAll: true });
+		await goto(`${env.parent_name.split('/').pop()}/${env.name}`, {
+			replaceState: true,
+			invalidateAll: true,
+		});
 	}}
 	on:create={async () => {
-		key = null;
 		createOpen = true;
 	}}
 	on:delete={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
@@ -93,7 +100,7 @@
 
 		toast.success(`Deleted ${env.name}`);
 	}}
-	entities={environments}
+	entities={environments.map((env) => ({ ...env, name: env.name.split('/').pop() }))}
 />
 
 <Dialog.Root bind:open={createOpen}>
@@ -102,7 +109,12 @@
 		<Dialog.Header>
 			<Dialog.Title>Creating Environment</Dialog.Title>
 		</Dialog.Header>
-		<form method="POST" class="flex flex-col gap-6" use:enhance>
+		<form
+			action={`/${team.name}/environments`}
+			method="POST"
+			class="flex flex-col gap-6"
+			use:enhance
+		>
 			<Form.Field {form} name="name">
 				<Form.Control let:attrs>
 					<Form.Label>Name</Form.Label>

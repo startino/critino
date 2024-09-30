@@ -12,8 +12,11 @@
 
 	export let data;
 
-	$: ({ team, params, environments, workflows } = data);
-	$: environment = environments.find((env) => env.name === params.env);
+	$: ({ supabase, team, params, environments: allEnvironments, workflows } = data);
+
+	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
+
+	$: environment = allEnvironments.find((env) => env.name === params.env);
 
 	let authenticated = false;
 
@@ -78,18 +81,18 @@
 		</div>
 		<Separator class="mt-0 pt-0 opacity-20" />
 
-		<Nav routes={primaryRoutes(team, environment, workflows)} />
+		<Nav routes={primaryRoutes(team, environments, environment, workflows)} />
 	</div>
-	<!-- /Nav -->
 
 	<Separator orientation="vertical" class="ml-0 pl-0 opacity-20" />
+	<!-- /Nav -->
 
 	{#if !authenticated}
 		<div class="relative flex w-full flex-col overflow-hidden text-nowrap">
-			<Breadcrumb />
 			<div
 				class="m-auto flex h-full w-full max-w-3xl flex-col items-center justify-center gap-4 p-16"
 			>
+				<Breadcrumb />
 				<Typography variant="title-md" class="mb-0">
 					Please enter the key for this environment
 				</Typography>

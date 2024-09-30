@@ -1,27 +1,19 @@
 import * as Icons from 'lucide-svelte';
-import type { Icon } from 'lucide-svelte';
-import type { ComponentType } from 'svelte';
 import type { Route } from '$lib/types/routes';
 import type { Team } from '$lib/supabase';
+import type { Tables } from '$lib/supabase';
 
-export const primaryRoutes = (team: Team): Route[] => [
-	{
-		title: 'Home',
-		label: null,
-		href: `/${team.name}`,
-		icon: Icons.House,
-		variant: 'ghost',
-	},
+export const primaryRoutes = (team: Team, environments: Tables<'environments'>[]): Route[] => [
 	{
 		title: 'Environments',
-		label: null,
-		href: `/${team.name}/environments`,
-		icon: Icons.PanelsTopLeft,
+		label: environments.length.toString(),
+		href: `/${team.name}`,
+		icon: Icons.Orbit,
 		variant: 'ghost',
 	},
 ];
 
-export const teamRoutes: Route[] = [
+export const teamRoutes = (team: Team): Route[] => [
 	{
 		title: 'Team',
 		label: null,
@@ -39,7 +31,7 @@ export const teamRoutes: Route[] = [
 	{
 		title: 'Settings',
 		label: null,
-		href: '',
+		href: `/${team.name}/settings`,
 		icon: Icons.Settings,
 		variant: 'ghost',
 	},

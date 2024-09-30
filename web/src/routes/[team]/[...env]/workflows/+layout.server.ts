@@ -29,6 +29,7 @@ export const load = async ({ params, parent, locals: { supabase } }) => {
 	}
 
 	return {
+		params,
 		team,
 		environment,
 		workflows,

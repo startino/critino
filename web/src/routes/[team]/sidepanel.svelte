@@ -6,10 +6,12 @@
 	import type { Database, Team } from '$lib/supabase';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import TeamSwitcher from './team-switcher.svelte';
+	import type { Tables } from '$lib/supabase';
 
 	export let supabase: SupabaseClient<Database>;
 	export let team: Team;
 	export let teams: Team[];
+	export let environments: Tables<'environments'>[];
 
 	let isCollapsed = true;
 </script>
@@ -29,7 +31,7 @@
 
 	<Separator class="mt-14 opacity-20" />
 
-	<Nav routes={primaryRoutes(team)} />
+	<Nav routes={primaryRoutes(team, environments)} />
 
 	<Separator
 		class="ml-2 min-w-10 max-w-10 pt-0 opacity-40 transition-all duration-200 ease-in-out group-hover:min-w-48 group-hover:max-w-48"
@@ -51,7 +53,7 @@
 			Team Management
 		</Typography>
 	</div>
-	<Nav routes={teamRoutes} />
+	<Nav routes={teamRoutes(team)} />
 
 	<Separator
 		class="ml-2 min-w-10 max-w-10 pt-0 opacity-20 transition-all duration-200 ease-in-out group-hover:min-w-48 group-hover:max-w-48"
