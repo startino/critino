@@ -9,7 +9,7 @@
 	let { routes }: Props = $props();
 </script>
 
-<div class="flex w-full flex-col gap-4 py-2 text-primary">
+<div class="flex w-full flex-col gap-4 overflow-hidden py-2 text-primary">
 	<nav class="grid gap-1 px-2">
 		{#if routes}
 			{#each routes as route}

@@ -32,6 +32,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^2.7.2
         version: 2.7.2
+      aes-ts:
+        specifier: 0.0.0-alpha.0
+        version: 0.0.0-alpha.0
       better-sqlite3:
         specifier: ^11.3.0
         version: 11.3.0
@@ -50,6 +53,9 @@ importers:
       formsnap:
         specifier: ^1.0.1
         version: 1.0.1(svelte@5.0.0-next.158)(sveltekit-superforms@2.19.0(@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.158)(vite@5.4.7(@types/node@22.5.5)(terser@5.33.0)))(svelte@5.0.0-next.158)(vite@5.4.7(@types/node@22.5.5)(terser@5.33.0)))(@types/json-schema@7.0.15)(svelte@5.0.0-next.158))
+      js-sha256:
+        specifier: ^0.11.0
+        version: 0.11.0
       langchain:
         specifier: ^0.3.2
         version: 0.3.2(@langchain/core@0.3.3(openai@4.63.0(zod@3.23.8)))(openai@4.63.0(zod@3.23.8))
@@ -80,6 +86,9 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.5.5)(typescript@5.6.2)
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
       xml2js:
         specifier: ^0.6.2
         version: 0.6.2
@@ -1773,6 +1782,9 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  aes-ts@0.0.0-alpha.0:
+    resolution: {integrity: sha512-0jNHgzxCXZETQsYMfzxmJ3plJfkX4kVzVJPNNqYNAONCRSxhucEJNe/XMOC+ozLJdZykWaRMrcv2hczmjytpUQ==}
+
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
@@ -2774,6 +2786,9 @@ packages:
   js-levenshtein@1.1.6:
     resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
     engines: {node: '>=0.10.0'}
+
+  js-sha256@0.11.0:
+    resolution: {integrity: sha512-6xNlKayMZvds9h1Y1VWc0fQHQ82BxTXizWPEtEeGvmOUYpBRy4gbWroHLpzowe6xiQhHpelCQiE7HEdznyBL9Q==}
 
   js-tiktoken@1.0.14:
     resolution: {integrity: sha512-Pk3l3WOgM9joguZY2k52+jH82RtABRgB5RdGFZNUGbOKGMVlNmafcPA3b0ITcCZPu1L9UclP1tne6aw7ZI4Myg==}
@@ -6103,6 +6118,8 @@ snapshots:
 
   acorn@8.12.1: {}
 
+  aes-ts@0.0.0-alpha.0: {}
+
   agent-base@6.0.2:
     dependencies:
       debug: 4.3.7(supports-color@9.4.0)
@@ -7207,6 +7224,8 @@ snapshots:
     optional: true
 
   js-levenshtein@1.1.6: {}
+
+  js-sha256@0.11.0: {}
 
   js-tiktoken@1.0.14:
     dependencies:

@@ -12,16 +12,16 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Typography } from '$lib/components/ui/typography';
+	import { v4 as uuidv4 } from 'uuid';
+	import { sha256 } from 'js-sha256';
 
 	export let data;
 
-	let { supabase, team } = data;
+	$: ({ supabase, team, params, environments: allEnvironments } = data);
 
-	$: params = data.params;
-	$: allEnvironments = data.environments;
 	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
 
-	let createOpen = false;
+	$: createOpen = false;
 
 	const form = superForm(data.form.environment, {
 		validators: zodClient(environmentSchema),
@@ -36,11 +36,14 @@
 		onResult: async (event) => {
 			if (event.result.type !== 'success') return;
 
+			const encryptedKey = key ? sha256.update(key).hex() : null;
+
 			const { error: eEnvironment } = await supabase.from('environments').insert({
 				name: $formData.parent_name + '/' + $formData.name,
 				parent_name: $formData.parent_name,
 				team_name: params.team,
 				description: $formData.description,
+				key: encryptedKey,
 			});
 
 			if (eEnvironment) {
@@ -63,6 +66,14 @@
 	});
 
 	const { form: formData, enhance } = form;
+
+	let key: string | null = null;
+
+	const genKey = () => {
+		key =
+			'sp-critino-' +
+			sha256.update(uuidv4().replace('-', '') + uuidv4().replace('-', '')).hex();
+	};
 </script>
 
 <Breadcrumb />
@@ -70,7 +81,10 @@
 <div class="m-5 flex w-full flex-col items-start">
 	<Button
 		on:click={async () => {
-			await goto(`${params.env.split('/').pop()}/workflows`);
+			await goto(`${params.env.split('/').pop()}/workflows`, {
+				replaceState: true,
+				invalidateAll: true,
+			});
 		}}
 		size="lg"
 	>
@@ -82,7 +96,10 @@
 
 <EntityControlGrid
 	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		await goto(`${env.parent_name.split('/').pop()}/${env.name}`);
+		await goto(`${env.parent_name.split('/').pop()}/${env.name}`, {
+			replaceState: true,
+			invalidateAll: true,
+		});
 	}}
 	on:create={async () => {
 		createOpen = true;
@@ -103,15 +120,14 @@
 
 <Dialog.Root bind:open={createOpen}>
 	<Dialog.Trigger />
-	<Dialog.Content>
+	<Dialog.Content class="max-w-2xl">
 		<Dialog.Header>
 			<Dialog.Title>Creating Environment</Dialog.Title>
-			<Dialog.Description>Creating Environment</Dialog.Description>
 		</Dialog.Header>
 		<form
 			action={`/${team.name}/environments`}
 			method="POST"
-			class="w-2/3 space-y-6"
+			class="flex flex-col gap-6"
 			use:enhance
 		>
 			<Form.Field {form} name="name">
@@ -128,6 +144,21 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
+			<div class="flex w-full flex-col gap-2">
+				<Button class="mr-auto" on:click={genKey}>Generate Access Key</Button>
+
+				{#if key}
+					<div class="flex items-center justify-start gap-1">
+						<Typography variant="title-sm">Key:</Typography>
+						<Typography variant="body-sm" class="pt-1 text-left">
+							{key}
+						</Typography>
+					</div>
+					<Typography class="text-left text-destructive">
+						Save this access key.
+					</Typography>
+				{/if}
+			</div>
 			<Form.Button>Submit</Form.Button>
 		</form>
 	</Dialog.Content>

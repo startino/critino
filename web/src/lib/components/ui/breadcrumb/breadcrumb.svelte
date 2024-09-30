@@ -44,7 +44,7 @@
 						class="overflow-hidden text-ellipsis rounded-lg px-2 pb-0.5 hover:bg-surface-variant/40"
 						href={crumb.href}
 					>
-						{crumb.name}
+						{decodeURIComponent(crumb.name)}
 					</a>
 				{:else}
 					<span class="cursor-default overflow-hidden rounded-lg px-2 pb-0.5">

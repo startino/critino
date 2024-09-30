@@ -61,12 +61,14 @@
 		"@tiptap/extension-hard-break": "^2.7.2",
 		"@tiptap/pm": "^2.7.2",
 		"@tiptap/starter-kit": "^2.7.2",
+		"aes-ts": "0.0.0-alpha.0",
 		"better-sqlite3": "^11.3.0",
 		"bits-ui": "^0.21.15",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"echarts": "^5.5.1",
 		"formsnap": "^1.0.1",
+		"js-sha256": "^0.11.0",
 		"langchain": "^0.3.2",
 		"lucide-svelte": "^0.445.0",
 		"mdsvex": "^0.12.3",
@@ -77,6 +79,7 @@
 		"tailwind-merge": "^2.5.2",
 		"tailwind-variants": "^0.2.1",
 		"ts-node": "^10.9.2",
+		"uuid": "^10.0.0",
 		"xml2js": "^0.6.2",
 		"zod": "^3.23.8"
 	}
