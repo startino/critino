@@ -11,53 +11,51 @@
 
 	$: ({ team } = data);
 
-	let authenticated = false;
+	let teamKey = '';
 
-	let key = '';
-
-	const persistentAuth = () => {
+	const persistentAuthTeam = () => {
 		if (!team) {
-			return;
+			return false;
 		}
 		if (!team.key) {
-			authenticated = true;
-			return;
+			return true;
 		}
 
 		if (sha256.update(localStorage.getItem('key' + team.name) ?? '').hex() !== team.key) {
-			authenticated = false;
-			return;
+			return false;
 		}
-		authenticated = true;
+		return true;
 	};
 
-	const authenticate = () => {
-		authenticated = false;
+	const authenticateTeam = () => {
 		if (!team) {
-			return;
+			return false;
 		}
 		if (!team.key) {
-			authenticated = true;
-			return;
+			return true;
 		}
-		if (sha256.update(key).hex() !== team.key) {
-			key = localStorage.getItem('key' + team.name) ?? '';
-			if (sha256.update(key).hex() !== team.key) {
+
+		if (sha256.update(teamKey).hex() !== team.key) {
+			teamKey = localStorage.getItem('key' + team.name) ?? '';
+			if (sha256.update(teamKey).hex() !== team.key) {
 				toast.error('Invalid key.');
-				return;
+				return false;
 			}
 		}
 
-		localStorage.setItem('key' + team.name, key!);
-		authenticated = true;
+		localStorage.setItem('key' + team.name, teamKey!);
+		return true;
 	};
 
+	let authenticated = false;
 	onMount(() => {
-		persistentAuth();
+		authenticated = false;
+		authenticated = persistentAuthTeam();
 	});
 
 	afterUpdate(() => {
-		persistentAuth();
+		authenticated = false;
+		authenticated = persistentAuthTeam();
 	});
 </script>
 
@@ -70,10 +68,10 @@
 			<Typography variant="title-md" class="mb-0">
 				Please enter the key for this team
 			</Typography>
-			<Input bind:value={key} placeholder="sp-critino-team-..." />
+			<Input bind:value={teamKey} placeholder="sp-critino-team-..." />
 			<Button
 				on:click={() => {
-					authenticate();
+					authenticated = authenticateTeam();
 				}}
 			>
 				Enter
