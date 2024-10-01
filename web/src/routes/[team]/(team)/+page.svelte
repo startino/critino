@@ -104,7 +104,7 @@
 		<Dialog.Header>
 			<Dialog.Title>Creating Environment</Dialog.Title>
 		</Dialog.Header>
-		<form method="POST" class="flex flex-col gap-6" use:enhance>
+		<form action={`/${team.name}`} method="POST" class="flex flex-col gap-6" use:enhance>
 			<Form.Field {form} name="name">
 				<Form.Control let:attrs>
 					<Form.Label>Name</Form.Label>
