@@ -3,11 +3,11 @@ import logging
 from functools import wraps
 import os
 from typing import Annotated
-from pydantic import BaseModel, AfterValidator
+from pydantic import BaseModel, AfterValidator, Field
 from src.interfaces import db
 from supabase import PostgrestAPIError
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from src.lib import auth, keys, validators as vd
 
 from src.lib.few_shot import (
@@ -66,7 +66,6 @@ def get_critique_ids() -> list[str]:
 class GetCritiquesParams(BaseModel):
     team_name: str
     environment_name: str
-    key: Annotated[str, AfterValidator(vd.str_empty)]
     workflow_name: str | None = None
     agent_name: str | None = None
     query: str | None = None
@@ -81,7 +80,8 @@ class GetCritiquesResult(BaseModel):
 @router.get("")
 @ahandle_error
 async def list_critiques(
-    params: GetCritiquesParams = Depends(),
+    x_critino_key: Annotated[str, Header()],
+    params: Annotated[GetCritiquesParams, Depends(GetCritiquesParams)],
 ) -> GetCritiquesResult:
 
     if (params.agent_name is not None) and (params.workflow_name is None):
@@ -101,7 +101,7 @@ async def list_critiques(
     supabase = db.client()
 
     auth.authenticate_team_or_environment(
-        supabase, params.team_name, params.environment_name, params.key
+        supabase, params.team_name, params.environment_name, x_critino_key
     )
 
     request = (
@@ -146,12 +146,11 @@ async def list_critiques(
     return GetCritiquesResult(data=relevant_critiques, count=len(relevant_critiques))
 
 
-class PostCritiquesParams(BaseModel):
+class PostCritiquesQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
     environment_name: Annotated[str, AfterValidator(vd.str_empty)]
     workflow_name: Annotated[str, AfterValidator(vd.str_empty)]
     agent_name: Annotated[str, AfterValidator(vd.str_empty)]
-    key: Annotated[str, AfterValidator(vd.str_empty)]
 
 
 class PostCritiquesBody(BaseModel):
@@ -169,12 +168,15 @@ class PostCritiquesResponse(BaseModel):
 @router.post("/{id}")
 @ahandle_error
 async def upsert(
-    id: str, body: PostCritiquesBody, params: PostCritiquesParams = Depends()
+    id: str,
+    body: PostCritiquesBody,
+    query: Annotated[PostCritiquesQuery, Depends(PostCritiquesQuery)],
+    x_critino_key: Annotated[str, Header()],
 ) -> PostCritiquesResponse:
     supabase = db.client()
 
     auth.authenticate_team_or_environment(
-        supabase, params.team_name, params.environment_name, params.key
+        supabase, query.team_name, query.environment_name, x_critino_key
     )
 
     try:
@@ -182,9 +184,9 @@ async def upsert(
             supabase.table("workflows")
             .upsert(
                 {
-                    "team_name": params.team_name,
-                    "environment_name": params.environment_name,
-                    "name": params.workflow_name,
+                    "team_name": query.team_name,
+                    "environment_name": query.environment_name,
+                    "name": query.workflow_name,
                 }
             )
             .execute()
@@ -194,10 +196,10 @@ async def upsert(
             supabase.table("agents")
             .upsert(
                 {
-                    "team_name": params.team_name,
-                    "environment_name": params.environment_name,
-                    "workflow_name": params.workflow_name,
-                    "name": params.agent_name,
+                    "team_name": query.team_name,
+                    "environment_name": query.environment_name,
+                    "workflow_name": query.workflow_name,
+                    "name": query.agent_name,
                 }
             )
             .execute()
@@ -206,10 +208,10 @@ async def upsert(
             supabase.table("critiques")
             .upsert(
                 {
-                    "team_name": params.team_name,
-                    "environment_name": params.environment_name,
-                    "workflow_name": params.workflow_name,
-                    "agent_name": params.agent_name,
+                    "team_name": query.team_name,
+                    "environment_name": query.environment_name,
+                    "workflow_name": query.workflow_name,
+                    "agent_name": query.agent_name,
                     "id": id,
                     **body.model_dump(),
                 }
@@ -225,6 +227,6 @@ async def upsert(
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return PostCritiquesResponse(
-        url=f"{PUBLIC_SITE_URL}/{params.team_name}/environments/{params.environment_name}/workflows/{params.workflow_name}/critiques/{id}",
+        url=f"{PUBLIC_SITE_URL}/{query.team_name}/environments/{query.environment_name}/workflows/{query.workflow_name}/critiques/{id}",
         data=critique,
     )
