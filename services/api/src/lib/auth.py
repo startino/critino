@@ -30,22 +30,22 @@ def authenticate_team_or_environment(
     supabase: SyncClient, team_name: str, environment_name: str, key: str
 ):
     try:
-        team = (
+        team_key = (
             supabase.table("teams")
             .select("key")
             .eq("name", team_name)
             .single()
             .execute()
-        )
+        ).data["key"]
 
-        environment = (
+        environment_key = (
             supabase.table("environments")
             .select("key")
             .eq("team_name", team_name)
             .eq("name", environment_name)
             .single()
             .execute()
-        )
+        ).data["key"]
     except PostgrestAPIError as e:
         logging.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
@@ -53,7 +53,5 @@ def authenticate_team_or_environment(
         logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
-    if team.data["key"] != keys.encrypt_key(key) and environment.data[
-        "key"
-    ] != keys.encrypt_key(key):
+    if team_key != keys.encrypt_key(key) and environment_key != keys.encrypt_key(key):
         raise HTTPException(status_code=401, detail="Unauthorized. Invalid key.")

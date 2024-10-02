@@ -3,7 +3,6 @@ import logging
 from functools import wraps
 import os
 from typing import Annotated
-from typing_extensions import TypedDict
 from pydantic import BaseModel, AfterValidator
 from src.interfaces import db
 from supabase import PostgrestAPIError
@@ -12,7 +11,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from src.lib import auth, keys, validators as vd
 
 from src.lib.few_shot import (
-    format_example_string,
     find_relevant_critiques,
     StrippedCritique,
 )
@@ -163,11 +161,16 @@ class PostCritiquesBody(BaseModel):
     response: str | None = None
 
 
+class PostCritiquesResponse(BaseModel):
+    url: str
+    data: dict
+
+
 @router.post("/{id}")
 @ahandle_error
 async def upsert(
     id: str, body: PostCritiquesBody, params: PostCritiquesParams = Depends()
-) -> str:
+) -> PostCritiquesResponse:
     supabase = db.client()
 
     auth.authenticate_team_or_environment(
@@ -199,16 +202,21 @@ async def upsert(
             )
             .execute()
         )
-        supabase.table("critiques").upsert(
-            {
-                "team_name": params.team_name,
-                "environment_name": params.environment_name,
-                "workflow_name": params.workflow_name,
-                "agent_name": params.agent_name,
-                "id": id,
-                **body.model_dump(),
-            }
-        ).execute()
+        critique = (
+            supabase.table("critiques")
+            .upsert(
+                {
+                    "team_name": params.team_name,
+                    "environment_name": params.environment_name,
+                    "workflow_name": params.workflow_name,
+                    "agent_name": params.agent_name,
+                    "id": id,
+                    **body.model_dump(),
+                }
+            )
+            .execute()
+            .data[0]
+        )
     except PostgrestAPIError as e:
         logging.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
@@ -216,4 +224,7 @@ async def upsert(
         logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
-    return f"{PUBLIC_SITE_URL}/{params.team_name}/environments/{params.environment_name}/workflows/{params.workflow_name}/critiques/{id}"
+    return PostCritiquesResponse(
+        url=f"{PUBLIC_SITE_URL}/{params.team_name}/environments/{params.environment_name}/workflows/{params.workflow_name}/critiques/{id}",
+        data=critique,
+    )

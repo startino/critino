@@ -86,7 +86,7 @@ async def create_environment(
         encrypted = key_response.encrypted
 
     try:
-        response = (
+        environment = (
             supabase.table("environments")
             .insert(
                 {
@@ -98,6 +98,7 @@ async def create_environment(
                 }
             )
             .execute()
+            .data[0]
         )
     except PostgrestAPIError as e:
         logging.error(f"PostgrestAPIError: {e}")
@@ -108,7 +109,7 @@ async def create_environment(
 
     return PostEnvironmentsResponse(
         key=key,
-        data=response.data[0],
+        data=environment,
     )
 
 
