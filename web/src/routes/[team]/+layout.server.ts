@@ -1,4 +1,4 @@
-import { environmentSchema, workflowSchema } from '$lib/schema';
+import { critiqueSchema, environmentSchema, workflowSchema } from '$lib/schema';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -30,6 +30,7 @@ export const load = async ({ params, locals: { supabase } }) => {
 
 	return {
 		form: {
+			critique: await superValidate(zod(critiqueSchema)),
 			environment: await superValidate(zod(environmentSchema)),
 			workflow: await superValidate(zod(workflowSchema)),
 		},

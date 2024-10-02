@@ -36,7 +36,7 @@
 	<Button
 		variant="ghost"
 		class="aspect-1 p-1 text-primary hover:bg-transparent hover:text-primary-container-on"
-		on:click={() => goto(`critiques/${id}`)}
+		on:click={() => goto(`${workflow.name}/${id}`)}
 	>
 		<Pencil></Pencil>
 	</Button>

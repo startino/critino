@@ -28,15 +28,10 @@ export const load = async ({ params, parent, locals: { supabase } }) => {
 		throw error(500, message);
 	}
 
-	const forms = {
-		critique: await superValidate(zod(critiqueSchema)),
-	};
-
 	return {
 		team,
 		environment,
 		agent,
 		critique,
-		forms,
 	};
 };

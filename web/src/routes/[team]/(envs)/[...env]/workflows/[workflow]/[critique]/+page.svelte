@@ -12,9 +12,9 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 
 	export let data;
-	let { supabase, forms, team, environment, workflow, agent, critique } = data;
+	$: ({ supabase, agent, critique } = data);
 
-	const form = superForm(forms.critique, {
+	const form = superForm(data.form.critique, {
 		dataType: 'json',
 		validators: zodClient(critiqueSchema),
 		async onSubmit() {
@@ -64,22 +64,20 @@
 	$: query = xml.tryParseXmlEvent(critique.query);
 </script>
 
-<Breadcrumb />
+<form
+	class="absolute bottom-0 left-0 right-0 top-0 mx-auto flex max-h-full max-w-3xl flex-col items-center justify-center gap-6 p-6"
+	method="POST"
+	action="?/send"
+	use:enhance
+>
+	<div class="flex flex-col items-center justify-center gap-1 text-primary">
+		<Typography as="h1" variant="display-sm">Editing Critique</Typography>
+		<Typography class="opacity-70" variant="title-md">
+			You are critizing the {agent.name}.
+		</Typography>
+	</div>
 
-<ScrollArea class="flex h-full w-full">
-	<form
-		class="mx-auto flex h-screen max-w-prose flex-col items-center justify-center gap-8"
-		method="POST"
-		action="?/send"
-		use:enhance
-	>
-		<div class="flex flex-col items-center justify-center gap-1 text-primary">
-			<Typography as="h1" variant="display-sm">Editing Critique</Typography>
-			<Typography class="opacity-70" variant="title-md">
-				You are critizing the {agent.name}.
-			</Typography>
-		</div>
-
+	<ScrollArea>
 		<Card.Root
 			class="mx-auto h-max w-full border-surface-variant/80 bg-primary-container/5 text-left"
 		>
@@ -182,7 +180,6 @@
 				</div>
 			</Card.Content>
 		</Card.Root>
-
-		<Form.Button type="submit" class="w-full">Save</Form.Button>
-	</form>
-</ScrollArea>
+	</ScrollArea>
+	<Form.Button type="submit" class="w-full">Save</Form.Button>
+</form>
