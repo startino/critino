@@ -36,4 +36,15 @@ export const environmentSchema = z.object({
 	parent_name: z.string().nullable(),
 });
 
-export type FormSchema = typeof environmentSchema;
+export type EnvironmentSchema = typeof environmentSchema;
+
+export const workflowSchema = z.object({
+	name: z
+		.string()
+		.min(2)
+		.max(50)
+		.regex(/^[^/]*$/, "Name must not contain '/'"),
+	description: z.string().min(0).max(100),
+});
+
+export type WorkflowSchema = typeof workflowSchema;
