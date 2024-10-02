@@ -55,7 +55,14 @@
 
 			environments = [
 				...environments,
-				{ ...$formData, name: $formData.parent_name + '/' + $formData.name },
+				{
+					name: $formData.parent_name + '/' + $formData.name,
+					parent_name: $formData.parent_name,
+					team_name: params.team,
+					description: $formData.description,
+					key: encryptedKey,
+					created_at: new Date().toISOString(),
+				},
 			];
 
 			createOpen = false;

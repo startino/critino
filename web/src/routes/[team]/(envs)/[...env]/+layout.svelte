@@ -16,8 +16,6 @@
 
 	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
 
-	let envKey = '';
-
 	const persistentAuthEnv = () => {
 		if (!environment) {
 			return false;
@@ -37,25 +35,23 @@
 		return true;
 	};
 
-	const authenticateEnv = () => {
+	const authenticateEnv = (key: string) => {
 		if (!environment) {
 			return false;
 		}
 		if (!environment.key) {
 			return false;
 		}
-		if (sha256.update(envKey).hex() !== environment.key) {
-			envKey = localStorage.getItem('key' + team.name + environment.name) ?? '';
-			if (sha256.update(envKey).hex() !== environment.key) {
+		if (sha256.update(key).hex() !== environment.key) {
+			key = localStorage.getItem('key' + team.name + environment.name) ?? '';
+			if (sha256.update(key).hex() !== environment.key) {
 				return false;
 			}
 		}
 
-		localStorage.setItem('key' + team.name + environment.name, envKey!);
+		localStorage.setItem('key' + team.name + environment.name, key);
 		return true;
 	};
-
-	let teamKey = '';
 
 	const persistentAuthTeam = () => {
 		if (!team) {
@@ -71,7 +67,7 @@
 		return true;
 	};
 
-	const authenticateTeam = () => {
+	const authenticateTeam = (key: string) => {
 		if (!team) {
 			return false;
 		}
@@ -79,14 +75,14 @@
 			return true;
 		}
 
-		if (sha256.update(teamKey).hex() !== team.key) {
-			teamKey = localStorage.getItem('key' + team.name) ?? '';
-			if (sha256.update(teamKey).hex() !== team.key) {
+		if (sha256.update(key).hex() !== team.key) {
+			key = localStorage.getItem('key' + team.name) ?? '';
+			if (sha256.update(key).hex() !== team.key) {
 				return false;
 			}
 		}
 
-		localStorage.setItem('key' + team.name, teamKey!);
+		localStorage.setItem('key' + team.name, key);
 		return true;
 	};
 
@@ -107,6 +103,8 @@
 			authenticated = persistentAuthEnv();
 		}
 	});
+
+	let newKey = '';
 </script>
 
 <div class="flex h-full w-full">
@@ -119,12 +117,12 @@
 				<Typography variant="title-md" class="mb-0">
 					Please enter the key for this environment
 				</Typography>
-				<Input bind:value={envKey} placeholder="sp-critino-env-..." />
+				<Input bind:value={newKey} placeholder="sp-critino-env-..." />
 				<Button
 					on:click={() => {
-						authenticated = authenticateTeam();
+						authenticated = authenticateTeam(newKey);
 						if (!authenticated) {
-							authenticated = authenticateEnv();
+							authenticated = authenticateEnv(newKey);
 						}
 						if (!authenticated) {
 							toast.error('Invalid team and env key');
