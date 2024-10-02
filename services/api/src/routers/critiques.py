@@ -227,6 +227,6 @@ async def upsert(
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return PostCritiquesResponse(
-        url=f"{PUBLIC_SITE_URL}/{query.team_name}/environments/{query.environment_name}/workflows/{query.workflow_name}/critiques/{id}",
+        url=f"{PUBLIC_SITE_URL}/{query.team_name}/{query.environment_name}/workflows/{query.workflow_name}/{id}",
         data=critique,
     )
