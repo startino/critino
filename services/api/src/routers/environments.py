@@ -52,7 +52,7 @@ def ahandle_error(func):
     return wrapper
 
 
-class PostEnvironmentsParams(BaseModel):
+class PostEnvironmentsQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
     parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
 
@@ -72,7 +72,7 @@ class PostEnvironmentsResponse(BaseModel):
 async def create_environment(
     name: str,
     body: PostEnvironmentsBody,
-    query: Annotated[PostEnvironmentsParams, Depends(PostEnvironmentsParams)],
+    query: Annotated[PostEnvironmentsQuery, Depends(PostEnvironmentsQuery)],
     x_critino_key: Annotated[str, Header()],
 ) -> PostEnvironmentsResponse:
     supabase = db.client()
