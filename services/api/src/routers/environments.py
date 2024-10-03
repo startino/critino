@@ -52,6 +52,48 @@ def ahandle_error(func):
     return wrapper
 
 
+class GetEnvironmentsQuery(BaseModel):
+    team_name: Annotated[str, AfterValidator(vd.str_empty)]
+    parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
+
+
+class GetEnvironmentsResponse(BaseModel):
+    data: list
+    count: int
+
+
+@router.get("")
+@ahandle_error
+async def list_environments(
+    query: Annotated[GetEnvironmentsQuery, Depends(GetEnvironmentsQuery)],
+    x_critino_key: Annotated[str, Header()],
+) -> GetEnvironmentsResponse:
+    supabase = db.client()
+
+    auth.authenticate_team(supabase, query.team_name, x_critino_key)
+
+    try:
+        environments = (
+            supabase.table("environments")
+            .select("*")
+            .eq("team_name", query.team_name)
+            .eq("parent_name", query.parent_name)
+            .execute()
+            .data
+        )
+    except PostgrestAPIError as e:
+        logging.error(f"PostgrestAPIError: {e}")
+        raise HTTPException(status_code=500, detail={**e.json()})
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail={**e.__dict__})
+
+    return GetEnvironmentsResponse(
+        data=environments,
+        count=len(environments),
+    )
+
+
 class PostEnvironmentsQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
     parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
@@ -110,6 +152,46 @@ async def create_environment(
 
     return PostEnvironmentsResponse(
         key=key,
+        data=environment,
+    )
+
+
+class GetEnvironmentQuery(BaseModel):
+    team_name: Annotated[str, AfterValidator(vd.str_empty)]
+
+
+class GetEnvironmentResponse(BaseModel):
+    data: dict
+
+
+@router.get("/{name}")
+@ahandle_error
+async def read_environment(
+    name: str,
+    query: Annotated[GetEnvironmentQuery, Depends(GetEnvironmentQuery)],
+    x_critino_key: Annotated[str, Header()],
+) -> GetEnvironmentResponse:
+    supabase = db.client()
+
+    auth.authenticate_team(supabase, query.team_name, x_critino_key)
+
+    try:
+        environment = (
+            supabase.table("environments")
+            .select("*")
+            .eq("name", name)
+            .single()
+            .execute()
+            .data
+        )
+    except PostgrestAPIError as e:
+        logging.error(f"PostgrestAPIError: {e}")
+        raise HTTPException(status_code=500, detail={**e.json()})
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail={**e.__dict__})
+
+    return GetEnvironmentResponse(
         data=environment,
     )
 
