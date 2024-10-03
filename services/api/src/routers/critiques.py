@@ -83,6 +83,7 @@ async def list_critiques(
     x_critino_key: Annotated[str, Header()],
     params: Annotated[GetCritiquesParams, Depends(GetCritiquesParams)],
 ) -> GetCritiquesResult:
+    logging.info(f"list_critiques: x_critino_key: {x_critino_key} - params: {params}")
 
     if (params.agent_name is not None) and (params.workflow_name is None):
         raise HTTPException(

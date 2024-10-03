@@ -9,6 +9,7 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { environmentSchema } from '$lib/schema.js';
 	import { toast } from 'svelte-sonner';
+	import { sluggify } from '$lib/utils.js';
 
 	export let data;
 
@@ -42,7 +43,7 @@
 
 <EntityControlGrid
 	on:click={async ({ detail: workflow }: CustomEvent<Tables<'environments'>>) => {
-		await goto(`workflows/${workflow.name}`, {
+		await goto(sluggify(`workflows/${workflow.name}`), {
 			replaceState: true,
 			invalidateAll: true,
 		});

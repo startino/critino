@@ -13,6 +13,7 @@
 	import { Typography } from '$lib/components/ui/typography';
 	import { v4 as uuidv4 } from 'uuid';
 	import { sha256 } from 'js-sha256';
+	import { sluggify } from '$lib/utils';
 
 	export let data;
 
@@ -88,7 +89,7 @@
 
 <EntityControlGrid
 	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		await goto(`${env.parent_name!.split('/').pop()}/${env.name}`, {
+		await goto(sluggify(`${env.parent_name!.split('/').pop()}/${env.name}`), {
 			replaceState: true,
 			invalidateAll: true,
 		});

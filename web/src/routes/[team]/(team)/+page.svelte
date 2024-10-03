@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { sluggify } from '$lib/utils';
 	import { EntityControlGrid } from '$lib/components/ui/entity-control-grid';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import type { Tables } from '$lib/supabase';
@@ -78,7 +79,10 @@
 
 <EntityControlGrid
 	on:click={async ({ detail: env }: CustomEvent<Tables<'environments'>>) => {
-		await goto(`${team.name}/${env.name}`, { replaceState: true, invalidateAll: true });
+		await goto(sluggify(`${team.name}/${env.name}`), {
+			replaceState: true,
+			invalidateAll: true,
+		});
 	}}
 	on:create={async () => {
 		key = null;

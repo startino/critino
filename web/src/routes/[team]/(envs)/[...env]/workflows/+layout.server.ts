@@ -1,19 +1,15 @@
+import { sluggify } from '$lib/utils.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ params, parent, locals: { supabase } }) => {
 	const { team } = await parent();
 
-	const { data: environment, error: eEnvironment } = await supabase
-		.from('environments')
-		.select('*')
-		.eq('team_name', team.name)
-		.eq('name', params.env)
-		.single();
+	const environment = (await parent()).environments.find(
+		(env) => sluggify(env.name) === sluggify(params.env)
+	);
 
-	if (!environment || eEnvironment) {
-		const message = `Error fetching environment: ${eEnvironment.message}`;
-		console.error(message);
-		throw error(500, message);
+	if (!environment) {
+		throw error(404, `Environment not found: ${params.env}`);
 	}
 
 	const { data: workflows, error: eWorkflows } = await supabase

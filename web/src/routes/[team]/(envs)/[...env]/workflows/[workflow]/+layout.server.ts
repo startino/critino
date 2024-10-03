@@ -1,22 +1,15 @@
-import { critiqueSchema } from '$lib/schema.js';
+import { sluggify } from '$lib/utils.js';
 import { error } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = async ({ params, parent, locals: { user, supabase } }) => {
 	const { team, environment } = await parent();
 
-	const { data: workflow, error: eWorkflow } = await supabase
-		.from('workflows')
-		.select('*')
-		.eq('team_name', team.name)
-		.eq('name', params.workflow)
-		.single();
+	const workflow = (await parent()).workflows.find(
+		(workflow) => sluggify(workflow.name) === sluggify(params.workflow)
+	);
 
-	if (!workflow || eWorkflow) {
-		const message = `Error fetching workflow: ${eWorkflow.message}`;
-		console.error(message);
-		throw error(500, message);
+	if (!workflow) {
+		throw error(404, `workflow not found: ${params.env}`);
 	}
 
 	const { data: agents, error: eAgents } = await supabase

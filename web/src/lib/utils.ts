@@ -4,6 +4,10 @@ import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
 import { PUBLIC_SITE_URL } from '$env/static/public';
 
+export const sluggify = (str: string) => {
+	return str.toLowerCase().replace(/\s/g, '-');
+};
+
 export const getURL = () => {
 	let url = PUBLIC_SITE_URL; // Use dynamic port or default to 5173
 	// Make sure to include `https://` when not localhost.

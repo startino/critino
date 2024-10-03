@@ -1,3 +1,4 @@
+import { sluggify } from '$lib/utils';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ parent, params, locals: { supabase } }) => {
@@ -13,7 +14,9 @@ export const load = async ({ parent, params, locals: { supabase } }) => {
 		console.error(message);
 		throw error(500, message);
 	}
-	const environment = (await parent()).environments.find((env) => env.name === params.env);
+	const environment = (await parent()).environments.find(
+		(env) => sluggify(env.name) === sluggify(params.env)
+	);
 
 	if (!environment) {
 		throw error(404, `Environment not found: ${params.env}`);
