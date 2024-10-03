@@ -17,16 +17,16 @@
 
 	export let data;
 
-	$: ({ supabase, team, params, environments: allEnvironments } = data);
+	$: ({ supabase, team, environment, environments: allEnvironments } = data);
 
-	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
+	$: environments = allEnvironments.filter((env) => env.name.startsWith(environment.name + '/'));
 
 	$: createOpen = false;
 
 	const form = superForm(data.form.environment, {
 		validators: zodClient(environmentSchema),
 		onSubmit: () => {
-			$formData.parent_name = params.env;
+			$formData.parent_name = environment.name;
 		},
 		onUpdated: async ({ form: f }) => {
 			if (!f.valid) {
@@ -41,7 +41,7 @@
 			const { error: eEnvironment } = await supabase.from('environments').insert({
 				name: $formData.parent_name + '/' + $formData.name,
 				parent_name: $formData.parent_name,
-				team_name: params.team,
+				team_name: team.name,
 				description: $formData.description,
 				key: encryptedKey,
 			});
@@ -59,7 +59,7 @@
 				{
 					name: $formData.parent_name + '/' + $formData.name,
 					parent_name: $formData.parent_name,
-					team_name: params.team,
+					team_name: team.name,
 					description: $formData.description,
 					key: encryptedKey,
 					created_at: new Date().toISOString(),
@@ -84,7 +84,7 @@
 </script>
 
 <Typography class="p-4 text-left" variant="headline-lg">
-	{params.env?.toString().split('/').pop()}'s environments
+	{environment.name.split('/').pop()}'s environments
 </Typography>
 
 <EntityControlGrid
@@ -108,7 +108,10 @@
 
 		toast.success(`Deleted ${env.name}`);
 	}}
-	entities={environments.map((env) => ({ ...env, name: env.name.split('/').pop() }))}
+	entities={environments.map((env) => ({
+		...env,
+		name: env.name.split('/').pop() ?? 'failed to get env name',
+	}))}
 />
 
 <Dialog.Root bind:open={createOpen}>

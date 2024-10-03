@@ -18,7 +18,7 @@
 
 	export let data;
 
-	$: ({ supabase, team, params, environments: allEnvironments } = data);
+	$: ({ supabase, team, environments: allEnvironments } = data);
 
 	$: environments = allEnvironments.filter((env) => !env.name.includes('/'));
 
@@ -42,7 +42,7 @@
 			const { error: eEnvironment } = await supabase.from('environments').insert({
 				name: $formData.name,
 				parent_name: $formData.parent_name,
-				team_name: params.team,
+				team_name: team.name,
 				description: $formData.description,
 				key: encryptedKey,
 			});

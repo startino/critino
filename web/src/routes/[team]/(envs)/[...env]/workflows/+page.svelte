@@ -13,7 +13,7 @@
 
 	export let data;
 
-	$: ({ params, workflows } = data);
+	$: ({ environment, workflows } = data);
 
 	$: createOpen = false;
 
@@ -38,7 +38,7 @@
 </script>
 
 <Typography class="p-4 text-left" variant="headline-lg">
-	{params.env?.toString().split('/').pop()}'s workflows
+	{environment.name.split('/').pop()}'s workflows
 </Typography>
 
 <EntityControlGrid

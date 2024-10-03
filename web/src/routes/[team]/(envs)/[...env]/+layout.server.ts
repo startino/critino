@@ -14,6 +14,7 @@ export const load = async ({ parent, params, locals: { supabase } }) => {
 		console.error(message);
 		throw error(500, message);
 	}
+
 	const environment = (await parent()).environments.find(
 		(env) => sluggify(env.name) === sluggify(params.env)
 	);

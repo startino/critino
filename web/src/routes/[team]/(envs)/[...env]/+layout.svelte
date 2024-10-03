@@ -12,9 +12,9 @@
 
 	export let data;
 
-	$: ({ supabase, team, params, environment, environments: allEnvironments, workflows } = data);
+	$: ({ team, environment, environments: allEnvironments, workflows } = data);
 
-	$: environments = allEnvironments.filter((env) => env.name.startsWith(params.env + '/'));
+	$: environments = allEnvironments.filter((env) => env.name.startsWith(environment.name + '/'));
 
 	const persistentAuthEnv = () => {
 		if (!environment) {
