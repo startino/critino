@@ -144,7 +144,7 @@ async def create_environment(
                 {
                     "team_name": query.team_name,
                     "parent_name": query.parent_name,
-                    "name": f"{query.parent_name + '/' if query.parent_name else ''}{name}",
+                    "name": name,
                     "description": body.description,
                     "key": encrypted,
                 }
