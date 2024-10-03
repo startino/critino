@@ -19,7 +19,7 @@
 
 	$: ({ supabase, team, environment, environments: allEnvironments } = data);
 
-	$: environments = allEnvironments.filter((env) => env.name.startsWith(environment.name + '/'));
+	$: environments = allEnvironments.filter((env) => env.parent_name === environment.name);
 
 	$: createOpen = false;
 

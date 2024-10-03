@@ -14,7 +14,7 @@
 
 	$: ({ team, environment, environments: allEnvironments, workflows } = data);
 
-	$: environments = allEnvironments.filter((env) => env.name.startsWith(environment.name + '/'));
+	$: environments = allEnvironments.filter((env) => env.parent_name === environment.name);
 
 	const persistentAuthEnv = () => {
 		if (!environment) {
