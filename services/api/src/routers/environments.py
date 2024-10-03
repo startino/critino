@@ -119,6 +119,10 @@ async def create_environment(
 ) -> PostEnvironmentsResponse:
     supabase = db.client()
 
+    if query.parent_name:
+        if query.parent_name not in name:
+            name = f"{query.parent_name}/{name}"
+
     auth.authenticate_team(supabase, query.team_name, x_critino_key)
 
     key: str | None = None
@@ -158,6 +162,7 @@ async def create_environment(
 
 class GetEnvironmentQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
+    parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
 
 
 class GetEnvironmentResponse(BaseModel):
@@ -173,12 +178,20 @@ async def read_environment(
 ) -> GetEnvironmentResponse:
     supabase = db.client()
 
-    auth.authenticate_team(supabase, query.team_name, x_critino_key)
+    if query.parent_name:
+        if query.parent_name not in name:
+            name = f"{query.parent_name}/{name}"
+
+    auth.authenticate_team_or_environment(
+        supabase, query.team_name, name, x_critino_key
+    )
 
     try:
         environment = (
             supabase.table("environments")
             .select("*")
+            .eq("team_name", query.team_name)
+            .eq("parent_name", query.parent_name)
             .eq("name", name)
             .single()
             .execute()
@@ -196,7 +209,7 @@ async def read_environment(
     )
 
 
-class DeleteEnvironmentsParams(BaseModel):
+class DeleteEnvironmentsQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
     parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
 
@@ -205,24 +218,28 @@ class DeleteEnvironmentsParams(BaseModel):
 @ahandle_error
 async def delete_environment(
     name: str,
-    params: Annotated[DeleteEnvironmentsParams, Depends(DeleteEnvironmentsParams)],
+    query: Annotated[DeleteEnvironmentsQuery, Depends(DeleteEnvironmentsQuery)],
     x_critino_key: Annotated[str, Header()],
 ) -> None:
     supabase = db.client()
 
-    if not params.parent_name:
-        auth.authenticate_team(supabase, params.team_name, x_critino_key)
+    if query.parent_name:
+        if query.parent_name not in name:
+            name = f"{query.parent_name}/{name}"
+
+    if not query.parent_name:
+        auth.authenticate_team(supabase, query.team_name, x_critino_key)
     else:
         auth.authenticate_team_or_environment(
-            supabase, params.team_name, params.parent_name, x_critino_key
+            supabase, query.team_name, query.parent_name, x_critino_key
         )
 
     try:
         (
             supabase.table("environments")
             .delete()
-            .eq("team_name", params.team_name)
-            .eq("parent_name", params.parent_name)
+            .eq("team_name", query.team_name)
+            .eq("parent_name", query.parent_name)
             .eq("name", name)
             .execute()
         )
