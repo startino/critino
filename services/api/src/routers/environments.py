@@ -123,7 +123,12 @@ async def create_environment(
         if query.parent_name not in name:
             name = f"{query.parent_name}/{name}"
 
-    auth.authenticate_team(supabase, query.team_name, x_critino_key)
+    if not query.parent_name:
+        auth.authenticate_team(supabase, query.team_name, x_critino_key)
+    else:
+        auth.authenticate_team_or_environment(
+            supabase, query.team_name, query.parent_name, x_critino_key
+        )
 
     key: str | None = None
     encrypted: str | None = None
