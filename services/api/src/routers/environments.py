@@ -112,10 +112,10 @@ class PostEnvironmentsResponse(BaseModel):
 @router.post("/{name}")
 @ahandle_error
 async def create_environment(
-    name: str,
+    name: Annotated[str, AfterValidator(vd.str_empty)],
     body: PostEnvironmentsBody,
     query: Annotated[PostEnvironmentsQuery, Depends(PostEnvironmentsQuery)],
-    x_critino_key: Annotated[str, Header()],
+    x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
 ) -> PostEnvironmentsResponse:
     supabase = db.client()
 
@@ -177,9 +177,9 @@ class GetEnvironmentResponse(BaseModel):
 @router.get("/{name}")
 @ahandle_error
 async def read_environment(
-    name: str,
+    name: Annotated[str, AfterValidator(vd.str_empty)],
     query: Annotated[GetEnvironmentQuery, Depends(GetEnvironmentQuery)],
-    x_critino_key: Annotated[str, Header()],
+    x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
 ) -> GetEnvironmentResponse:
     supabase = db.client()
 
@@ -222,7 +222,7 @@ class DeleteEnvironmentsQuery(BaseModel):
 @router.delete("/{name}")
 @ahandle_error
 async def delete_environment(
-    name: str,
+    name: Annotated[str, AfterValidator(vd.str_empty)],
     query: Annotated[DeleteEnvironmentsQuery, Depends(DeleteEnvironmentsQuery)],
     x_critino_key: Annotated[str, Header()],
 ) -> None:

@@ -9,54 +9,9 @@
 
 	export let data;
 
-	$: ({ team } = data);
+	$: ({ authenticated, team } = data);
 
-	let teamKey = '';
-
-	const persistentAuthTeam = () => {
-		if (!team) {
-			return false;
-		}
-		if (!team.key) {
-			return true;
-		}
-
-		if (sha256.update(localStorage.getItem('key' + team.name) ?? '').hex() !== team.key) {
-			return false;
-		}
-		return true;
-	};
-
-	const authenticateTeam = () => {
-		if (!team) {
-			return false;
-		}
-		if (!team.key) {
-			return true;
-		}
-
-		if (sha256.update(teamKey).hex() !== team.key) {
-			teamKey = localStorage.getItem('key' + team.name) ?? '';
-			if (sha256.update(teamKey).hex() !== team.key) {
-				toast.error('Invalid key.');
-				return false;
-			}
-		}
-
-		localStorage.setItem('key' + team.name, teamKey!);
-		return true;
-	};
-
-	let authenticated = false;
-	onMount(() => {
-		authenticated = false;
-		authenticated = persistentAuthTeam();
-	});
-
-	afterUpdate(() => {
-		authenticated = false;
-		authenticated = persistentAuthTeam();
-	});
+	let newKey = '';
 </script>
 
 {#if !authenticated}
@@ -68,10 +23,10 @@
 			<Typography variant="title-md" class="mb-0">
 				Please enter the key for this team
 			</Typography>
-			<Input bind:value={teamKey} placeholder="sp-critino-team-..." />
+			<Input bind:value={newKey} placeholder="sp-critino-team-..." />
 			<Button
 				on:click={() => {
-					authenticated = authenticateTeam();
+					window.location.href = window.location.href.split('?')[0] + `?key=${newKey}`;
 				}}
 			>
 				Enter

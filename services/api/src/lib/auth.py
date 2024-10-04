@@ -7,14 +7,15 @@ from src.lib import keys
 
 
 def authenticate_team(supabase: SyncClient, team_name: str, key: str):
+    logging.info(f"Authenticating team: {team_name}")
     try:
-        team = (
+        team_key = (
             supabase.table("teams")
             .select("key")
             .eq("name", team_name)
             .single()
             .execute()
-        )
+        ).data["key"]
     except PostgrestAPIError as e:
         logging.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
@@ -22,13 +23,24 @@ def authenticate_team(supabase: SyncClient, team_name: str, key: str):
         logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
-    if team.data["key"] != keys.encrypt_key(key):
+    logging.info(f"Valid crypts: {[team_key]}")
+    logging.info(f"Provided crypt: {keys.encrypt_key(key)}")
+    logging.info(f"Provided key: {key}")
+    if team_key != keys.encrypt_key(key):
         raise HTTPException(status_code=401, detail="Unauthorized. Invalid key.")
 
 
 def authenticate_team_or_environment(
     supabase: SyncClient, team_name: str, environment_name: str, key: str
 ):
+    if team_name == "":
+        raise HTTPException(status_code=401, detail="Unauthorized. Team Empty.")
+    if environment_name == "":
+        raise HTTPException(status_code=401, detail="Unauthorized. Environment Empty.")
+    if key == "":
+        raise HTTPException(status_code=401, detail="Unauthorized. Key Empty.")
+
+    logging.info(f"Authenticating team: {team_name} or environment: {environment_name}")
     try:
         valid_keys = [
             (
@@ -64,5 +76,8 @@ def authenticate_team_or_environment(
         logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
+    logging.info(f"Valid crypts: {valid_keys}")
+    logging.info(f"Provided crypt: {keys.encrypt_key(key)}")
+    logging.info(f"Provided key: {key}")
     if keys.encrypt_key(key) not in valid_keys:
         raise HTTPException(status_code=401, detail="Unauthorized. Invalid key.")

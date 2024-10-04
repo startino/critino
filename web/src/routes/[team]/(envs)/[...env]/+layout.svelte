@@ -9,102 +9,18 @@
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
+	import api from '$lib/api';
+	import { goto } from '$app/navigation';
 
 	export let data;
 
-	$: ({ team, environment, environments: allEnvironments, workflows } = data);
+	$: ({ authenticated, team, environment, environments: allEnvironments, workflows } = data);
 
 	$: environments = allEnvironments.filter((env) => env.parent_name === environment.name);
 
-	const persistentAuthEnv = () => {
-		if (!environment) {
-			return false;
-		}
-		if (!environment.key) {
-			return false;
-		}
-
-		if (
-			sha256
-				.update(localStorage.getItem('key' + team.name + environment.name) ?? '')
-				.hex() !== environment.key
-		) {
-			return false;
-		}
-
-		return true;
-	};
-
-	const authenticateEnv = (key: string) => {
-		if (!environment) {
-			return false;
-		}
-		if (!environment.key) {
-			return false;
-		}
-		if (sha256.update(key).hex() !== environment.key) {
-			key = localStorage.getItem('key' + team.name + environment.name) ?? '';
-			if (sha256.update(key).hex() !== environment.key) {
-				return false;
-			}
-		}
-
-		localStorage.setItem('key' + team.name + environment.name, key);
-		return true;
-	};
-
-	const persistentAuthTeam = () => {
-		if (!team) {
-			return false;
-		}
-		if (!team.key) {
-			return true;
-		}
-
-		if (sha256.update(localStorage.getItem('key' + team.name) ?? '').hex() !== team.key) {
-			return false;
-		}
-		return true;
-	};
-
-	const authenticateTeam = (key: string) => {
-		if (!team) {
-			return false;
-		}
-		if (!team.key) {
-			return true;
-		}
-
-		if (sha256.update(key).hex() !== team.key) {
-			key = localStorage.getItem('key' + team.name) ?? '';
-			if (sha256.update(key).hex() !== team.key) {
-				return false;
-			}
-		}
-
-		localStorage.setItem('key' + team.name, key);
-		return true;
-	};
-
-	let authenticated = false;
-
-	onMount(() => {
-		authenticated = false;
-		authenticated = persistentAuthTeam();
-		if (!authenticated) {
-			authenticated = persistentAuthEnv();
-		}
-	});
-
-	afterUpdate(() => {
-		authenticated = false;
-		authenticated = persistentAuthTeam();
-		if (!authenticated) {
-			authenticated = persistentAuthEnv();
-		}
-	});
-
 	let newKey = '';
+
+	$: console.log('authenticated', authenticated);
 </script>
 
 <div class="flex h-full w-full">
@@ -119,14 +35,9 @@
 				</Typography>
 				<Input bind:value={newKey} placeholder="sp-critino-env-..." />
 				<Button
-					on:click={() => {
-						authenticated = authenticateTeam(newKey);
-						if (!authenticated) {
-							authenticated = authenticateEnv(newKey);
-						}
-						if (!authenticated) {
-							toast.error('Invalid team and env key');
-						}
+					on:click={async () => {
+						window.location.href =
+							window.location.href.split('?')[0] + `?key=${newKey}`;
 					}}
 				>
 					Enter
