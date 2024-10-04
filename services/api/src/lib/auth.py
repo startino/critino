@@ -30,22 +30,33 @@ def authenticate_team_or_environment(
     supabase: SyncClient, team_name: str, environment_name: str, key: str
 ):
     try:
-        team_key = (
-            supabase.table("teams")
-            .select("key")
-            .eq("name", team_name)
-            .single()
-            .execute()
-        ).data["key"]
+        valid_keys = [
+            (
+                supabase.table("teams")
+                .select("key")
+                .eq("name", team_name)
+                .single()
+                .execute()
+            ).data["key"]
+        ]
 
-        environment_key = (
+        # Split the environment_name by '/'
+        parts = environment_name.split("/")
+
+        # Generate all possible prefixes
+        prefixes = ["/".join(parts[: i + 1]) for i in range(len(parts))]
+
+        # Query the database for all prefixes in a single call
+        result = (
             supabase.table("environments")
             .select("key")
             .eq("team_name", team_name)
-            .eq("name", environment_name)
-            .single()
+            .in_("name", prefixes)
             .execute()
-        ).data["key"]
+        )
+
+        # Extract the keys from the result
+        valid_keys += [item["key"] for item in result.data]
     except PostgrestAPIError as e:
         logging.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
@@ -53,5 +64,5 @@ def authenticate_team_or_environment(
         logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
-    if team_key != keys.encrypt_key(key) and environment_key != keys.encrypt_key(key):
+    if keys.encrypt_key(key) not in valid_keys:
         raise HTTPException(status_code=401, detail="Unauthorized. Invalid key.")
