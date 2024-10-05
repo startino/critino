@@ -25,11 +25,8 @@ export const load = async ({ url, cookies, parent, params, locals: { supabase } 
 		throw error(404, `Environment not found: ${params.env}`);
 	}
 
-	console.log(cookies.get('visited') ?? 'false');
-
-	cookies.set('visited', 'tttrue', { path: '/', secure: false });
-
 	const getKey = (url: URL, cookies: Cookies, environment: Tables<'environments'>): string => {
+		console.log('getKey', url, cookies, environment);
 		const searchKey = url.searchParams.get('key');
 		if (searchKey) {
 			const cookieKey = `key-${environment.team_name}-${environment.name}`;
