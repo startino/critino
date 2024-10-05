@@ -94,17 +94,17 @@ async def list_environments(
     )
 
 
-class PostEnvironmentsQuery(BaseModel):
+class PostEnvironmentQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
     parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
 
 
-class PostEnvironmentsBody(BaseModel):
+class PostEnvironmentBody(BaseModel):
     description: str = ""
     gen_key: bool = False
 
 
-class PostEnvironmentsResponse(BaseModel):
+class PostEnvironmentResponse(BaseModel):
     data: dict
     key: str | None
 
@@ -113,10 +113,10 @@ class PostEnvironmentsResponse(BaseModel):
 @ahandle_error
 async def create_environment(
     name: Annotated[str, AfterValidator(vd.str_empty)],
-    body: PostEnvironmentsBody,
-    query: Annotated[PostEnvironmentsQuery, Depends(PostEnvironmentsQuery)],
+    body: PostEnvironmentBody,
+    query: Annotated[PostEnvironmentQuery, Depends(PostEnvironmentQuery)],
     x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
-) -> PostEnvironmentsResponse:
+) -> PostEnvironmentResponse:
     supabase = db.client()
 
     if query.parent_name:
@@ -159,10 +159,180 @@ async def create_environment(
         logging.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
-    return PostEnvironmentsResponse(
+    return PostEnvironmentResponse(
         key=key,
         data=environment,
     )
+
+
+class PatchEnvironmentQuery(BaseModel):
+    team_name: Annotated[str, AfterValidator(vd.str_empty)]
+    parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
+
+
+class PatchEnvironmentBody(BaseModel):
+    description: str = ""
+
+
+class PatchEnvironmentResponse(BaseModel):
+    data: dict
+
+
+@router.patch("/{name}")
+@ahandle_error
+async def update_environment(
+    name: Annotated[str, AfterValidator(vd.str_empty)],
+    body: PostEnvironmentBody,
+    query: Annotated[PostEnvironmentQuery, Depends(PostEnvironmentQuery)],
+    x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
+) -> PatchEnvironmentResponse:
+    supabase = db.client()
+
+    if query.parent_name:
+        if query.parent_name not in name:
+            name = f"{query.parent_name}/{name}"
+
+    if not query.parent_name:
+        auth.authenticate_team(supabase, query.team_name, x_critino_key)
+    else:
+        auth.authenticate_team_or_environment(
+            supabase, query.team_name, query.parent_name, x_critino_key
+        )
+
+    try:
+        environment = (
+            supabase.table("environments")
+            .update(
+                {
+                    "description": body.description,
+                }
+            )
+            .eq("team_name", query.team_name)
+            .eq("parent_name", query.parent_name)
+            .eq("name", name)
+            .execute()
+            .data[0]
+        )
+    except PostgrestAPIError as e:
+        logging.error(f"PostgrestAPIError: {e}")
+        raise HTTPException(status_code=500, detail={**e.json()})
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail={**e.__dict__})
+
+    return PatchEnvironmentResponse(
+        data=environment,
+    )
+
+
+class PatchEnvironmentKeyQuery(BaseModel):
+    team_name: Annotated[str, AfterValidator(vd.str_empty)]
+    parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
+
+
+class PatchEnvironmentKeyResponse(BaseModel):
+    data: dict
+    key: str | None
+
+
+@router.patch("/{name}/key")
+@ahandle_error
+async def update_environment_key(
+    name: Annotated[str, AfterValidator(vd.str_empty)],
+    query: Annotated[PatchEnvironmentKeyQuery, Depends(PatchEnvironmentKeyQuery)],
+    x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
+) -> PatchEnvironmentKeyResponse:
+    supabase = db.client()
+
+    if query.parent_name:
+        if query.parent_name not in name:
+            name = f"{query.parent_name}/{name}"
+
+    if not query.parent_name:
+        auth.authenticate_team(supabase, query.team_name, x_critino_key)
+    else:
+        auth.authenticate_team_or_environment(
+            supabase, query.team_name, query.parent_name, x_critino_key
+        )
+
+    key_response = keys.gen_key("env")
+    key = key_response.key
+    encrypted = key_response.encrypted
+
+    try:
+        environment = (
+            supabase.table("environments")
+            .update(
+                {
+                    "key": encrypted,
+                }
+            )
+            .eq("team_name", query.team_name)
+            .eq("parent_name", query.parent_name)
+            .eq("name", name)
+            .execute()
+            .data[0]
+        )
+    except PostgrestAPIError as e:
+        logging.error(f"PostgrestAPIError: {e}")
+        raise HTTPException(status_code=500, detail={**e.json()})
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail={**e.__dict__})
+
+    return PatchEnvironmentKeyResponse(
+        key=key,
+        data=environment,
+    )
+
+
+class DeleteEnvironmentKeyResponse(BaseModel):
+    data: dict
+    key: str | None
+
+
+@router.delete("/{name}/key")
+@ahandle_error
+async def delete_environment_key(
+    name: Annotated[str, AfterValidator(vd.str_empty)],
+    query: Annotated[PatchEnvironmentKeyQuery, Depends(PatchEnvironmentKeyQuery)],
+    x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
+) -> DeleteEnvironmentKeyResponse:
+    supabase = db.client()
+
+    if query.parent_name:
+        if query.parent_name not in name:
+            name = f"{query.parent_name}/{name}"
+
+    if not query.parent_name:
+        auth.authenticate_team(supabase, query.team_name, x_critino_key)
+    else:
+        auth.authenticate_team_or_environment(
+            supabase, query.team_name, query.parent_name, x_critino_key
+        )
+
+    try:
+        environment = (
+            supabase.table("environments")
+            .update(
+                {
+                    "key": None,
+                }
+            )
+            .eq("team_name", query.team_name)
+            .eq("parent_name", query.parent_name)
+            .eq("name", name)
+            .execute()
+            .data[0]
+        )
+    except PostgrestAPIError as e:
+        logging.error(f"PostgrestAPIError: {e}")
+        raise HTTPException(status_code=500, detail={**e.json()})
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail={**e.__dict__})
+
+    return DeleteEnvironmentKeyResponse(data=environment, key=None)
 
 
 class GetEnvironmentQuery(BaseModel):
@@ -171,7 +341,7 @@ class GetEnvironmentQuery(BaseModel):
 
 
 class GetEnvironmentResponse(BaseModel):
-    data: dict
+    data: list[dict]
 
 
 @router.get("/{name}")
@@ -214,7 +384,7 @@ async def read_environment(
     )
 
 
-class DeleteEnvironmentsQuery(BaseModel):
+class DeleteEnvironmentQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
     parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
 
@@ -223,7 +393,7 @@ class DeleteEnvironmentsQuery(BaseModel):
 @ahandle_error
 async def delete_environment(
     name: Annotated[str, AfterValidator(vd.str_empty)],
-    query: Annotated[DeleteEnvironmentsQuery, Depends(DeleteEnvironmentsQuery)],
+    query: Annotated[DeleteEnvironmentQuery, Depends(DeleteEnvironmentQuery)],
     x_critino_key: Annotated[str, Header()],
 ) -> None:
     supabase = db.client()
