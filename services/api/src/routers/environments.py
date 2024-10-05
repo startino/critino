@@ -341,7 +341,7 @@ class GetEnvironmentQuery(BaseModel):
 
 
 class GetEnvironmentResponse(BaseModel):
-    data: list[dict]
+    data: dict
 
 
 @router.get("/{name}")
