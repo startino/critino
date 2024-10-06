@@ -5,6 +5,7 @@ import os
 from typing import Annotated
 from pydantic import BaseModel, AfterValidator, Field
 from src.interfaces import db
+from src.lib.url_utils import sluggify
 from supabase import PostgrestAPIError
 
 from fastapi import APIRouter, Depends, HTTPException, Header
@@ -228,6 +229,6 @@ async def upsert(
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return PostCritiquesResponse(
-        url=f"{PUBLIC_SITE_URL}/{query.team_name}/{query.environment_name}/workflows/{query.workflow_name}/{id}",
+        url=f"{PUBLIC_SITE_URL}/{sluggify(query.team_name)}/{sluggify(query.environment_name)}/workflows/{sluggify(query.workflow_name)}/{id}",
         data=critique,
     )
