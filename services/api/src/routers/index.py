@@ -16,8 +16,6 @@ from fastapi.responses import RedirectResponse
 
 router = APIRouter()
 
-PUBLIC_SITE_URL = os.getenv("PUBLIC_SITE_URL", "http://0.0.0.0:5173")
-
 
 def handle_error(func):
     @wraps(func)

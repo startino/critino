@@ -8,11 +8,9 @@ export const sluggify = (str: string) => {
 	return str.toLowerCase().replace(/\s/g, '-');
 };
 
-export const getURL = () => {
-	let url = PUBLIC_SITE_URL; // Use dynamic port or default to 5173
-	// Make sure to include `https://` when not localhost.
+export const getURL = (url: string | null = null) => {
+	url = url ?? PUBLIC_SITE_URL;
 	url = url.includes('http') ? url : `https://${url}`;
-	// Make sure to include a trailing `/`.
 	url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
 	return url;
 };

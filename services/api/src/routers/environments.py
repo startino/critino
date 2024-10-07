@@ -13,8 +13,6 @@ from src.lib import validators as vd
 
 router = APIRouter(prefix="/environments")
 
-PUBLIC_SITE_URL = os.getenv("PUBLIC_SITE_URL", "http://0.0.0.0:5173")
-
 
 def handle_error(func):
     @wraps(func)

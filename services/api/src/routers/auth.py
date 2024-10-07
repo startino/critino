@@ -9,8 +9,6 @@ from src.lib import validators as vd
 
 router = APIRouter(prefix="/auth")
 
-PUBLIC_SITE_URL = os.getenv("PUBLIC_SITE_URL", "http://0.0.0.0:5173")
-
 
 class GetAuthResponse(BaseModel):
     status: int
