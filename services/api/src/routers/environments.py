@@ -3,6 +3,7 @@ import logging
 from functools import wraps
 import os
 from typing import Annotated
+import urllib.parse
 from pydantic import AfterValidator, BaseModel
 from src.interfaces import db
 from supabase import PostgrestAPIError
@@ -68,6 +69,9 @@ async def list_environments(
 ) -> GetEnvironmentsResponse:
     supabase = db.client()
 
+    query.team_name = urllib.parse.unquote(query.team_name)
+    query.environment_name = urllib.parse.unquote(query.environment_name)
+
     auth.authenticate_team(supabase, query.team_name, x_critino_key)
 
     try:
@@ -116,6 +120,10 @@ async def create_environment(
     x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
 ) -> PostEnvironmentResponse:
     supabase = db.client()
+
+    query.team_name = urllib.parse.unquote(query.team_name)
+    if query.parent_name:
+        query.parent_name = urllib.parse.unquote(query.parent_name)
 
     if query.parent_name:
         if query.parent_name not in name:
@@ -186,6 +194,10 @@ async def update_environment(
 ) -> PatchEnvironmentResponse:
     supabase = db.client()
 
+    query.team_name = urllib.parse.unquote(query.team_name)
+    if query.parent_name:
+        query.parent_name = urllib.parse.unquote(query.parent_name)
+
     if query.parent_name:
         if query.parent_name not in name:
             name = f"{query.parent_name}/{name}"
@@ -241,6 +253,10 @@ async def update_environment_key(
     x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
 ) -> PatchEnvironmentKeyResponse:
     supabase = db.client()
+
+    query.team_name = urllib.parse.unquote(query.team_name)
+    if query.parent_name:
+        query.parent_name = urllib.parse.unquote(query.parent_name)
 
     if query.parent_name:
         if query.parent_name not in name:
@@ -298,6 +314,10 @@ async def delete_environment_key(
 ) -> DeleteEnvironmentKeyResponse:
     supabase = db.client()
 
+    query.team_name = urllib.parse.unquote(query.team_name)
+    if query.parent_name:
+        query.parent_name = urllib.parse.unquote(query.parent_name)
+
     if query.parent_name:
         if query.parent_name not in name:
             name = f"{query.parent_name}/{name}"
@@ -351,6 +371,10 @@ async def read_environment(
 ) -> GetEnvironmentResponse:
     supabase = db.client()
 
+    query.team_name = urllib.parse.unquote(query.team_name)
+    if query.parent_name:
+        query.parent_name = urllib.parse.unquote(query.parent_name)
+
     if query.parent_name:
         if query.parent_name not in name:
             name = f"{query.parent_name}/{name}"
@@ -395,6 +419,10 @@ async def delete_environment(
     x_critino_key: Annotated[str, Header()],
 ) -> None:
     supabase = db.client()
+
+    query.team_name = urllib.parse.unquote(query.team_name)
+    if query.parent_name:
+        query.parent_name = urllib.parse.unquote(query.parent_name)
 
     if query.parent_name:
         if query.parent_name not in name:

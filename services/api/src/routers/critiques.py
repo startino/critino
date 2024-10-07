@@ -3,9 +3,10 @@ import logging
 from functools import wraps
 import os
 from typing import Annotated
+import urllib.parse
 from pydantic import BaseModel, AfterValidator, Field
 from src.interfaces import db
-from src.lib.url_utils import get_url, sluggify
+from src.lib.url_utils import get_url, sluggify, un_url_encode
 from supabase import PostgrestAPIError
 
 from fastapi import APIRouter, Depends, HTTPException, Header
@@ -62,7 +63,7 @@ def get_critique_ids() -> list[str]:
     return [critique["id"] for critique in response.data]
 
 
-class GetCritiquesParams(BaseModel):
+class GetCritiquesQuery(BaseModel):
     team_name: str
     environment_name: str
     workflow_name: str | None = None
@@ -80,18 +81,25 @@ class GetCritiquesResult(BaseModel):
 @ahandle_error
 async def list_critiques(
     x_critino_key: Annotated[str, Header()],
-    params: Annotated[GetCritiquesParams, Depends(GetCritiquesParams)],
+    query: Annotated[GetCritiquesQuery, Depends(GetCritiquesQuery)],
 ) -> GetCritiquesResult:
-    logging.info(f"list_critiques: x_critino_key: {x_critino_key} - params: {params}")
+    logging.info(f"list_critiques: x_critino_key: {x_critino_key} - params: {query}")
 
-    if (params.agent_name is not None) and (params.workflow_name is None):
+    query.team_name = urllib.parse.unquote(query.team_name)
+    query.environment_name = urllib.parse.unquote(query.environment_name)
+    if query.workflow_name:
+        query.workflow_name = urllib.parse.unquote(query.workflow_name)
+    if query.agent_name:
+        query.agent_name = urllib.parse.unquote(query.agent_name)
+
+    if (query.agent_name is not None) and (query.workflow_name is None):
         raise HTTPException(
             status_code=400,
             detail="If you provide an agent_name, you must also provide a workflow_name",
         )
 
-    if (params.query is None and params.k is not None) or (
-        params.k is None and params.query is not None
+    if (query.query is None and query.k is not None) or (
+        query.k is None and query.query is not None
     ):
         raise HTTPException(
             status_code=400,
@@ -101,25 +109,25 @@ async def list_critiques(
     supabase = db.client()
 
     auth.authenticate_team_or_environment(
-        supabase, params.team_name, params.environment_name, x_critino_key
+        supabase, query.team_name, query.environment_name, x_critino_key
     )
 
     request = (
         supabase.table("critiques")
         .select("*")
-        .eq("team_name", params.team_name)
-        .eq("environment_name", params.environment_name)
+        .eq("team_name", query.team_name)
+        .eq("environment_name", query.environment_name)
     )
 
-    if params.workflow_name is not None:
-        request.eq("workflow_name", params.workflow_name)
+    if query.workflow_name is not None:
+        request.eq("workflow_name", query.workflow_name)
 
-    if params.agent_name is not None:
-        request.eq("agent_name", params.agent_name)
+    if query.agent_name is not None:
+        request.eq("agent_name", query.agent_name)
 
     response = request.execute()
 
-    if params.query is None or params.k is None:
+    if query.query is None or query.k is None:
         return GetCritiquesResult(
             data=[
                 StrippedCritique(
@@ -141,7 +149,7 @@ async def list_critiques(
         for critique in response.data
     ]
 
-    relevant_critiques = find_relevant_critiques(critiques, params.query, k=params.k)
+    relevant_critiques = find_relevant_critiques(critiques, query.query, k=query.k)
 
     return GetCritiquesResult(data=relevant_critiques, count=len(relevant_critiques))
 
@@ -178,6 +186,11 @@ async def upsert(
     auth.authenticate_team_or_environment(
         supabase, query.team_name, query.environment_name, x_critino_key
     )
+
+    query.team_name = urllib.parse.unquote(query.team_name)
+    query.environment_name = urllib.parse.unquote(query.environment_name)
+    query.workflow_name = urllib.parse.unquote(query.workflow_name)
+    query.agent_name = urllib.parse.unquote(query.agent_name)
 
     try:
         (

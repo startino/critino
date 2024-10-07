@@ -1,4 +1,5 @@
 import os
+import urllib.parse
 from typing import Annotated
 from pydantic import AfterValidator, BaseModel
 from src.interfaces import db
@@ -37,6 +38,11 @@ async def authenticate_environment(
     query: Annotated[GetEnvironmentQuery, Depends(GetEnvironmentQuery)],
     x_critino_key: Annotated[str, Header()],
 ) -> GetAuthResponse:
+
+    query.team_name = urllib.parse.unquote(query.team_name)
+    if query.parent_name:
+        query.parent_name = urllib.parse.unquote(query.parent_name)
+
     if query.parent_name:
         if query.parent_name not in name:
             name = f"{query.parent_name}/{name}"

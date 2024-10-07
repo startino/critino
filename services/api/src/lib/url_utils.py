@@ -1,7 +1,7 @@
 import os
 import urllib.parse
 
-PUBLIC_SITE_URL = os.getenv("PUBLIC_SITE_URL", "http://0.0.0.0:5173")
+PUBLIC_SITE_URL = os.getenv("PUBLIC_SITE_URL", "http://0.0.0.0:1357")
 
 
 def get_url(url=None):
@@ -12,4 +12,4 @@ def get_url(url=None):
 
 
 def sluggify(s: str) -> str:
-    return urllib.parse.quote(s.lower().replace(" ", "-"))
+    return s.lower().replace(" ", "-")
