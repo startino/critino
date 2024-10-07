@@ -57,7 +57,7 @@ export const load = async ({ url, cookies, parent, params, locals: { supabase } 
 			parent_name:
 				environment.name.split('/').length === 1
 					? null
-					: params.env.split('/').slice(0, -1).join('/'),
+					: environment.name.split('/').slice(0, -1).join('/'),
 		},
 		path: { name: environment.name.split('/').pop() },
 		header: {
