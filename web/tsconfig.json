@@ -4,17 +4,29 @@
 	"display": "Svelte",
 	"_version": "5.0.0",
 	"compilerOptions": {
+		// From svelte create
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"moduleResolution": "bundler",
+		// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
+		// except $lib which is handled by https://kit.svelte.dev/docs/configuration#files
+		//
+		// If you want to overwrite includes/excludes, make sure to copy over the relevant includes/excludes
+		// from the referenced tsconfig.json - TypeScript does not merge them in
+
+		// Extras
 		"lib": ["ESNext", "DOM"],
 		"module": "esnext",
 		"target": "esnext",
-		"moduleResolution": "bundler",
 		"moduleDetection": "force",
 		"allowImportingTsExtensions": true,
 		"noEmit": true,
-		"esModuleInterop": true,
-		"strict": true,
-		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
 		"noUncheckedIndexedAccess": true,
 		"downlevelIteration": true,
@@ -23,11 +35,8 @@
         to enforce using `import type` instead of `import` for Types.
         */
 		"verbatimModuleSyntax": true,
-		/**
-        To have warnings/errors of the Svelte compiler at the correct position,
-        enable source maps by default.
-        */
-		"sourceMap": true,
+
+		// Reqired for other editors than vscode to have proper type generation
 		"plugins": [
 			{
 				"name": "typescript-svelte-plugin",

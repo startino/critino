@@ -1,26 +1,32 @@
-import tsParser from '@typescript-eslint/parser';
-import svelteConfig from './svelte.config.js';
-import svelteParser from 'svelte-eslint-parser';
+import eslint from '@eslint/js';
+import prettier from 'eslint-config-prettier';
+import svelte from 'eslint-plugin-svelte';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default tseslint.config(
+	eslint.configs.recommended,
+	...tseslint.configs.recommended,
+	...svelte.configs['flat/recommended'],
+	prettier,
+	...svelte.configs['flat/prettier'],
 	{
 		languageOptions: {
-			parser: tsParser,
-			parserOptions: {
-				extraFileExtensions: ['.svelte'], // This is a required setting in `@typescript-eslint/parser` v4.24.0.
-				svelteConfig,
+			globals: {
+				...globals.browser,
+				...globals.node,
 			},
 		},
 	},
 	{
-		files: ['**/*.svelte', '*.svelte'],
+		files: ['**/*.svelte'],
 		languageOptions: {
-			parser: svelteParser,
-			// Parse the `<script>` in `.svelte` as TypeScript by adding the following configuration.
 			parserOptions: {
-				parser: tsParser,
-				svelteConfig,
+				parser: tseslint.parser,
 			},
 		},
 	},
-];
+	{
+		ignores: ['build/', '.svelte-kit/', 'dist/'],
+	}
+);
