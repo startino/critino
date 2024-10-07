@@ -4,9 +4,9 @@ from functools import wraps
 import os
 from typing import Annotated
 import urllib.parse
-from pydantic import BaseModel, AfterValidator, Field
+from pydantic import BaseModel, AfterValidator
 from src.interfaces import db
-from src.lib.url_utils import get_url, sluggify, un_url_encode
+from src.lib.url_utils import get_url, sluggify
 from supabase import PostgrestAPIError
 
 from fastapi import APIRouter, Depends, HTTPException, Header
