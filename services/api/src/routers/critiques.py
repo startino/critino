@@ -162,10 +162,10 @@ class PostCritiquesQuery(BaseModel):
 
 
 class PostCritiquesBody(BaseModel):
+    query: Annotated[str, AfterValidator(vd.str_empty)] | None = None
+    response: Annotated[str, AfterValidator(vd.str_empty)] | None = None
     context: str | None = None
-    query: str | None = None
     optimal: str | None = None
-    response: str | None = None
 
 
 class PostCritiquesResponse(BaseModel):
