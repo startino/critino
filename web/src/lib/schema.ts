@@ -13,6 +13,7 @@ export const critiqueSchema = z.object({
 	team_name: z.string(),
 	response: z.string(),
 	optimal: z.string(),
+	instructions: z.string(),
 	context: z.array(
 		z.object({
 			name: z.string(),

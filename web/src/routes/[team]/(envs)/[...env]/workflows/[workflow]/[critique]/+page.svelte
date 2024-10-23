@@ -26,6 +26,7 @@
 			$formData.tags = critique.tags;
 			$formData.response = critique.response;
 			$formData.optimal = critique.optimal;
+			$formData.instructions = critique.instructions;
 
 			$formData.context = critique.context as Context[];
 			$formData.critique = critique.critique;
@@ -176,6 +177,21 @@
 					<TipTap
 						class="rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
 						bind:content={critique.optimal}
+					></TipTap>
+				</div>
+
+				<Typography variant="title-md" class="mr-auto pt-4 text-left text-secondary">
+					Tailored Instructions
+				</Typography>
+				<Typography variant="title-sm" class="mr-auto pb-2 text-left text-secondary/70">
+					These are tailored instructions that are given to the agent when making a
+					response in a similar situation to this one.
+				</Typography>
+
+				<div class="flex justify-start">
+					<TipTap
+						class="rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
+						bind:content={critique.instructions}
 					></TipTap>
 				</div>
 			</Card.Content>

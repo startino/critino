@@ -17,7 +17,6 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { TipTap } from '$lib/components/ui/tiptap';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import TooltipContent from '$lib/components/ui/tooltip/tooltip-content.svelte';
 
 	export let supabase: SupabaseClient<Database>;
 	export let environment: Environment;
@@ -60,6 +59,10 @@
 		table.column({
 			accessor: 'optimal',
 			header: 'Optimal Response',
+		}),
+		table.column({
+			accessor: 'instructions',
+			header: 'Tailored Instructions',
 		}),
 		table.column({
 			accessor: 'response',
@@ -122,7 +125,7 @@
 								<Table.Row class=" border-surface-variant/80" {...rowAttrs}>
 									{#each row.cells as cell (cell.id)}
 										<Subscribe attrs={cell.attrs()} let:attrs>
-											{#if cell.id === 'response' || cell.id === 'optimal' || cell.id === 'query'}
+											{#if cell.id === 'response' || cell.id === 'optimal' || cell.id === 'instructions' || cell.id === 'query'}
 												<Table.Cell
 													class="max-h-[10ch] w-max max-w-[65ch] overflow-hidden text-ellipsis"
 													{...attrs}
