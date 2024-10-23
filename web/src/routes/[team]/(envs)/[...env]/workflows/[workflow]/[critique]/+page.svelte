@@ -158,7 +158,7 @@
 
 				<div class="flex justify-start">
 					<TipTap
-						class="rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
+						class="min-w-[7rem] rounded-lg border border-primary/50 bg-primary-container/10 px-2 py-1 text-primary brightness-125"
 						bind:content={critique.response}
 					></TipTap>
 				</div>
@@ -174,7 +174,7 @@
 
 				<div class="flex justify-start">
 					<TipTap
-						class="rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
+						class="min-w-[7rem] rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
 						bind:content={critique.optimal}
 					></TipTap>
 				</div>
@@ -189,7 +189,7 @@
 
 				<div class="flex justify-start">
 					<TipTap
-						class="rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
+						class="min-w-[7rem] rounded-lg border border-secondary/50 bg-secondary-container/10 px-2 py-1 text-secondary brightness-125"
 						bind:content={critique.instructions}
 					></TipTap>
 				</div>
