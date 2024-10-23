@@ -7,7 +7,6 @@
 	import { critiqueSchema } from '$lib/schema';
 	import { toast } from 'svelte-sonner';
 	import { Typography } from '$lib/components/ui/typography';
-	import { Breadcrumb } from '$lib/components/ui/breadcrumb';
 	import * as xml from '$lib/xml';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 
