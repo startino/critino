@@ -13,22 +13,7 @@ class StrippedCritique(BaseModel):
     context: str
     query: str
     optimal: str
-
-
-def format_example_string(critiques: list[StrippedCritique]) -> str:
-    example_prompt = PromptTemplate.from_template(
-        "<example><context>{context}</context><query>{query}</query><output>{optimal}</output></example>"
-    )
-
-    few_shot = FewShotPromptTemplate(
-        examples=[critique.model_dump() for critique in critiques],
-        example_prompt=example_prompt,
-        example_separator="",
-        prefix="<examples>",
-        suffix="</examples>",
-    ).format()
-
-    return xml_utils.trim_xml(few_shot)
+    instructions: str
 
 
 def find_relevant_critiques(

@@ -132,6 +132,7 @@ async def list_critiques(
             data=[
                 StrippedCritique(
                     optimal=critique["optimal"],
+                    instructions=critique["instructions"],
                     query=critique["query"],
                     context=critique["context"],
                 )
@@ -143,6 +144,7 @@ async def list_critiques(
     critiques = [
         StrippedCritique(
             optimal=critique["optimal"],
+            instructions=critique["instructions"],
             query=critique["query"],
             context=critique["context"],
         )
@@ -166,6 +168,7 @@ class PostCritiquesBody(BaseModel):
     response: Annotated[str, AfterValidator(vd.str_empty)] | None = None
     context: str | None = None
     optimal: str | None = None
+    instructions: str | None = None
 
 
 class PostCritiquesResponse(BaseModel):

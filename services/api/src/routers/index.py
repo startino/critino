@@ -1,17 +1,8 @@
 import traceback
 import logging
 from functools import wraps
-import os
-from typing import Annotated
-from pydantic import AfterValidator, BaseModel
-from src.interfaces import db
-from src.lib.few_shot import (
-    format_example_string,
-    find_relevant_critiques,
-    StrippedCritique,
-)
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 
 router = APIRouter()
