@@ -8,7 +8,7 @@
 
 <img
 	alt="Startino Logo"
-	src="https://starti.no/favicon.png"
+	src="https://www.starti.no/favicon.png"
 	height="24"
 	width="24"
 	{...$$restProps}
