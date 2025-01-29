@@ -1,5 +1,0 @@
-[phases.setup]
-nixPkgs = ['...', 'poetry']
-
-[start]
-cmd = 'fastapi run src'

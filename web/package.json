@@ -86,5 +86,13 @@
 		"uuid": "^10.0.0",
 		"xml2js": "^0.6.2",
 		"zod": "^3.23.8"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"supabase",
+			"better-sqlite3",
+			"@sveltejs/kit"
+		]
 	}
 }

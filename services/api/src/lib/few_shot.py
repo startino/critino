@@ -35,14 +35,6 @@ def find_relevant_critiques(
     k: int = 4,
     similarity_key: SimilarityKey = "query",
 ) -> list[StrippedCritique]:
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    if OPENAI_API_KEY is None:
-        logging.error("OPENAI_API_KEY is not set")
-        raise ValueError("OPENAI_API_KEY is not set")
-    OPENAI_API_KEY = SecretStr(OPENAI_API_KEY)
-
-    # embeddings = OpenAIEmbeddings(api_key=OPENAI_API_KEY)
-
     example_selector = SemanticSimilarityExampleSelector.from_examples(
         [critique.model_dump() for critique in critiques],
         embeddings,

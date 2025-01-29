@@ -29,7 +29,8 @@ diskcache = "*"
 pydantic = "*"
 sse-starlette = "*"
 watchfiles = "0.23.0"
-sentence-transformers = "^3.3.1"
+sentence_transformers = "*"
+youtube-transcript-api = "*"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "*"
