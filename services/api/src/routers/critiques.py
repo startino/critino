@@ -1,3 +1,4 @@
+import json
 import traceback
 import logging
 from functools import wraps
@@ -10,6 +11,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from pydantic import BaseModel, AfterValidator, Field
 from src.interfaces import db, llm
 from src.lib.url_utils import get_url, sluggify
+from src.lib.critiques_utils import process_request
+from src.lib.types import GenerateCritiqueInput
 from supabase import PostgrestAPIError
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
@@ -580,3 +583,11 @@ async def upsert_many(
         url=f"{get_url()}{sluggify(query.team_name)}/{sluggify(query.environment_name)}/critiques",
         data=data,
     )
+
+
+@router.get("/generate")
+@ahandle_error
+async def generate(body: GenerateCritiqueInput) -> list[dict]:
+    response = process_request(body)
+    logging.info(f"generate: response: {response}")
+    return [json.loads(r) for r in response] if response is not None else []

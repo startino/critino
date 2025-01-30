@@ -18,6 +18,7 @@ fastapi = { extras = ["standard"], version = "*" }
 tenacity = "*"
 supabase = "*"
 langchain = "*"
+langgraph = "*"
 langchain-community = "*"
 langchain-openai = "*"
 praw = "*"
