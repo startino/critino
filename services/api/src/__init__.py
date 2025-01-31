@@ -1,12 +1,11 @@
-import time
 import logging
-from dotenv import load_dotenv
+import time
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from requests import Request
-
-from src.routers import auth, critiques, index, environments
+from src.routers import auth, critiques, environments, index
 
 load_dotenv()
 

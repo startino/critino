@@ -1,26 +1,25 @@
-import traceback
+import json
 import logging
-from functools import wraps
-from typing import Annotated, cast
+import traceback
 import urllib.parse
 import uuid
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
-from langchain_openai.chat_models import ChatOpenAI
+from functools import wraps
+from typing import Annotated, cast
+
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from langchain_core.messages import (AIMessage, BaseMessage, HumanMessage,
+                                     SystemMessage)
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from pydantic import BaseModel, AfterValidator, Field
+from langchain_openai.chat_models import ChatOpenAI
+from pydantic import AfterValidator, BaseModel, Field
 from src.interfaces import db, llm
+from src.lib import auth
+from src.lib import validators as vd
+from src.lib.few_shot import (SimilarityKey, StrippedCritique,
+                              find_relevant_critiques)
 from src.lib.url_utils import get_url, sluggify
+from src.lib.youtube_critiques_utils import CritiqueRequest, generate_critique
 from supabase import PostgrestAPIError
-
-from fastapi import APIRouter, Depends, HTTPException, Header, Query
-from src.lib import auth, validators as vd
-
-
-from src.lib.few_shot import (
-    SimilarityKey,
-    find_relevant_critiques,
-    StrippedCritique,
-)
 
 router = APIRouter(prefix="/critiques")
 
@@ -580,3 +579,11 @@ async def upsert_many(
         url=f"{get_url()}{sluggify(query.team_name)}/{sluggify(query.environment_name)}/critiques",
         data=data,
     )
+
+
+@router.post("/generate")
+@ahandle_error
+async def generate(body: CritiqueRequest) -> dict:
+    response = generate_critique(body)
+    logging.info(f"generate: response: {response}")
+    return response.dict()

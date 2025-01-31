@@ -1,16 +1,16 @@
-import traceback
 import logging
-from functools import wraps
 import os
-from typing import Annotated
+import traceback
 import urllib.parse
+from functools import wraps
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import AfterValidator, BaseModel
 from src.interfaces import db
-from supabase import PostgrestAPIError
-
-from fastapi import APIRouter, Depends, HTTPException, Header
 from src.lib import auth, keys
 from src.lib import validators as vd
+from supabase import PostgrestAPIError
 
 router = APIRouter(prefix="/environments")
 

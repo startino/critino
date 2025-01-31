@@ -1,7 +1,7 @@
 # Helper function to convert hex color to RGB format
-import re
 import argparse
 import json
+import re
 
 
 # Helper function to convert hex color to RGB format

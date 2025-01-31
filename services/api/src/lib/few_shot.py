@@ -1,14 +1,13 @@
 import logging
+import os
 from typing import Literal
-from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
-from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 
 # from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+from langchain_core.example_selectors import SemanticSimilarityExampleSelector
+from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
 from langchain_core.vectorstores import InMemoryVectorStore
 from pydantic import BaseModel, SecretStr
-import os
-
 from src.lib import xml_utils
 
 

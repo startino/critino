@@ -1,9 +1,9 @@
 import logging
+
 from fastapi import HTTPException
+from src.lib import keys
 from supabase import PostgrestAPIError
 from supabase._sync.client import SyncClient
-
-from src.lib import keys
 
 
 def authenticate_team(supabase: SyncClient, team_name: str, key: str):
