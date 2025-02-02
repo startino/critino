@@ -65,7 +65,7 @@ def generate_critiques(state: GraphState) -> GraphState:
         prompt = ChatPromptTemplate(
             [
                 SystemMessage(
-                    content="""" You are an advanced AI critique generator trained to analyze media content and
+                    content=""" You are an advanced AI critique generator trained to analyze media content and
                     provide structured feedback based on user-defined criteria. Your task is to process the given
                     text chunk and generate multiple critiques adhering to the Critino format. Each critique should
                     be precise, actionable, and well-structured, ensuring clarity and relevance.
