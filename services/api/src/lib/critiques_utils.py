@@ -1,5 +1,7 @@
 import os
 import logging
+import requests
+from tempfile import NamedTemporaryFile
 from langgraph.graph import StateGraph, END
 from langchain_community.document_loaders import YoutubeLoader, PyPDFLoader, Docx2txtLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -10,6 +12,7 @@ from typing import cast, TypedDict, List, Literal, Optional
 from pydantic import BaseModel, Field
 from urllib.parse import urlparse
 from src.lib.types import GenerateCritiqueInput, GenerateCritiqueOutput
+
 
 
 # Define the state schema
@@ -115,6 +118,27 @@ def classify_url(url) -> Literal["youtube", "pdf", "docx", "txt", "unknown"]:
     return "unknown"
 
 
+def download_file(url: str) -> Optional[str]:
+    """Downloads a file from the given URL and saves it temporarily."""
+    try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()  # Raise error for bad status codes
+
+        ext = os.path.splitext(urlparse(url).path)[-1].lower()
+        if ext not in [".pdf", ".txt", ".docx"]:
+            return None
+
+        temp_file = NamedTemporaryFile(delete=False, suffix=ext)
+        with open(temp_file.name, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+        return temp_file.name
+    except requests.RequestException as e:
+        logging.error(f"Failed to download file: {e}")
+        return None
+
+
 def process_url(state: GraphState) -> GraphState:
     file_url: Optional[str] = state.get("user_input", {}).file_url
 
@@ -132,15 +156,20 @@ def process_url(state: GraphState) -> GraphState:
             loader = YoutubeLoader.from_youtube_url(
                 file_url, add_video_info=False, language=["en", "id"], translation="en"
             )
-        elif file_type == "pdf":
-            loader = PyPDFLoader(file_url)
-        elif file_type == "docx":
-            loader = Docx2txtLoader(file_url)
-        elif file_type == "txt":
-            loader = TextLoader(file_url)
+        else:
+            temp_file = download_file(file_url)
+            logging.info(f"temp_file: {temp_file}")
+            if not temp_file:
+                return {"document_or_youtube_text": None}
+            if file_type == "pdf":
+                loader = PyPDFLoader(temp_file)
+            elif file_type == "docx":
+                loader = Docx2txtLoader(temp_file)
+            elif file_type == "txt":
+                loader = TextLoader(temp_file)
 
-        if loader is None:
-            return {"document_or_youtube_text": None}
+            if loader is None:
+                return {"document_or_youtube_text": None}
 
         documents = loader.load()
         extracted_text = "\n".join([doc.page_content for doc in documents])
