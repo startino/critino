@@ -14,7 +14,7 @@ from supabase import PostgrestAPIError
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from src.lib import auth, validators as vd
-
+from src.lib.critique_generator import CritiqueGeneratorRequest, CritiqueGeneratorResponse, generate_critique
 
 from src.lib.few_shot import (
     SimilarityKey,
@@ -580,3 +580,10 @@ async def upsert_many(
         url=f"{get_url()}{sluggify(query.team_name)}/{sluggify(query.environment_name)}/critiques",
         data=data,
     )
+
+@router.get("/generate-critiques")
+@ahandle_error
+async def generate_critiques(request: CritiqueGeneratorRequest) -> list[CritiqueGeneratorResponse]:
+    logging.info(f"generate_critiques: request: {request}")
+    critiques = generate_critique(request)
+    return critiques

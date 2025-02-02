@@ -30,6 +30,9 @@ pydantic = "*"
 sse-starlette = "*"
 watchfiles = "0.23.0"
 sentence-transformers = "^3.3.1"
+youtube-transcript-api = "*"
+docx2txt = '*'
+pypdf = "*"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "*"
