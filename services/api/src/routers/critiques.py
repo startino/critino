@@ -98,6 +98,16 @@ Please deduce the situation from the context provided.
     return situation
 
 
+@router.post("/generate")
+@ahandle_error
+async def generate(
+    body: GenerateCritiqueInput
+) -> list[dict]:
+    response = process_request(body)
+    logging.info(f"generate: response: {response}")
+    return [json.loads(r) for r in response] if response is not None else []
+
+
 @router.get("/ids")
 def get_critique_ids() -> list[str]:
     supabase = db.client()
@@ -583,11 +593,3 @@ async def upsert_many(
         url=f"{get_url()}{sluggify(query.team_name)}/{sluggify(query.environment_name)}/critiques",
         data=data,
     )
-
-
-@router.get("/generate")
-@ahandle_error
-async def generate(body: GenerateCritiqueInput) -> list[dict]:
-    response = process_request(body)
-    logging.info(f"generate: response: {response}")
-    return [json.loads(r) for r in response] if response is not None else []
