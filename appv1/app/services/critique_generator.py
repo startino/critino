@@ -13,7 +13,7 @@ from app.services.content_processor import chunk_content, chunk_content_streamin
 import json
 llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-flash",
-    google_api_key="AIzaSyC1emOwE53GOWq5OIvm27HmVLtkyAIicGc"
+    google_api_key=""
 )
 PROMPT_TEMPLATE = """You are a precise dialogue formatter. Format the given transcript chunk into a structured dialogue following these EXACT requirements:
 
