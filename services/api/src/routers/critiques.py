@@ -14,8 +14,8 @@ from supabase import PostgrestAPIError
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from src.lib import auth, validators as vd
-
-
+from src.lib.critique_generator import CritiqueGeneratorRequest, CritiqueGeneratorResponse, CritiqueProcessor
+import json
 from src.lib.few_shot import (
     SimilarityKey,
     find_relevant_critiques,
@@ -23,7 +23,7 @@ from src.lib.few_shot import (
 )
 
 router = APIRouter(prefix="/critiques")
-
+critique_processor = CritiqueProcessor()
 
 def handle_error(func):
     @wraps(func)
@@ -377,6 +377,12 @@ If optimal is present, that is the **optimal** you're aiming for.
     logging.error("generate_fields: all attempts at populating missing failed")
     return filled_body
 
+@router.post("/generate-critiques")
+@ahandle_error
+async def generate_critiques(request: CritiqueGeneratorRequest) -> list[dict]:
+    logging.info(f"generate_critiques: request: {request}")
+    critiques = critique_processor.generate_critique(request)
+    return [json.loads(crit) for crit in critiques]
 
 @router.post("/{id}")
 @ahandle_error
