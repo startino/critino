@@ -377,6 +377,12 @@ If optimal is present, that is the **optimal** you're aiming for.
     logging.error("generate_fields: all attempts at populating missing failed")
     return filled_body
 
+@router.post("/generate-critiques")
+@ahandle_error
+async def generate_critiques(request: CritiqueGeneratorRequest) -> list[CritiqueGeneratorResponse]:
+    logging.info(f"generate_critiques: request: {request}")
+    critiques = generate_critique(request)
+    return critiques
 
 @router.post("/{id}")
 @ahandle_error
@@ -580,10 +586,3 @@ async def upsert_many(
         url=f"{get_url()}{sluggify(query.team_name)}/{sluggify(query.environment_name)}/critiques",
         data=data,
     )
-
-@router.get("/generate-critiques")
-@ahandle_error
-async def generate_critiques(request: CritiqueGeneratorRequest) -> list[CritiqueGeneratorResponse]:
-    logging.info(f"generate_critiques: request: {request}")
-    critiques = generate_critique(request)
-    return critiques
