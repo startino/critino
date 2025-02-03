@@ -52,6 +52,7 @@ services:
       - LANGCHAIN_PROJECT
       - LANGCHAIN_ENDPOINT
       - LANGCHAIN_API_KEY
+      - GOOGLE_API_KEY
     env_file: ./services/api/.env
 
 networks:

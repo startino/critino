@@ -7,8 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from requests import Request
 
 from src.routers import auth, critiques, index, environments
+from src.routers.critiques_v1 import critiquesv1
 
 load_dotenv()
+
 
 
 logging.basicConfig(
@@ -33,6 +35,7 @@ def create_app() -> FastAPI:
     app.include_router(auth.router)
     app.include_router(environments.router)
     app.include_router(critiques.router)
+    app.include_router(critiquesv1.router)
 
     app.add_middleware(
         CORSMiddleware,
