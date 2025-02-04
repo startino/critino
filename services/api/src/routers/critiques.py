@@ -11,7 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from pydantic import BaseModel, AfterValidator, Field
 from src.interfaces import db, llm
 from src.lib.url_utils import get_url, sluggify
-from src.lib.critiques_utils import process_request
+from src.lib.critiques_utils import CritiqueGenerator
 from src.lib.types import GenerateCritiqueInput
 from supabase import PostgrestAPIError
 
@@ -103,7 +103,8 @@ Please deduce the situation from the context provided.
 async def generate(
     body: GenerateCritiqueInput
 ) -> list[dict]:
-    response = process_request(body)
+    critique_generator = CritiqueGenerator()
+    response = critique_generator.process_request(body)
     logging.info(f"generate: response: {response}")
     return [json.loads(r) for r in response] if response is not None else []
 
