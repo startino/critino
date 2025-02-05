@@ -1,5 +1,5 @@
-import traceback
 import logging
+import traceback
 from functools import wraps
 
 from fastapi import APIRouter, HTTPException

@@ -1,9 +1,9 @@
 import urllib.parse
 from typing import Annotated
-from pydantic import AfterValidator, BaseModel
-from src.interfaces import db
 
 from fastapi import APIRouter, Depends, Header
+from pydantic import AfterValidator, BaseModel
+from src.interfaces import db
 from src.lib import auth
 from src.lib import validators as vd
 
