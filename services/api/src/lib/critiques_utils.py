@@ -3,7 +3,12 @@ import logging
 import requests
 from tempfile import NamedTemporaryFile
 from langgraph.graph import StateGraph, END
-from langchain_community.document_loaders import YoutubeLoader, PyPDFLoader, Docx2txtLoader, TextLoader
+from langchain_community.document_loaders import (
+    YoutubeLoader,
+    PyPDFLoader,
+    Docx2txtLoader,
+    TextLoader,
+)
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import SystemMessage, HumanMessage
 from langchain.prompts import ChatPromptTemplate
@@ -16,34 +21,13 @@ from src.lib.constants import LANGUAGE_CODES
 
 
 # Define the state schema
-class GraphState(TypedDict):
+class GraphState(BaseModel):
     document_or_youtube_text: str | None
+    chunk_size: int
+    chunk_overlap: int
     chunks: List[str] | None
     user_input: GenerateCritiqueInput
     critiques: List[GenerateCritiqueOutput] | None
-
-
-class CritiqueResponse(BaseModel):
-    context: str = Field(
-        ...,
-        description="A detailed background of the conversation or content leading up to the query. This provides "
-                    "necessary context to understand the nature of the discussion."
-    )
-    query: str = Field(
-        ...,
-        description="The specific statement, question, or input that triggered a response. It represents the direct "
-                    "prompt to which an optimal reply should be formulated."
-    )
-    optimal: str = Field(
-        ...,
-        description="The ideal, most accurate, and contextually appropriate response to the given query. This is the "
-                    "benchmark against which other responses are evaluated."
-    )
-    situation: str = Field(
-        ...,
-        description="A ~10 word description of the situation from the context and query. The situation should be "
-                    "generic such that it's similarly worded to others since it's used for similarity search."
-    )
 
 
 class CritiqueGenerator:
@@ -52,21 +36,45 @@ class CritiqueGenerator:
         self.loader = None
         self.temp_file = None
         self.critiques = []
-        self.model = llm.chat_open_router(model="gpt-4o", api_key="api-key")
-        self.splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=20)
+        self.model = llm.chat_open_router(
+            model="gpt-4o",
+            api_key=str(os.getenv("OPENROUTER_API_KEY")),
+        )
 
-    def chunk_text(self, state: GraphState) -> GraphState:
-        if state["document_or_youtube_text"] is None:
+    def chunk_text(self, state: GraphState):
+        self.splitter = RecursiveCharacterTextSplitter(
+            chunk_size=state.chunk_size, chunk_overlap=state.chunk_overlap
+        )
+        if state.document_or_youtube_text is None:
             return {"chunks": None}
 
-        return {"chunks": self.splitter.split_text(state["document_or_youtube_text"])}
+        return {"chunks": self.splitter.split_text(state.document_or_youtube_text)}
 
     # Function to generate critiques
-    def generate_critiques(self, state: GraphState) -> GraphState:
-        if state["chunks"] is None:
+    def generate_critiques(self, state: GraphState):
+        if state.chunks is None:
             return {"critiques": None}
 
-        for chunk in state["chunks"]:
+        class CritiqueResponse(BaseModel):
+            context: str = Field(
+                ...,
+                description=state.user_input.definitions.context,
+            )
+            query: str = Field(
+                ...,
+                description=state.user_input.definitions.query,
+            )
+            optimal: str = Field(
+                ...,
+                description=state.user_input.definitions.optimal,
+            )
+            situation: str = Field(
+                ...,
+                description="A ~10 word description of the situation from the context and query. The situation should be "
+                "generic such that it's similarly worded to others since it's used for similarity search.",
+            )
+
+        for chunk in state.chunks:
             prompt = ChatPromptTemplate(
                 [
                     SystemMessage(
@@ -75,36 +83,33 @@ class CritiqueGenerator:
                         text chunk and generate multiple critiques adhering to the Critino format. Each critique should
                         be precise, actionable, and well-structured, ensuring clarity and relevance.
 
-                        Follow this structured output:
-                        - **Context**: Briefly summarize the surrounding information relevant to the critique.
-                        - **Query**: The specific aspect being evaluated.
-                        - **Optimal Response**: A well-crafted answer or correction based on best practices.
-                        - **Situation**: A generalized version of the critique to enable similarity searches.
-
                         Ensure the critiques are objective, relevant, and maintain professional standards.
                         """
                     ),
                     HumanMessage(
                         content=f"""Analyze the following text chunk and generate structured critiques based on the Critino format.
 
-                        **User-Defined Definitions:**
-                        - **Context**: {state["user_input"].definitions.context}
-                        - **Query**: {state["user_input"].definitions.query}
-                        - **Optimal Response**: {state["user_input"].definitions.optimal}
+                        **Follow this defined structure for the critiques:**
+                        - **Context**: {state.user_input.definitions.context}
+                        - **Query**: {state.user_input.definitions.query}
+                        - **Optimal Response**: {state.user_input.definitions.optimal}
+                        - **Situation**: A ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search.
 
                         **Text Chunk:**"
                         {chunk}
                         """
-                    )
+                    ),
                 ]
             )
-            model_with_structured_output = self.model.with_structured_output(CritiqueResponse)
+            model_with_structured_output = self.model.with_structured_output(
+                CritiqueResponse
+            )
 
             response = cast(
-                CritiqueResponse,
-                model_with_structured_output.invoke(prompt.invoke({}))
+                CritiqueResponse, model_with_structured_output.invoke(prompt.invoke({}))
             )
             critique = response.model_dump_json(indent=4)
+            logging.info(f"critique: \n\n\n{critique}\n\n\n")
             self.critiques.append(critique)
 
         return {"critiques": self.critiques}
@@ -136,27 +141,30 @@ class CritiqueGenerator:
         except requests.RequestException as e:
             logging.error(f"Failed to download file: {e}")
 
-    def process_url(self, state: GraphState) -> GraphState:
-        self.url = state.get("user_input", {}).file_url
+    def process_url(self, state: GraphState):
+        self.url = state.user_input.file_url
 
         if not self.url:
-            return {"document_or_youtube_text": None}
+            return {}
 
         file_type = self.classify_url()
 
         if file_type == "unknown":
-            return {"document_or_youtube_text": None}
+            return {}
 
         try:
             if file_type == "youtube":
                 self.loader = YoutubeLoader.from_youtube_url(
-                    self.url, add_video_info=False, language=LANGUAGE_CODES, translation="en"
+                    self.url,
+                    add_video_info=False,
+                    language=LANGUAGE_CODES,
+                    translation="en",
                 )
             else:
                 self.download_file()
                 logging.info(f"temp_file: {self.temp_file.name}")
                 if not self.temp_file.name:
-                    return {"document_or_youtube_text": None}
+                    return {}
                 if file_type == "pdf":
                     self.loader = PyPDFLoader(self.temp_file.name)
                 elif file_type == "docx":
@@ -165,7 +173,7 @@ class CritiqueGenerator:
                     self.loader = TextLoader(self.temp_file.name)
 
                 if self.loader is None:
-                    return {"document_or_youtube_text": None}
+                    return {}
 
             documents = self.loader.load()
             extracted_text = "\n".join([doc.page_content for doc in documents])
@@ -174,9 +182,11 @@ class CritiqueGenerator:
 
         except Exception as e:
             logging.error(f"Error processing URL: {e}")
-            return {"document_or_youtube_text": None}
+            return {}
 
-    def process_request(self, input_data: GenerateCritiqueInput) -> List[GenerateCritiqueOutput]:
+    def process_request(
+        self, input_data: GenerateCritiqueInput
+    ) -> List[GenerateCritiqueOutput]:
         # Initialize workflow with state schema
         workflow = StateGraph(GraphState)
 
@@ -195,12 +205,14 @@ class CritiqueGenerator:
         graph = workflow.compile()
 
         # Initialize with required state
-        initial_state = {
-            "user_input": input_data,
-            "document_or_youtube_text": None,
-            "chunks": None,
-            "critiques": None
-        }
+        initial_state = GraphState(
+            user_input=input_data,
+            document_or_youtube_text=None,
+            chunks=None,
+            critiques=None,
+            chunk_size=input_data.config.chunk_size,
+            chunk_overlap=input_data.config.chunk_overlap,
+        )
 
-        result = graph.invoke(initial_state)
+        result = graph.invoke(initial_state.model_dump())
         return result["critiques"]

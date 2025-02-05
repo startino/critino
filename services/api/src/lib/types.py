@@ -7,8 +7,14 @@ class Definitions(BaseModel):
     optimal: str
 
 
+class GenerateCritiqueConfig(BaseModel):
+    chunk_size: int
+    chunk_overlap: int
+
+
 class GenerateCritiqueInput(BaseModel):
     file_url: str
+    config: GenerateCritiqueConfig
     definitions: Definitions
 
 
