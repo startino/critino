@@ -37,7 +37,7 @@ RUN poetry config virtualenvs.create false && poetry install --no-interaction --
 COPY . .
 
 # Expose the port your FastAPI app will run on
-EXPOSE 8000
+EXPOSE 8080
 
 # Command to run the FastAPI application with hot reload
 CMD ["poetry", "run", "fastapi", "run", "src", "--host", "0.0.0.0", "--port", "8080", "--reload"]
