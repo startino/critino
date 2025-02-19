@@ -16,8 +16,6 @@ services:
     networks:
       critino_net:
         ipv4_address: 172.16.238.12
-    environment:
-      - PUBLIC_API_URL=http://api:8000
     env_file: ./web/.env
 
   api:
