@@ -1,8 +1,18 @@
+import json
 import os
 import logging
 import requests
 from tempfile import NamedTemporaryFile
 from langgraph.graph import StateGraph, END
+from sse_starlette import ServerSentEvent
+from langchain_core.messages import (
+    AIMessageChunk,
+    AIMessage,
+    BaseMessage,
+    BaseMessageChunk,
+    ToolMessage,
+    message_to_dict,
+)
 from langchain_community.document_loaders import (
     YoutubeLoader,
     PyPDFLoader,
@@ -172,9 +182,7 @@ class CritiqueGenerator:
             logging.error(f"Error processing URL: {e}")
             return {}
 
-    def process_request(
-        self, input_data: GenerateCritiqueInput
-    ) -> List[GenerateCritiqueOutput]:
+    async def process_request(self, input_data: GenerateCritiqueInput):
         # Initialize workflow with state schema
         workflow = StateGraph(GraphState)
 
@@ -202,5 +210,58 @@ class CritiqueGenerator:
             chunk_overlap=input_data.config.chunk_overlap,
         )
 
-        result = graph.invoke(initial_state.model_dump())
-        return result["critiques"]
+        critiques_list = []
+
+        async for event in graph.astream_events(
+            initial_state.model_dump(), version="v2"
+        ):
+            kind, data = event["event"], event["data"]
+
+            metadata = event.get("metadata", {})
+            node = metadata.get("langgraph_node", None)
+
+            input = data.get("input", None)
+
+            match kind:
+                case "on_parser_end":
+                    if not node:
+                        logging.error(f"workshop: no node found for event {kind}")
+                        continue
+
+                    logging.info(f"workshop: {node}: {kind}: parser end: {data}")
+                    input = data.get("input", None)
+                    output = data.get("output", None)
+
+                    if isinstance(output, BaseModel):
+                        output_string = output.model_dump_json()
+                    elif isinstance(output, list):
+                        output_string = json.dumps(output[0].get("args", None))
+                        if not output_string:
+                            logging.error(
+                                f"workshop: output is list but missing args: output: {output}"
+                            )
+                            continue
+                    else:
+                        logging.error(
+                            f"workshop: output is not a BaseModel or a list: output: {output}"
+                        )
+                        continue
+
+                    if not isinstance(input, AIMessage):
+                        logging.error(
+                            f"workshop: input is not an AIMessage: input: {input}"
+                        )
+                        continue
+
+                    yield ServerSentEvent(
+                        data=output_string,
+                        event="on_critique_end",
+                    )
+
+                    critiques_list.append(json.loads(output_string))
+
+        # Yield the accumulated critiques in a final event
+        yield ServerSentEvent(
+            data=json.dumps(critiques_list),
+            event="on_critiques_end",
+        )

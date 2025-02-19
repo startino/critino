@@ -14,6 +14,7 @@ from src.lib.url_utils import get_url, sluggify
 from src.lib.critiques_utils import CritiqueGenerator
 from src.lib.types import GenerateCritiqueInput
 from supabase import PostgrestAPIError
+from sse_starlette import EventSourceResponse
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from src.lib import auth, validators as vd
@@ -102,16 +103,15 @@ Please deduce the situation from the context provided.
 @ahandle_error
 async def generate(
     x_openrouter_api_key: Annotated[str | None, Header()], body: GenerateCritiqueInput
-) -> list[dict]:
+):
     if not x_openrouter_api_key:
         raise HTTPException(
             status_code=400,
             detail="OpenRouter API key is required to generate critiques.",
         )
     critique_generator = CritiqueGenerator(body.instructions, x_openrouter_api_key)
-    response = critique_generator.process_request(body)
-    logging.info(f"generate: response: {response}")
-    return [json.loads(r) for r in response] if response is not None else []
+    event = critique_generator.process_request(body)
+    return EventSourceResponse(event, media_type="text/event-stream")
 
 
 @router.get("/ids")
