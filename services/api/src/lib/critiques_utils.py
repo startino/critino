@@ -31,8 +31,9 @@ class GraphState(BaseModel):
 
 
 class CritiqueGenerator:
-    def __init__(self, openrouter_api_key: str):
+    def __init__(self, instructions, openrouter_api_key: str):
         self.openrouter_api_key = openrouter_api_key
+        self.instructions = instructions
         self.url = None
         self.loader = None
         self.temp_file = None
@@ -78,27 +79,18 @@ class CritiqueGenerator:
         for chunk in state.chunks:
             prompt = ChatPromptTemplate(
                 [
-                    SystemMessage(
-                        content=""" You are an advanced AI critique generator trained to analyze media content and
-                        provide structured feedback based on user-defined criteria. Your task is to process the given
-                        text chunk and generate multiple critiques adhering to the Critino format. Each critique should
-                        be precise, actionable, and well-structured, ensuring clarity and relevance.
-
-                        Ensure the critiques are objective, relevant, and maintain professional standards.
-                        """
-                    ),
+                    SystemMessage(content=self.instructions),
                     HumanMessage(
-                        content=f"""Analyze the following text chunk and generate structured critiques based on the Critino format.
+                        content=f"""
+**Follow this defined structure for the critiques:**
+- **Context**: {state.user_input.definitions.context}
+- **Query**: {state.user_input.definitions.query}
+- **Optimal Response**: {state.user_input.definitions.optimal}
+- **Situation**: A ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search.
 
-                        **Follow this defined structure for the critiques:**
-                        - **Context**: {state.user_input.definitions.context}
-                        - **Query**: {state.user_input.definitions.query}
-                        - **Optimal Response**: {state.user_input.definitions.optimal}
-                        - **Situation**: A ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search.
-
-                        **Text Chunk:**"
-                        {chunk}
-                        """
+**Text Chunk:**"
+{chunk}
+                        """.strip()
                     ),
                 ]
             )
