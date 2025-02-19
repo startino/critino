@@ -31,14 +31,15 @@ class GraphState(BaseModel):
 
 
 class CritiqueGenerator:
-    def __init__(self):
+    def __init__(self, openrouter_api_key: str):
+        self.openrouter_api_key = openrouter_api_key
         self.url = None
         self.loader = None
         self.temp_file = None
         self.critiques = []
         self.model = llm.chat_open_router(
             model="gpt-4o",
-            api_key=str(os.getenv("OPENROUTER_API_KEY")),
+            api_key=self.openrouter_api_key,
         )
 
     def chunk_text(self, state: GraphState):

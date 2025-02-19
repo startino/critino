@@ -101,9 +101,15 @@ Please deduce the situation from the context provided.
 @router.post("/generate")
 @ahandle_error
 async def generate(
-    body: GenerateCritiqueInput
+    x_openrouter_api_key: Annotated[str | None, Header()], body: GenerateCritiqueInput
 ) -> list[dict]:
-    critique_generator = CritiqueGenerator()
+    if not x_openrouter_api_key:
+        raise HTTPException(
+            status_code=400,
+            detail="OpenRouter API key is required to generate critiques.",
+        )
+
+    critique_generator = CritiqueGenerator(x_openrouter_api_key)
     response = critique_generator.process_request(body)
     logging.info(f"generate: response: {response}")
     return [json.loads(r) for r in response] if response is not None else []
