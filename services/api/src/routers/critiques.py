@@ -67,7 +67,7 @@ def ahandle_error(func):
 def generate_situation(model: ChatOpenAI, context: str) -> str:
     class Situation(BaseModel):
         situation: str = Field(
-            description="A ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search."
+            description="A ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names."
         )
 
     context = truncate_context(context)

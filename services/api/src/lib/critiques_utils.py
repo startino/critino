@@ -39,7 +39,7 @@ class CritiqueGenerator:
         self.temp_file = None
         self.critiques = []
         self.model = llm.chat_open_router(
-            model="gpt-4o",
+            model="google/gemini-2.0-flash-001",
             api_key=self.openrouter_api_key,
         )
 
@@ -58,10 +58,6 @@ class CritiqueGenerator:
             return {"critiques": None}
 
         class CritiqueResponse(BaseModel):
-            context: str = Field(
-                ...,
-                description=state.user_input.definitions.context,
-            )
             query: str = Field(
                 ...,
                 description=state.user_input.definitions.query,
@@ -72,8 +68,8 @@ class CritiqueGenerator:
             )
             situation: str = Field(
                 ...,
-                description="A ~10 word description of the situation from the context and query. The situation should be "
-                "generic such that it's similarly worded to others since it's used for similarity search.",
+                description="A ~10 word description of the situation from the query. The situation should be "
+                "generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names.",
             )
 
         for chunk in state.chunks:
@@ -83,10 +79,9 @@ class CritiqueGenerator:
                     HumanMessage(
                         content=f"""
 **Follow this defined structure for the critiques:**
-- **Context**: {state.user_input.definitions.context}
 - **Query**: {state.user_input.definitions.query}
 - **Optimal Response**: {state.user_input.definitions.optimal}
-- **Situation**: A ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search.
+- **Situation**: A ~10 word description of the situation from the query. The situation should be generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names.
 
 **Text Chunk:**"
 {chunk}
