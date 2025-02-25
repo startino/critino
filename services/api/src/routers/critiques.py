@@ -66,37 +66,27 @@ def ahandle_error(func):
 
 
 def generate_situation(model: ChatOpenAI, context: str) -> str:
-    class Situation(BaseModel):
-        situation: str = Field(
-            description="A ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names."
-        )
-
     context = truncate_context(context)
 
-    prompt = ChatPromptTemplate(
-        [
-            HumanMessage(
-                content=f"""
+    prompt = [
+        HumanMessage(
+            content=f"""
 <context>
 {context}
 </context>
 
 Please deduce the situation from the context provided.
+
+Provide a ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names.
                 """.strip()
-            ),
-        ]
-    )
+        ),
+    ]
 
-    agent = model.with_structured_output(Situation)
+    situation = model.invoke(prompt)
 
-    situation = cast(
-        Situation,
-        agent.invoke(prompt.invoke({})),
-    ).situation
+    logging.info(f"critiques: generate_situation: {situation.content}")
 
-    logging.info(f"critiques: generate_situation: {situation}")
-
-    return situation
+    return situation.content
 
 
 @router.post("/generate")
@@ -203,9 +193,9 @@ async def list_critiques(
     if query.similarity_key == "situation":
         model = (
             llm.chat_open_router(
-                model="anthropic/claude-3-5-haiku-20241022:beta",
+                model="google/gemini-2.0-flash-001",
                 api_key=x_openrouter_api_key,
-                temperature=0.1,
+                temperature=0,
             )
             if x_openrouter_api_key
             else None
@@ -421,9 +411,9 @@ async def upsert(
 
     model = (
         llm.chat_open_router(
-            model="anthropic/claude-3-5-haiku-20241022:beta",
+            model="google/gemini-2.0-flash-001",
             api_key=x_openrouter_api_key,
-            temperature=0.1,
+            temperature=0,
         )
         if x_openrouter_api_key
         else None
@@ -525,9 +515,9 @@ async def upsert_many(
 
         model = (
             llm.chat_open_router(
-                model="anthropic/claude-3-5-haiku-20241022:beta",
+                model="google/gemini-2.0-flash-001",
                 api_key=x_openrouter_api_key,
-                temperature=0.1,
+                temperature=0,
             )
             if x_openrouter_api_key
             else None
