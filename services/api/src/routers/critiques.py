@@ -193,7 +193,7 @@ async def list_critiques(
     if query.similarity_key == "situation":
         model = (
             llm.chat_open_router(
-                model="google/gemini-2.0-flash-001",
+                model="google/gemini-2.5-flash-preview",
                 api_key=x_openrouter_api_key,
                 temperature=0,
             )
@@ -411,7 +411,7 @@ async def upsert(
 
     model = (
         llm.chat_open_router(
-            model="google/gemini-2.0-flash-001",
+            model="google/gemini-2.5-flash-preview",
             api_key=x_openrouter_api_key,
             temperature=0,
         )
@@ -515,7 +515,7 @@ async def upsert_many(
 
         model = (
             llm.chat_open_router(
-                model="google/gemini-2.0-flash-001",
+                model="google/gemini-2.5-flash-preview",
                 api_key=x_openrouter_api_key,
                 temperature=0,
             )
