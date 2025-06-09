@@ -1,9 +1,11 @@
+from datetime import datetime
 import traceback
 import logging
 from functools import wraps
 import os
 from typing import Annotated
 import urllib.parse
+import uuid
 from pydantic import AfterValidator, BaseModel
 from src.interfaces import db
 from supabase import PostgrestAPIError
@@ -173,6 +175,139 @@ async def create_environment(
     return PostEnvironmentResponse(
         key=key,
         data=environment,
+    )
+
+
+class DuplicateEnvironmentQuery(BaseModel):
+    from_team_name: Annotated[str, AfterValidator(vd.str_empty)]
+    from_parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
+
+
+class DuplicateEnvironmentResponse(BaseModel):
+    data: dict
+
+
+class DuplicateEnvironmentBody(BaseModel):
+    # Until echoAI clients need their own team, the team name is the same as the from_team_name
+    to_team_name: Annotated[str, AfterValidator(vd.str_empty)]
+    to_parent_name: Annotated[str, AfterValidator(vd.str_empty)] | None = None
+    new_name: Annotated[str, AfterValidator(vd.str_empty)]
+    gen_key: bool = False
+
+
+@router.post("/{name}/duplicate")
+@ahandle_error
+async def duplicate_environment(
+    name: Annotated[str, AfterValidator(vd.str_empty)],
+    body: DuplicateEnvironmentBody,
+    query: Annotated[DuplicateEnvironmentQuery, Depends(DuplicateEnvironmentQuery)],
+    x_critino_key: Annotated[Annotated[str, AfterValidator(vd.str_empty)], Header()],
+) -> DuplicateEnvironmentResponse:
+    """
+    Duplicate an environment.
+
+    This endpoint duplicates an environment and all its critiques.
+
+    Currently, this endpoint is only safe for duplicating environments in the same team.
+
+    Returns:
+        The duplicated environment.
+    """
+
+    supabase = db.client()
+
+    query.from_team_name = urllib.parse.unquote(query.from_team_name)
+    # "/" is used for parent hirearchy, don't allow in the passed name
+    if "/" in name:
+        raise HTTPException(400, detail={"name": "Name cannot contain '/'"})
+    if "/" in body.new_name:
+        raise HTTPException(400, detail={"new_name": "New name cannot contain '/'"})
+    
+    if query.from_parent_name:
+        query.from_parent_name = urllib.parse.unquote(query.from_parent_name)
+        # At this point, name went from being just the last segment of the environment name to parent_name/name
+        full_from_name = f"{query.from_parent_name}/{name}"
+
+    if body.to_parent_name:
+        body.to_parent_name = urllib.parse.unquote(body.to_parent_name)
+        full_to_name = f"{body.to_parent_name}/{body.new_name}"
+
+    # If echoAI clients need their own team, we'll need to handle the auth and checking of existing environments.
+    if not query.from_parent_name:
+        auth.authenticate_team(supabase, query.from_team_name, x_critino_key)
+    else:
+        auth.authenticate_team_or_environment(
+            supabase, query.from_team_name, query.from_parent_name, x_critino_key,
+        )
+
+    try:
+        environment = (
+            supabase.table("environments")
+            .select("*")
+            .eq("team_name", query.from_team_name)
+            .eq("parent_name", query.from_parent_name)
+            .eq("name", full_from_name)
+            .execute()
+            .data[0]
+        )
+        critiques = (
+            supabase.table("critiques")
+            .select("*")
+            .eq("team_name", query.from_team_name)
+            .eq("environment_name", full_from_name)
+            .execute()
+            .data
+        )
+
+    except PostgrestAPIError as e:
+        logging.error(f"PostgrestAPIError: {e}")
+        raise HTTPException(status_code=500, detail={**e.json()})
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail={**e.__dict__})
+
+    if not environment:
+        raise HTTPException(404, detail={"name": "Environment not found"})
+
+
+    try:
+        new_environment = (
+            supabase.table("environments")
+            .insert(
+                {
+                    "team_name": body.to_team_name,
+                    "parent_name": body.to_parent_name,
+                    "name": full_to_name,
+                    "description": environment["description"],
+                    "key": environment["key"],
+                }
+            )
+            .execute()
+            .data[0]
+        )
+        new_critiques = (
+            supabase.table("critiques")
+            .insert(
+                [
+                    {**critique, "id": str(uuid.uuid4()), "created_at": datetime.now().isoformat(), "team_name": body.to_team_name, "environment_name": full_to_name}
+                    for critique in critiques
+                ]
+            )
+            .execute()
+            .data
+        )
+    except PostgrestAPIError as e:
+        logging.error(f"PostgrestAPIError: {e}")
+        raise HTTPException(status_code=500, detail={**e.json()})
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail={**e.__dict__})
+
+    return DuplicateEnvironmentResponse(
+        data={
+            "new_environment": new_environment,
+            "new_critiques": new_critiques,
+        },
     )
 
 

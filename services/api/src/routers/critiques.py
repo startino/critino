@@ -536,7 +536,7 @@ async def upsert_many(
             raise HTTPException(
                 status_code=400,
                 detail="'populate_missing' is true but no model is available to populate the fields.",
-            )
+            )   
 
         filled_critique = generate_fields(query, critique, model) if model else None
 
@@ -589,3 +589,4 @@ async def upsert_many(
         url=f"{get_url()}{sluggify(query.team_name)}/{sluggify(query.environment_name)}/critiques",
         data=data,
     )
+
