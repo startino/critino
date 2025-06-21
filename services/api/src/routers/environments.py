@@ -73,11 +73,11 @@ async def list_environments(
 
     query.team_name = urllib.parse.unquote(query.team_name)
     # "/" is used for parent hirearchy, don't allow in the passed name
-    if "/" in name:
-        raise HTTPException(400, detail={"name": "Name cannot contain '/'"})
-    if query.parent_name:
-        query.parent_name = urllib.parse.unquote(query.parent_name)
-        name = f"{query.parent_name}/{name}"
+    # if "/" in name:
+    #     raise HTTPException(400, detail={"name": "Name cannot contain '/'"})
+    # if query.parent_name:
+    #     query.parent_name = urllib.parse.unquote(query.parent_name)
+    #     name = f"{query.parent_name}/{name}"
 
     auth.authenticate_team(supabase, query.team_name, x_critino_key)
 

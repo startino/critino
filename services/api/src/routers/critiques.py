@@ -1,14 +1,12 @@
-import json
 import traceback
 import logging
 from functools import wraps
-from typing import Annotated, cast
+from typing import Annotated
 import urllib.parse
 import uuid
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage
 from langchain_openai.chat_models import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from pydantic import BaseModel, AfterValidator, Field
+from pydantic import BaseModel, AfterValidator
 from src.interfaces import db, llm
 from src.lib.url_utils import get_url, sluggify
 from src.lib.critiques_utils import CritiqueGenerator
@@ -23,8 +21,8 @@ from src.lib import auth, validators as vd
 from src.lib.few_shot import (
     SimilarityKey,
     find_relevant_critiques,
-    StrippedCritique,
 )
+from src.models.critique import Critique, CrtitiqueWithSituation
 
 router = APIRouter(prefix="/critiques")
 
@@ -65,19 +63,20 @@ def ahandle_error(func):
     return wrapper
 
 
-def generate_situation(model: ChatOpenAI, context: str) -> str:
-    context = truncate_context(context)
+def generate_situation(model: ChatOpenAI, query: str) -> str:
+    logging.info(f"generate_fields: query: {query}")
+    query = truncate_query(query)
 
     prompt = [
         HumanMessage(
             content=f"""
 <context>
-{context}
+{query}
 </context>
 
 Please deduce the situation from the context provided.
 
-Provide a ~10 word description of the situation from the context and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names.
+Provide a ~10 word description of the situation from the query and query. The situation should be generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names.
                 """.strip()
         ),
     ]
@@ -114,15 +113,14 @@ def get_critique_ids() -> list[str]:
 class GetCritiquesQuery(BaseModel):
     team_name: str
     environment_name: str
-    context: str | None = None
     query: str | None = None
     k: int | None = None
-    similarity_key: SimilarityKey = "query"
+    similarity_key: SimilarityKey = "situation"
 
 
 class GetCritiquesResult(BaseModel):
     situation: str | None = None
-    data: list[StrippedCritique]
+    data: list[Critique]
     count: int
 
 
@@ -167,11 +165,10 @@ async def list_critiques(
     if query.query is None or query.k is None:
         return GetCritiquesResult(
             data=[
-                StrippedCritique(
-                    optimal=critique["optimal"] if not None else "",
-                    instructions=critique["instructions"] if not None else "",
+                CrtitiqueWithSituation(
                     query=critique["query"],
-                    context=critique["context"],
+                    feedback=critique["feedback"],
+                    response=critique["response"],
                     situation=critique["situation"],
                 )
                 for critique in response.data
@@ -180,11 +177,10 @@ async def list_critiques(
         )
 
     critiques = [
-        StrippedCritique(
-            optimal=critique["optimal"] if not None else "",
-            instructions=critique["instructions"] if not None else "",
+        CrtitiqueWithSituation(
             query=critique["query"],
-            context=critique["context"],
+            feedback=critique["feedback"],
+            response=critique["response"],
             situation=critique["situation"],
         )
         for critique in response.data
@@ -207,10 +203,7 @@ async def list_critiques(
                 detail="'similarity_key' is set to 'situation' but no model is available to generate the situation.",
             )
 
-        context = query.context + "\n" if query.context else "" + query.query
-        logging.info(f"generate_fields: Generated context: {context}")
-        situation = generate_situation(model, context)
-        logging.info(f"generate_fields: Generated situation: {situation}")
+        situation = generate_situation(model, query.query)
 
         relevant_critiques = find_relevant_critiques(
             critiques, situation, k=query.k, similarity_key=query.similarity_key
@@ -230,15 +223,11 @@ async def list_critiques(
 class PostCritiquesQuery(BaseModel):
     team_name: Annotated[str, AfterValidator(vd.str_empty)]
     environment_name: Annotated[str, AfterValidator(vd.str_empty)]
-    populate_missing: bool = False
 
 
-class PostCritiquesBody(BaseModel):
-    query: Annotated[str, AfterValidator(vd.str_empty)] | None = None
-    response: str | None = None
-    context: str | None = None
-    optimal: str | None = None
-    instructions: str | None = None
+class Feedback(BaseModel):
+    response: str
+    correction: str
 
 
 class PostCritiquesResponse(BaseModel):
@@ -246,155 +235,20 @@ class PostCritiquesResponse(BaseModel):
     data: dict
 
 
-class FilledBody(PostCritiquesBody):
-    situation: str = ""
-
-
-def truncate_context(context: str, limit: int = 1500) -> str:
-    if len(context) > limit:
-        return "..." + context[-limit:]
-    return context
-
-
-def generate_fields(
-    query: PostCritiquesQuery,
-    body: PostCritiquesBody,
-    model: ChatOpenAI,
-    attempts: int = 3,
-    messages: list[BaseMessage] = [],
-) -> FilledBody:
-    logging.info(
-        f"generate_fields: Starting to generate fields for query: {query}, body: {body}"
-    )
-    context = (body.context + "\n" if body.context else "") + (
-        body.query if body.query else ""
-    )
-    situation = generate_situation(model, context)
-    filled_body = FilledBody(
-        query=body.query,
-        context=body.context,
-        response=body.response if body.response else "",
-        optimal=body.optimal,
-        instructions=body.instructions,
-        situation=situation,
-    )
-
-    logging.info(f"generate_fields: Created filled_body: {filled_body}")
-
-    if not query.populate_missing:
-        logging.info("critiques: generate_fields: did not populate fields")
-        return filled_body
-
-    class Populate(BaseModel):
-        chain_of_thought: str = Field(
-            description="This is your reasoning, use it to evaluate the current information given. Especially the context and original response 'response'. Evaluate how the response was optimized 'optimal'. Then make sure to evaluate how to create instructions on how to achieve the 'optimal' answer. Always start this field with `Let's think step by step. `"
-        )
-        optimal: str = Field(
-            description="DO NOT LEAVE EMPTY. The pure optimal response."
-        )
-        instructions: str = Field(
-            description="DO NOT LEAVE EMPTY. The pure tailored instructions for achieving a response similar or like the same as the optimal response, only provide instructions on how to achive the optimal response, don't provide your own instructions."
-        )
-
-    prompt = ChatPromptTemplate(
-        [
-            SystemMessage(
-                content="""
-You revise critiques and populate the missing properties inferring them from the current.
-Please populate the missing fields.
-DO NOT REPLACE FIELDS ALREADY FILLED IN, THOSE ARE SET IN STONE AS OPTIMAL, USE THOSE TO INSPIRE AND INFER THE MISSING FIELDS.
-        """
-            ),
-            HumanMessage(
-                content=f"""
-Fields and context:
-{filled_body.model_dump_json(indent=4)}
-
-Please deduce the missing fields.
-Do NOT change the fields already present.
-If optimal is present, that is the **optimal** you're aiming for.
-        """
-            ),
-            MessagesPlaceholder("msgs"),
-        ]
-    )
-
-    agent = model.with_structured_output(Populate)
-
-    logging.info("generate_fields: Starting attempts to populate fields")
-    for attempt in range(attempts):
-        logging.info(f"generate_fields: Attempt {attempt + 1}")
-        result = cast(
-            Populate,
-            agent.invoke(prompt.invoke({"msgs": messages})),
-        )
-        logging.info(f"generate_fields: Result from agent: {result}")
-        if (
-            filled_body.instructions != ""
-            and result.instructions != filled_body.instructions
-        ) or (filled_body.optimal != "" and result.optimal != filled_body.optimal):
-            logging.info(
-                f"generate_fields: Instructions or optimal field not populated, adding messages to correct"
-            )
-            messages.append(
-                AIMessage(name="populator", content=result.model_dump_json(indent=4))
-            )
-            messages.append(
-                HumanMessage(
-                    content="You did not properly populate the missing fields. You changed an existing field. DO NOT CHANGE EXISTING FIELDS, THOSE ARE ALREADY PERFECT."
-                )
-            )
-            continue
-
-        filled_body.instructions = (
-            result.instructions if result.instructions else filled_body.instructions
-        )
-        filled_body.optimal = (
-            result.optimal if result.optimal else filled_body.instructions
-        )
-
-        if filled_body.instructions == "" or filled_body.optimal == "":
-            messages.append(
-                AIMessage(name="populator", content=result.model_dump_json(indent=4))
-            )
-            messages.append(
-                HumanMessage(
-                    content="You did not properly populate the missing fields. You did not populate a missing field. DO NOT CHANGE EXISTING FIELDS, THOSE ARE ALREADY PERFECT."
-                )
-            )
-            continue
-
-        filled_body = FilledBody(
-            query=filled_body.query,
-            context=filled_body.context,
-            response=filled_body.response,
-            optimal=filled_body.optimal,
-            instructions=filled_body.instructions,
-            situation=filled_body.situation,
-        )
-
-        logging.info(
-            f"critiques: generate_fields: attempt {attempt + 1}: (instructions: {result.instructions}, optimal: {result.optimal})"
-        )
-
-        logging.info(
-            f"generate_fields: Successfully populated fields on attempt {attempt + 1}"
-        )
-        logging.info(f"generate_fields: Returning filled_body: {filled_body}")
-        return filled_body
-
-    logging.error("generate_fields: all attempts at populating missing failed")
-    return filled_body
+def truncate_query(query: str, limit: int = 1500) -> str:
+    if len(query) > limit:
+        return "..." + query[-limit:]
+    return query
 
 
 @router.post("/{id}")
 @ahandle_error
 async def upsert(
     id: str,
-    body: PostCritiquesBody,
+    body: Critique,
     query: Annotated[PostCritiquesQuery, Depends(PostCritiquesQuery)],
     x_critino_key: Annotated[str, Header()],
-    x_openrouter_api_key: Annotated[str | None, Header()],
+    x_openrouter_api_key: Annotated[str, Header()],
     tags: Annotated[list[str] | None, Query()] = None,
 ) -> PostCritiquesResponse:
     logging.info(
@@ -402,35 +256,14 @@ async def upsert(
     )
     query.team_name = urllib.parse.unquote(query.team_name).strip()
     query.environment_name = urllib.parse.unquote(query.environment_name).strip()
-    query.populate_missing = False
 
-    if body.instructions is None:
-        body.instructions = ""
-    if body.optimal is None:
-        body.optimal = ""
-
-    model = (
-        llm.chat_open_router(
-            model="google/gemini-2.5-flash-preview",
-            api_key=x_openrouter_api_key,
-            temperature=0,
-        )
-        if x_openrouter_api_key
-        else None
+    model = llm.chat_open_router(
+        model="google/gemini-2.5-flash-preview",
+        api_key=x_openrouter_api_key,
+        temperature=0,
     )
 
-    if body.optimal == "" and body.instructions == "" and query.populate_missing:
-        raise HTTPException(
-            status_code=400,
-            detail="both 'optimal' and 'instructions' cannot be empty when 'populate_missing' is true.",
-        )
-    if query.populate_missing and model is None:
-        raise HTTPException(
-            status_code=400,
-            detail="'populate_missing' is true but no model is available to populate the fields.",
-        )
-
-    filled_body = generate_fields(query, body, model) if model else None
+    situation = generate_situation(model, body.query)
 
     supabase = db.client()
 
@@ -458,7 +291,10 @@ async def upsert(
                     "team_name": query.team_name.strip(),
                     "environment_name": query.environment_name.strip(),
                     "tags": tags if tags else [],
-                    **(filled_body.model_dump() if filled_body else body.model_dump()),
+                    "query": body.query,
+                    "feedback": body.feedback if body.feedback else [],
+                    "response": body.response if body.response else "",
+                    "situation": situation,
                 }
             )
             .execute()
@@ -477,7 +313,7 @@ async def upsert(
     )
 
 
-class PostManyCritique(PostCritiquesBody):
+class PostManyCritique(Critique):
     id: Annotated[str, AfterValidator(vd.str_empty)] | None = None
 
 
@@ -496,7 +332,7 @@ async def upsert_many(
     body: PostManyCritiquesBody,
     query: Annotated[PostCritiquesQuery, Depends(PostCritiquesQuery)],
     x_critino_key: Annotated[str, Header()],
-    x_openrouter_api_key: Annotated[str | None, Header()],
+    x_openrouter_api_key: Annotated[str, Header()],
     tags: Annotated[list[str] | None, Query()] = None,
 ) -> PostManyCritiquesResponse:
     logging.info(
@@ -504,41 +340,16 @@ async def upsert_many(
     )
     query.team_name = urllib.parse.unquote(query.team_name).strip()
     query.environment_name = urllib.parse.unquote(query.environment_name).strip()
-    query.populate_missing = False
 
     data = []
     for critique in body.critiques:
-        if critique.instructions is None:
-            critique.instructions = ""
-        if critique.optimal is None:
-            critique.optimal = ""
-
-        model = (
-            llm.chat_open_router(
-                model="google/gemini-2.5-flash-preview",
-                api_key=x_openrouter_api_key,
-                temperature=0,
-            )
-            if x_openrouter_api_key
-            else None
+        model = llm.chat_open_router(
+            model="google/gemini-2.5-flash-preview",
+            api_key=x_openrouter_api_key,
+            temperature=0,
         )
 
-        if (
-            critique.optimal == ""
-            and critique.instructions == ""
-            and query.populate_missing
-        ):
-            raise HTTPException(
-                status_code=400,
-                detail="both 'optimal' and 'instructions' cannot be empty when 'populate_missing' is true.",
-            )
-        if query.populate_missing and model is None:
-            raise HTTPException(
-                status_code=400,
-                detail="'populate_missing' is true but no model is available to populate the fields.",
-            )   
-
-        filled_critique = generate_fields(query, critique, model) if model else None
+        situation = generate_situation(model, critique.query)
 
         supabase = db.client()
 
@@ -566,11 +377,10 @@ async def upsert_many(
                         "team_name": query.team_name.strip(),
                         "environment_name": query.environment_name.strip(),
                         "tags": tags if tags else [],
-                        **(
-                            filled_critique.model_dump()
-                            if filled_critique
-                            else critique.model_dump()
-                        ),
+                        "query": critique.query,
+                        "feedback": critique.feedback if critique.feedback else [],
+                        "response": critique.response if critique.response else "",
+                        "situation": situation,
                     }
                 )
                 .execute()

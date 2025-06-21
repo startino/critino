@@ -73,9 +73,9 @@ class CritiqueGenerator:
                 ...,
                 description=state.user_input.definitions.query,
             )
-            optimal: str = Field(
+            response: str = Field(
                 ...,
-                description=state.user_input.definitions.optimal,
+                description=state.user_input.definitions.response,
             )
             situation: str = Field(
                 ...,
@@ -91,7 +91,7 @@ class CritiqueGenerator:
                         content=f"""
 **Follow this defined structure for the critiques:**
 - **Query**: {state.user_input.definitions.query}
-- **Optimal Response**: {state.user_input.definitions.optimal}
+- **response Response**: {state.user_input.definitions.response}
 - **Situation**: A ~10 word description of the situation from the query. The situation should be generic such that it's similarly worded to others since it's used for similarity search. Do not mention specifics like names.
 
 **Text Chunk:**"

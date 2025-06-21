@@ -5,7 +5,7 @@ class Definitions(BaseModel):
     query: str = (
         "The segment of the transcript that provides background and ongoing conversation leading up to the key statement. It includes all dialogue that sets the stage for what follows."
     )
-    optimal: str = (
+    response: str = (
         "The direct response or reaction following the query. This is the statement that follows the query, formatted with proper speaker tags."
     )
 

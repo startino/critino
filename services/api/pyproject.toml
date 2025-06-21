@@ -1,3 +1,40 @@
+[project]
+authors = [
+    { name = "Jonas Lindberg", email = "jonas.lindberg@futi.no" },
+    { name = "Jorge Lewis", email = "jorge.lewis@futi.no" },
+]
+license = { text = "BSL-1.1 (https://github.com/startino/critino/blob/alpha/LICENSE)" }
+requires-python = "<3.13,>=3.11"
+dependencies = [
+    "fastapi[standard]",
+    "tenacity",
+    "supabase",
+    "langchain",
+    "langgraph",
+    "langchain-community",
+    "langchain-openai",
+    "praw",
+    "markdown",
+    "gptrim",
+    "selenium",
+    "python-dotenv",
+    "diskcache",
+    "pydantic",
+    "sse-starlette",
+    "watchfiles==0.23.0",
+    "sentence-transformers",
+    "youtube-transcript-api",
+]
+name = "src"
+version = "0.0.1"
+description = "API for Critino, the LLM Critique Platform."
+readme = "./README.md"
+
+[project.urls]
+homepage = "https://critino.starti.no"
+repository = "https://github.com/startino/critino"
+documentation = "https://api.critino.starti.no/docs"
+
 [tool.poetry]
 name = "src"
 version = "0.0.1"
@@ -12,43 +49,11 @@ repository = "https://github.com/startino/critino"
 documentation = "https://api.critino.starti.no/docs"
 license = "BSL-1.1 (https://github.com/startino/critino/blob/alpha/LICENSE)"
 
-[tool.poetry.dependencies]
-python = ">=3.11,<3.13"
-fastapi = { extras = ["standard"], version = "*" }
-tenacity = "*"
-supabase = "*"
-langchain = "*"
-langgraph = "*"
-langchain-community = "*"
-langchain-openai = "*"
-praw = "*"
-markdown = "*"
-gptrim = "*"
-selenium = "*"
-python-dotenv = "*"
-diskcache = "*"
-pydantic = "*"
-sse-starlette = "*"
-watchfiles = "0.23.0"
-sentence_transformers = "*"
-youtube-transcript-api = "*"
-
-[tool.poetry.group.dev.dependencies]
-mypy = "*"
-black = "*"
-isort = "*"
-autoflake = "*"
-flake8 = "*"
-pytest = "*"
-pytest-cov = "*"
-# pyright = "*"
-
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
 line_length = 80
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = ["mypy", "black", "isort", "autoflake", "flake8", "pytest", "pytest-cov"]
