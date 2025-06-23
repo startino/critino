@@ -292,7 +292,9 @@ async def upsert(
                     "environment_name": query.environment_name.strip(),
                     "tags": tags if tags else [],
                     "query": body.query,
-                    "feedback": body.feedback if body.feedback else [],
+                    "feedback": (
+                        [f.model_dump() for f in body.feedback] if body.feedback else []
+                    ),
                     "response": body.response if body.response else "",
                     "situation": situation,
                 }
@@ -399,4 +401,3 @@ async def upsert_many(
         url=f"{get_url()}{sluggify(query.team_name)}/{sluggify(query.environment_name)}/critiques",
         data=data,
     )
-
