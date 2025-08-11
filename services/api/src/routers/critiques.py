@@ -189,7 +189,7 @@ async def list_critiques(
     if query.similarity_key == "situation":
         model = (
             llm.chat_open_router(
-                model="google/gemini-2.5-flash",
+                model="google/gemini-2.0-flash-001",
                 api_key=x_openrouter_api_key,
                 temperature=0,
             )
@@ -258,7 +258,7 @@ async def upsert(
     query.environment_name = urllib.parse.unquote(query.environment_name).strip()
 
     model = llm.chat_open_router(
-        model="google/gemini-2.5-flash",
+        model="google/gemini-2.0-flash-001",
         api_key=x_openrouter_api_key,
         temperature=0,
     )
@@ -346,7 +346,7 @@ async def upsert_many(
     data = []
     for critique in body.critiques:
         model = llm.chat_open_router(
-            model="google/gemini-2.5-flash",
+            model="google/gemini-2.0-flash-001",
             api_key=x_openrouter_api_key,
             temperature=0,
         )

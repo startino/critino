@@ -49,7 +49,7 @@ class CritiqueGenerator:
         self.temp_file = None
         self.critiques = []
         self.model = llm.chat_open_router(
-            model="google/gemini-2.5-flash",
+            model="google/gemini-2.0-flash-001",
             api_key=self.openrouter_api_key,
             temperature=0,
         )
