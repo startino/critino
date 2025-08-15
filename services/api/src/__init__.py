@@ -15,7 +15,6 @@ logfire.configure(
     token=os.getenv("LOGFIRE_TOKEN"),
     environment=os.getenv("PUBLIC_ENVIRONMENT", "local"),
 )
-logfire.instrument_pydantic()
 logfire.instrument_pydantic_ai()
 
 

@@ -83,3 +83,4 @@ def authenticate_team_or_environment(
     logfire.info(f"Provided key: {key}")
     if keys.encrypt_key(key) not in valid_keys:
         raise HTTPException(status_code=401, detail="Unauthorized. Invalid key.")
+    return True
