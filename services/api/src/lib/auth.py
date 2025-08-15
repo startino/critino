@@ -6,6 +6,7 @@ from supabase._sync.client import SyncClient
 from src.lib import keys
 
 
+@logfire.instrument("authenticate_team {team_name}")
 def authenticate_team(supabase: SyncClient, team_name: str, key: str):
     logfire.info(f"Authenticating team: {team_name}")
     try:
@@ -30,6 +31,7 @@ def authenticate_team(supabase: SyncClient, team_name: str, key: str):
         raise HTTPException(status_code=401, detail="Unauthorized. Invalid key.")
 
 
+@logfire.instrument("authenticate_team_or_environment {team_name} {environment_name}")
 def authenticate_team_or_environment(
     supabase: SyncClient, team_name: str, environment_name: str, key: str
 ):
