@@ -145,11 +145,6 @@ async def list_critiques(
             detail="Both 'query' and 'k' must be either set if you want relevant critiques or None if you want all critiques.",
         )
 
-    async def authenticate():
-        return auth.authenticate_team_or_environment(
-            supabase, query.team_name, query.environment_name, x_critino_key
-        )
-
     async def get_critiques(supabase, query):
         with logfire.span(
             f"fetching critiques for {query.team_name}/{query.environment_name}"
@@ -163,9 +158,17 @@ async def list_critiques(
             if tags:
                 request = request.contains("tags", tags)
 
-            return request.execute()
+            return await asyncio.to_thread(request.execute())
 
-    auth_task = asyncio.create_task(authenticate())
+    auth_task = asyncio.create_task(
+        asyncio.to_thread(
+            auth.authenticate_team_or_environment,
+            supabase,
+            query.team_name,
+            query.environment_name,
+            x_critino_key,
+        )
+    )
     critiques_task = asyncio.create_task(get_critiques(supabase, query))
 
     authenticated, response = await asyncio.gather(auth_task, critiques_task)
