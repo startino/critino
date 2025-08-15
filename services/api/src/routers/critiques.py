@@ -23,6 +23,8 @@ from src.models.critique import Critique, CritiqueWithSituation
 
 router = APIRouter(prefix="/critiques")
 
+supabase = db.client()
+
 
 def handle_error(func):
     @wraps(func)
@@ -142,76 +144,73 @@ async def list_critiques(
             detail="Both 'query' and 'k' must be either set if you want relevant critiques or None if you want all critiques.",
         )
 
-    supabase = db.client()
-
     auth.authenticate_team_or_environment(
         supabase, query.team_name, query.environment_name, x_critino_key
     )
 
-    request = (
-        supabase.table("critiques")
-        .select("*")
-        .eq("team_name", query.team_name)
-        .eq("environment_name", query.environment_name)
-    )
-    if tags:
-        request = request.contains("tags", tags)
-
-    response = request.execute()
-
-    if query.query is None or query.k is None:
-        return GetCritiquesResult(
-            data=[
-                CritiqueWithSituation(
-                    query=critique["query"],
-                    feedback=critique["feedback"],
-                    response=critique["response"],
-                    situation=critique["situation"],
-                )
-                for critique in response.data
-            ],
-            count=len(response.data),
+    with logfire.span(
+        f"fetching critiques for {query.team_name}/{query.environment_name}"
+    ):
+        request = (
+            supabase.table("critiques")
+            .select("*")
+            .eq("team_name", query.team_name)
+            .eq("environment_name", query.environment_name)
         )
+        if tags:
+            request = request.contains("tags", tags)
 
-    critiques = [
-        CritiqueWithSituation(
-            query=critique["query"],
-            feedback=critique["feedback"],
-            response=critique["response"],
-            situation=critique["situation"],
-        )
-        for critique in response.data
-    ]
+        response = request.execute()
 
+        if query.query is None or query.k is None:
+            return GetCritiquesResult(
+                data=[
+                    Critique(
+                        query=critique["query"],
+                        feedback=critique["feedback"],
+                        response=critique["response"],
+                    )
+                    for critique in response.data
+                ],
+                count=len(response.data),
+            )
+
+        critiques = [
+            CritiqueWithSituation(
+                query=critique["query"],
+                feedback=critique["feedback"],
+                response=critique["response"],
+                situation=critique["situation"],
+            )
+            for critique in response.data
+        ]
+
+    situation = None
     if query.similarity_key == "situation":
-        model = (
-            llm.chat_open_router(
-                model="google/gemini-2.0-flash-001",
-                api_key=x_openrouter_api_key,
-                temperature=0,
-            )
-            if x_openrouter_api_key
-            else None
-        )
-
-        if not model:
-            raise HTTPException(
-                status_code=400,
-                detail="'similarity_key' is set to 'situation' but no model is available to generate the situation.",
+        with logfire.span("generating situation"):
+            model = (
+                llm.chat_open_router(
+                    model="google/gemini-2.0-flash-001",
+                    api_key=x_openrouter_api_key,
+                    temperature=0,
+                )
+                if x_openrouter_api_key
+                else None
             )
 
-        situation = generate_situation(model, query.query)
+            if not model:
+                raise HTTPException(
+                    status_code=400,
+                    detail="'similarity_key' is set to 'situation' but no model is available to generate the situation.",
+                )
 
-        relevant_critiques = keyword_search(
-            critiques, situation, k=query.k, similarity_key=query.similarity_key
-        )
-
-        return GetCritiquesResult(
-            situation=situation, data=relevant_critiques, count=len(relevant_critiques)
-        )
+            situation = generate_situation(model, query.query)
 
     relevant_critiques = keyword_search(
-        critiques, query.query, k=query.k, similarity_key=query.similarity_key
+        critiques,
+        situation if situation else query.query,
+        k=query.k,
+        similarity_key=query.similarity_key,
     )
 
     return GetCritiquesResult(data=relevant_critiques, count=len(relevant_critiques))
