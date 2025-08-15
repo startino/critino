@@ -145,39 +145,34 @@ async def list_critiques(
             detail="Both 'query' and 'k' must be either set if you want relevant critiques or None if you want all critiques.",
         )
 
-    async def get_critiques(supabase, query):
-        with logfire.span(
-            f"fetching critiques for {query.team_name}/{query.environment_name}"
-        ):
-            request = (
-                supabase.table("critiques")
-                .select("*")
-                .eq("team_name", query.team_name)
-                .eq("environment_name", query.environment_name)
+    with logfire.span("auth and fetching critiques"):
+        request = (
+            supabase.table("critiques")
+            .select("*")
+            .eq("team_name", query.team_name)
+            .eq("environment_name", query.environment_name)
+        )
+        if tags:
+            request = request.contains("tags", tags)
+
+        auth_task = asyncio.create_task(
+            asyncio.to_thread(
+                auth.authenticate_team_or_environment,
+                supabase,
+                query.team_name,
+                query.environment_name,
+                x_critino_key,
             )
-            if tags:
-                request = request.contains("tags", tags)
-
-            return await asyncio.to_thread(request.execute())
-
-    auth_task = asyncio.create_task(
-        asyncio.to_thread(
-            auth.authenticate_team_or_environment,
-            supabase,
-            query.team_name,
-            query.environment_name,
-            x_critino_key,
         )
-    )
-    critiques_task = asyncio.create_task(get_critiques(supabase, query))
+        critiques_task = asyncio.create_task(asyncio.to_thread(request.execute))
 
-    authenticated, response = await asyncio.gather(auth_task, critiques_task)
+        authenticated, response = await asyncio.gather(auth_task, critiques_task)
 
-    if not authenticated:
-        raise HTTPException(
-            status_code=401,
-            detail="Unauthorized.",
-        )
+        if not authenticated:
+            raise HTTPException(
+                status_code=401,
+                detail="Unauthorized.",
+            )
 
     if query.query is None or query.k is None:
         return GetCritiquesResult(
