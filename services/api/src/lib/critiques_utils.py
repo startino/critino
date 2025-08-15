@@ -1,17 +1,12 @@
 import json
 import os
-import logging
+import logfire
 import requests
 from tempfile import NamedTemporaryFile
 from langgraph.graph import StateGraph, END
 from sse_starlette import ServerSentEvent
 from langchain_core.messages import (
-    AIMessageChunk,
     AIMessage,
-    BaseMessage,
-    BaseMessageChunk,
-    ToolMessage,
-    message_to_dict,
 )
 from langchain_community.document_loaders import (
     YoutubeLoader,
@@ -108,7 +103,7 @@ class CritiqueGenerator:
                 CritiqueResponse, model_with_structured_output.invoke(prompt.invoke({}))
             )
             critique = response.model_dump_json(indent=4)
-            logging.info(f"critique: \n\n\n{critique}\n\n\n")
+            logfire.info(f"critique: \n\n\n{critique}\n\n\n")
             self.critiques.append(critique)
 
         return {"critiques": self.critiques}
@@ -138,7 +133,7 @@ class CritiqueGenerator:
                         f.write(chunk)
 
         except requests.RequestException as e:
-            logging.error(f"Failed to download file: {e}")
+            logfire.error(f"Failed to download file: {e}")
 
     def process_url(self, state: GraphState):
         self.url = state.user_input.file_url
@@ -161,7 +156,7 @@ class CritiqueGenerator:
                 )
             else:
                 self.download_file()
-                logging.info(f"temp_file: {self.temp_file.name}")
+                logfire.info(f"temp_file: {self.temp_file.name}")
                 if not self.temp_file.name:
                     return {}
                 if file_type == "pdf":
@@ -180,7 +175,7 @@ class CritiqueGenerator:
             return {"document_or_youtube_text": extracted_text}
 
         except Exception as e:
-            logging.error(f"Error processing URL: {e}")
+            logfire.error(f"Error processing URL: {e}")
             return {}
 
     async def process_request(self, input_data: GenerateCritiqueInput):
@@ -226,10 +221,10 @@ class CritiqueGenerator:
             match kind:
                 case "on_parser_end":
                     if not node:
-                        logging.error(f"workshop: no node found for event {kind}")
+                        logfire.error(f"workshop: no node found for event {kind}")
                         continue
 
-                    logging.info(f"workshop: {node}: {kind}: parser end: {data}")
+                    logfire.info(f"workshop: {node}: {kind}: parser end: {data}")
                     input = data.get("input", None)
                     output = data.get("output", None)
 
@@ -238,18 +233,18 @@ class CritiqueGenerator:
                     elif isinstance(output, list):
                         output_string = json.dumps(output[0].get("args", None))
                         if not output_string:
-                            logging.error(
+                            logfire.error(
                                 f"workshop: output is list but missing args: output: {output}"
                             )
                             continue
                     else:
-                        logging.error(
+                        logfire.error(
                             f"workshop: output is not a BaseModel or a list: output: {output}"
                         )
                         continue
 
                     if not isinstance(input, AIMessage):
-                        logging.error(
+                        logfire.error(
                             f"workshop: input is not an AIMessage: input: {input}"
                         )
                         continue

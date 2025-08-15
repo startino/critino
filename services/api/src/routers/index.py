@@ -1,5 +1,5 @@
 import traceback
-import logging
+import logfire
 from functools import wraps
 
 from fastapi import APIRouter, HTTPException
@@ -18,7 +18,7 @@ def handle_error(func):
             raise e
         except Exception as e:
             tb_str = "".join(traceback.format_exception(e))
-            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            logfire.error(f"Error in {func.__name__}: {e}\n{tb_str}")
             raise HTTPException(
                 status_code=500, detail={"message": str(e), "traceback": tb_str}
             )
@@ -36,7 +36,7 @@ def ahandle_error(func):
             raise e
         except Exception as e:
             tb_str = "".join(traceback.format_exception(e))
-            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            logfire.error(f"Error in {func.__name__}: {e}\n{tb_str}")
             raise HTTPException(
                 status_code=500, detail={"message": str(e), "traceback": tb_str}
             )

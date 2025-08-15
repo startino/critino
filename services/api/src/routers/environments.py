@@ -1,6 +1,6 @@
 from datetime import datetime
 import traceback
-import logging
+import logfire
 from functools import wraps
 import os
 from typing import Annotated
@@ -27,7 +27,7 @@ def handle_error(func):
             raise e
         except Exception as e:
             tb_str = "".join(traceback.format_exception(e))
-            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            logfire.error(f"Error in {func.__name__}: {e}\n{tb_str}")
             raise HTTPException(
                 status_code=500, detail={**e.__dict__, "traceback": tb_str}
             )
@@ -45,7 +45,7 @@ def ahandle_error(func):
             raise e
         except Exception as e:
             tb_str = "".join(traceback.format_exception(e))
-            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            logfire.error(f"Error in {func.__name__}: {e}\n{tb_str}")
             raise HTTPException(
                 status_code=500, detail={**e.__dict__, "traceback": tb_str}
             )
@@ -91,10 +91,10 @@ async def list_environments(
             .data
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return GetEnvironmentsResponse(
@@ -166,10 +166,10 @@ async def create_environment(
             .data[0]
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return PostEnvironmentResponse(
@@ -260,10 +260,10 @@ async def duplicate_environment(
         )
 
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     if not environment:
@@ -297,10 +297,10 @@ async def duplicate_environment(
             .data
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return DuplicateEnvironmentResponse(
@@ -368,10 +368,10 @@ async def update_environment(
             .data[0]
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return PatchEnvironmentResponse(
@@ -433,10 +433,10 @@ async def update_environment_key(
             .data[0]
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return PatchEnvironmentKeyResponse(
@@ -489,10 +489,10 @@ async def delete_environment_key(
             .data[0]
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return DeleteEnvironmentKeyResponse(data=environment, key=None)
@@ -540,10 +540,10 @@ async def read_environment(
             .data
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return GetEnvironmentResponse(
@@ -590,8 +590,8 @@ async def delete_environment(
             .execute()
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})

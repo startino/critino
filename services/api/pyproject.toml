@@ -22,8 +22,11 @@ dependencies = [
     "pydantic",
     "sse-starlette",
     "watchfiles==0.23.0",
-    "sentence-transformers",
     "youtube-transcript-api",
+    "logfire>=4.3.3",
+    "rapidfuzz>=3.13.0",
+    "pydantic-ai>=0.7.2",
+    "opentelemetry-instrumentation-fastapi>=0.57b0",
 ]
 name = "src"
 version = "0.0.1"

@@ -1,5 +1,6 @@
+import os
 import time
-import logging
+import logfire
 from dotenv import load_dotenv
 
 from fastapi import FastAPI
@@ -10,12 +11,12 @@ from src.routers import auth, critiques, index, environments
 
 load_dotenv()
 
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s:%(msecs)03d - %(levelname)s - %(message)s",
-    datefmt="%M:%S",
+logfire.configure(
+    token=os.getenv("LOGFIRE_TOKEN"),
+    environment=os.getenv("PUBLIC_ENVIRONMENT", "local"),
 )
+logfire.instrument_pydantic()
+logfire.instrument_pydantic_ai()
 
 
 def create_app() -> FastAPI:
@@ -46,3 +47,5 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+logfire.instrument_fastapi(app, capture_headers=True)

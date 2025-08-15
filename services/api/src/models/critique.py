@@ -11,5 +11,5 @@ class Critique(BaseModel):
     response: str | None = None
 
 
-class CrtitiqueWithSituation(Critique):
+class CritiqueWithSituation(Critique):
     situation: str
