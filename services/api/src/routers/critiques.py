@@ -114,7 +114,7 @@ class GetCritiquesQuery(BaseModel):
     environment_name: str
     query: str | None = None
     k: int | None = None
-    similarity_key: SimilarityKey = "situation"
+    similarity_key: SimilarityKey = "query"
 
 
 class GetCritiquesResult(BaseModel):
