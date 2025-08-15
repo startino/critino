@@ -168,7 +168,13 @@ async def list_critiques(
     auth_task = asyncio.create_task(authenticate())
     critiques_task = asyncio.create_task(get_critiques(supabase, query))
 
-    auth, response = await asyncio.gather(auth_task, critiques_task)
+    authenticated, response = await asyncio.gather(auth_task, critiques_task)
+
+    if not authenticated:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized.",
+        )
 
     if query.query is None or query.k is None:
         return GetCritiquesResult(
