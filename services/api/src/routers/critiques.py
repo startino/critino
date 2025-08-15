@@ -1,5 +1,5 @@
 import traceback
-import logging
+import logfire
 from functools import wraps
 from typing import Annotated
 import urllib.parse
@@ -18,11 +18,8 @@ from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from src.lib import auth, validators as vd
 
 
-from src.lib.few_shot import (
-    SimilarityKey,
-    find_relevant_critiques,
-)
-from src.models.critique import Critique, CrtitiqueWithSituation
+from src.lib.few_shot import SimilarityKey, keyword_search
+from src.models.critique import Critique, CritiqueWithSituation
 
 router = APIRouter(prefix="/critiques")
 
@@ -37,7 +34,7 @@ def handle_error(func):
             raise e
         except Exception as e:
             tb_str = "".join(traceback.format_exception(e))
-            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            logfire.error(f"Error in {func.__name__}: {e}\n{tb_str}")
             raise HTTPException(
                 status_code=500, detail={"message": str(e), "traceback": tb_str}
             )
@@ -55,7 +52,7 @@ def ahandle_error(func):
             raise e
         except Exception as e:
             tb_str = "".join(traceback.format_exception(e))
-            logging.error(f"Error in {func.__name__}: {e}\n{tb_str}")
+            logfire.error(f"Error in {func.__name__}: {e}\n{tb_str}")
             raise HTTPException(
                 status_code=500, detail={"message": str(e), "traceback": tb_str}
             )
@@ -64,7 +61,7 @@ def ahandle_error(func):
 
 
 def generate_situation(model: ChatOpenAI, query: str) -> str:
-    logging.info(f"generate_fields: query: {query}")
+    logfire.info(f"generate_fields: query: {query}")
     query = truncate_query(query)
 
     prompt = [
@@ -83,7 +80,7 @@ Provide a ~10 word description of the situation from the query and query. The si
 
     situation = model.invoke(prompt)
 
-    logging.info(f"critiques: generate_situation: {situation.content}")
+    logfire.info(f"critiques: generate_situation: {situation.content}")
 
     return situation.content
 
@@ -132,7 +129,7 @@ async def list_critiques(
     x_openrouter_api_key: Annotated[str | None, Header()],
     tags: Annotated[list[str] | None, Query()] = None,
 ) -> GetCritiquesResult:
-    logging.info(f"list_critiques: x_critino_key: {x_critino_key} - params: {query}")
+    logfire.info(f"list_critiques: x_critino_key: {x_critino_key} - params: {query}")
 
     query.team_name = urllib.parse.unquote(query.team_name).strip()
     query.environment_name = urllib.parse.unquote(query.environment_name).strip()
@@ -165,7 +162,7 @@ async def list_critiques(
     if query.query is None or query.k is None:
         return GetCritiquesResult(
             data=[
-                CrtitiqueWithSituation(
+                CritiqueWithSituation(
                     query=critique["query"],
                     feedback=critique["feedback"],
                     response=critique["response"],
@@ -177,7 +174,7 @@ async def list_critiques(
         )
 
     critiques = [
-        CrtitiqueWithSituation(
+        CritiqueWithSituation(
             query=critique["query"],
             feedback=critique["feedback"],
             response=critique["response"],
@@ -205,7 +202,7 @@ async def list_critiques(
 
         situation = generate_situation(model, query.query)
 
-        relevant_critiques = find_relevant_critiques(
+        relevant_critiques = keyword_search(
             critiques, situation, k=query.k, similarity_key=query.similarity_key
         )
 
@@ -213,7 +210,7 @@ async def list_critiques(
             situation=situation, data=relevant_critiques, count=len(relevant_critiques)
         )
 
-    relevant_critiques = find_relevant_critiques(
+    relevant_critiques = keyword_search(
         critiques, query.query, k=query.k, similarity_key=query.similarity_key
     )
 
@@ -251,7 +248,7 @@ async def upsert(
     x_openrouter_api_key: Annotated[str, Header()],
     tags: Annotated[list[str] | None, Query()] = None,
 ) -> PostCritiquesResponse:
-    logging.info(
+    logfire.info(
         f"upsert: id: {id}, body: {body}, query: {query}, x_critino_key: {x_critino_key}, x_openrouter_api_key: {x_openrouter_api_key}"
     )
     query.team_name = urllib.parse.unquote(query.team_name).strip()
@@ -303,10 +300,10 @@ async def upsert(
             .data[0]
         )
     except PostgrestAPIError as e:
-        logging.error(f"PostgrestAPIError: {e}")
+        logfire.error(f"PostgrestAPIError: {e}")
         raise HTTPException(status_code=500, detail={**e.json()})
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logfire.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail={**e.__dict__})
 
     return PostCritiquesResponse(
@@ -337,7 +334,7 @@ async def upsert_many(
     x_openrouter_api_key: Annotated[str, Header()],
     tags: Annotated[list[str] | None, Query()] = None,
 ) -> PostManyCritiquesResponse:
-    logging.info(
+    logfire.info(
         f"upsert: id: {id}, body: {body}, query: {query}, x_critino_key: {x_critino_key}, x_openrouter_api_key: {x_openrouter_api_key}"
     )
     query.team_name = urllib.parse.unquote(query.team_name).strip()
@@ -389,10 +386,10 @@ async def upsert_many(
                 .data[0]
             )
         except PostgrestAPIError as e:
-            logging.error(f"PostgrestAPIError: {e}")
+            logfire.error(f"PostgrestAPIError: {e}")
             raise HTTPException(status_code=500, detail={**e.json()})
         except Exception as e:
-            logging.error(f"Unexpected error: {e}")
+            logfire.error(f"Unexpected error: {e}")
             raise HTTPException(status_code=500, detail={**e.__dict__})
 
         data.append(critique)
